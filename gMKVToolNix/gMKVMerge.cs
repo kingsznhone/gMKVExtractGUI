@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace gMKVToolNix
 {
@@ -84,7 +86,8 @@ namespace gMKVToolNix
             identify_verbose, // Will let mkvmerge(1) probe the single file and report its type, the tracks contained in the file and their track IDs. If this option is used then the only other option allowed is the filename. 
             ui_language, //Forces the translations for the language code to be used 
             command_line_charset,
-            output_charset
+            output_charset,
+            identification_format // Set the identification results format ('text', 'verbose-text', 'json')
         }
 
         public gMKVMerge(String mkvToonlixPath)
@@ -106,7 +109,16 @@ namespace gMKVToolNix
             // Execute the mkvmerge
             ExecuteMkvMerge(argMKVFile);
             // Start the parsing of the output
-            ParseMkvMergeOutput();
+            // Since MKVToolNix v9.6.0, start parsing the JSON identification info
+            FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(_MKVMergeFilename);
+            if (myFileVersionInfo.FileMajorPart >= 9 && myFileVersionInfo.FileMinorPart >= 6)
+            {
+                ParseMkvMergeJsonOutput();
+            }
+            else
+            {
+                ParseMkvMergeOutput();
+            }
             return _SegmentList;
         }
 
@@ -361,7 +373,19 @@ namespace gMKVToolNix
                 }
                 //optionList.Add(new OptionValue(MkvMergeOptions.command_line_charset, "\"UTF-8\""));
                 //optionList.Add(new OptionValue(MkvMergeOptions.output_charset, "\"UTF-8\""));
-                optionList.Add(new OptionValue(MkvMergeOptions.identify_verbose, String.Empty));
+
+                // Since MKVToolNix v9.6.0, start parsing the JSON identification info
+                FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(_MKVMergeFilename);
+                if (myFileVersionInfo.FileMajorPart >= 9 && myFileVersionInfo.FileMinorPart >= 6)
+                {
+                    optionList.Add(new OptionValue(MkvMergeOptions.identify, String.Empty));
+                    optionList.Add(new OptionValue(MkvMergeOptions.identification_format, "json"));
+                }
+                else
+                {
+                    // For previous mkvmerge versions, keep compatibility
+                    optionList.Add(new OptionValue(MkvMergeOptions.identify_verbose, String.Empty));
+                }
 
                 ProcessStartInfo myProcessInfo = new ProcessStartInfo();
                 myProcessInfo.FileName = _MKVMergeFilename;
@@ -397,6 +421,268 @@ namespace gMKVToolNix
                     throw new Exception(String.Format("Mkvmerge exited with error code {0}!\r\n\r\nErrors reported:\r\n{1}",
                         myProcess.ExitCode, _ErrorBuilder.ToString()));
                 }
+            }
+        }
+
+        private void ParseMkvMergeJsonOutput()
+        {
+            // Read the JSON output data to a JObject
+            JObject o = JObject.Parse(_MKVMergeOutput.ToString());
+            List<gMKVSegment> chapters = new List<gMKVSegment>();
+            List<gMKVSegment> attachments = new List<gMKVSegment>();
+            List<gMKVSegment> tracks = new List<gMKVSegment>();
+            // Parse all the children tokens accordingly
+            foreach (JToken token in o.Children())
+            {
+                if(token is JProperty)
+                {
+                    JProperty p = token as JProperty;
+                    if (p != null)
+                    {
+                        if (!String.IsNullOrWhiteSpace(p.Name) && p.Name.ToLower().Trim() == "chapters")
+                        {
+                            if (p.HasValues)
+                            {
+                                foreach (JToken entry in p)
+                                {
+                                    if (entry is JArray)
+                                    {
+                                        if ((entry as JArray).Count > 0)
+                                        {
+                                            foreach (JToken entryTokens in entry)
+                                            {
+                                                if (entryTokens.HasValues)
+                                                {
+                                                    foreach (JToken chapEntry in entryTokens)
+                                                    {
+                                                        gMKVChapter tmp = new gMKVChapter();
+                                                        tmp.ChapterCount = chapEntry.ToObject<Int32>();
+                                                        chapters.Add(tmp);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (!String.IsNullOrWhiteSpace(p.Name) && p.Name.ToLower().Trim() == "attachments")
+                        {
+                            if (p.HasValues)
+                            {
+                                foreach (JToken attachmentToken in p)
+                                {
+                                    foreach (JToken finalAttachmentToken in attachmentToken)                                        
+                                    {
+                                        gMKVAttachment tmp = new gMKVAttachment();
+                                        foreach (JToken propertyAttachmentToken in finalAttachmentToken)
+                                        {
+                                            if(propertyAttachmentToken is JProperty)
+                                            {
+                                                JProperty prop = propertyAttachmentToken as JProperty;
+                                                if (!String.IsNullOrWhiteSpace(prop.Name) && prop.Name.ToLower().Trim() == "content_type")
+                                                {
+                                                    tmp.MimeType = prop.ToObject<String>();
+                                                }
+                                                if (!String.IsNullOrWhiteSpace(prop.Name) && prop.Name.ToLower().Trim() == "file_name")
+                                                {
+                                                    tmp.Filename = prop.ToObject<String>();
+                                                }
+                                                if (!String.IsNullOrWhiteSpace(prop.Name) && prop.Name.ToLower().Trim() == "id")
+                                                {
+                                                    tmp.ID = prop.ToObject<Int32>();
+                                                }
+                                                if (!String.IsNullOrWhiteSpace(prop.Name) && prop.Name.ToLower().Trim() == "size")
+                                                {
+                                                    tmp.FileSize = prop.ToObject<String>();
+                                                }
+                                            }
+                                        }
+                                        attachments.Add(tmp);
+                                    }
+                                }
+                            }
+                        }
+                        if (!String.IsNullOrWhiteSpace(p.Name) && p.Name.ToLower().Trim() == "container")
+                        {
+                            gMKVSegmentInfo tmp = new gMKVSegmentInfo();
+                            if (p.HasValues)
+                            {
+                                foreach (JToken child in p.Children())
+                                {
+                                    if (child.HasValues)
+                                    {
+                                        foreach (JToken value in child.Children())
+                                        {
+                                            if (value is JProperty)
+                                            {
+                                                JProperty valueProperty = value as JProperty;
+                                                if (valueProperty != null && !String.IsNullOrWhiteSpace(valueProperty.Name) && valueProperty.Name.ToLower().Trim() == "properties")
+                                                {
+                                                    foreach (JToken childProperty in valueProperty.Children())
+                                                    {
+                                                        foreach (JToken childPreFinalProperty in childProperty.Children())
+                                                        {
+                                                            if (childPreFinalProperty is JProperty)
+                                                            {
+                                                                JProperty childFinalProperty = childPreFinalProperty as JProperty;
+                                                                if (childFinalProperty != null && !String.IsNullOrWhiteSpace(childFinalProperty.Name) && childFinalProperty.Name.ToLower().Trim() == "date_utc")
+                                                                {
+                                                                    tmp.Date = childFinalProperty.ToObject<DateTime>().ToString("ddd MMM dd HH:mm:ss yyyy UTC", CultureInfo.InvariantCulture);
+                                                                }
+                                                                if (childFinalProperty != null && !String.IsNullOrWhiteSpace(childFinalProperty.Name) && childFinalProperty.Name.ToLower().Trim() == "duration")
+                                                                {
+                                                                    //Duration: 5979.008s (01:39:39.008)
+                                                                    String originalDuration = childFinalProperty.ToObject<String>();
+                                                                    TimeSpan tmpTime = TimeSpan.FromMilliseconds(Convert.ToDouble(Int64.Parse(originalDuration)) / 1000000.0);
+                                                                    tmp.Duration = String.Format("{0}s ({1}:{2}:{3}.{4})",
+                                                                        (Convert.ToDouble(Int64.Parse(originalDuration)) / 1000000000.0).ToString("#0.000", CultureInfo.InvariantCulture),
+                                                                        tmpTime.Hours.ToString("00"),
+                                                                        tmpTime.Minutes.ToString("00"),
+                                                                        tmpTime.Seconds.ToString("00"),
+                                                                        tmpTime.Milliseconds.ToString("000"));
+                                                                }
+                                                                if (childFinalProperty != null && !String.IsNullOrWhiteSpace(childFinalProperty.Name) && childFinalProperty.Name.ToLower().Trim() == "muxing_application")
+                                                                {
+                                                                    tmp.MuxingApplication = childFinalProperty.ToObject<String>();
+                                                                }
+                                                                if (childFinalProperty != null && !String.IsNullOrWhiteSpace(childFinalProperty.Name) && childFinalProperty.Name.ToLower().Trim() == "writing_application")
+                                                                {
+                                                                    tmp.WritingApplication = childFinalProperty.ToObject<String>();
+                                                                }
+                                                            }
+
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            _SegmentList.Add(tmp);
+                        } // "container"
+                        if (!String.IsNullOrWhiteSpace(p.Name) && p.Name.ToLower().Trim() == "tracks")
+                        {
+                            if (p.HasValues)
+                            {
+                                foreach (JToken child in p.Children())
+                                {
+                                    if (child.HasValues)
+                                    {
+                                        foreach (JToken value in child.Children())
+                                        {
+                                            if (value.HasValues)
+                                            {
+                                                gMKVTrack tmp = new gMKVTrack();
+                                                foreach (JToken childPreFinalProperty in value.Children())
+                                                {
+                                                    if (childPreFinalProperty is JProperty)
+                                                    {
+                                                        JProperty childFinalProperty = childPreFinalProperty as JProperty;
+                                                        if (childFinalProperty != null && !String.IsNullOrWhiteSpace(childFinalProperty.Name) && childFinalProperty.Name.ToLower().Trim() == "id")
+                                                        {
+                                                            tmp.TrackID = childFinalProperty.ToObject<Int32>();
+                                                        }
+                                                        if (childFinalProperty != null && !String.IsNullOrWhiteSpace(childFinalProperty.Name) && childFinalProperty.Name.ToLower().Trim() == "properties")
+                                                        {
+                                                            if (childFinalProperty.HasValues)
+                                                            {
+                                                                foreach (JToken propertyChild in childFinalProperty)
+                                                                {
+                                                                    if (propertyChild.HasValues)
+                                                                    {
+                                                                        foreach (JToken propertyFinalChild in propertyChild)
+                                                                        {
+                                                                            if (propertyFinalChild.HasValues)
+                                                                            {
+                                                                                if(propertyFinalChild is JProperty)
+                                                                                {
+                                                                                    JProperty propertyFinal = propertyFinalChild as JProperty;
+                                                                                    if (propertyFinal != null && !String.IsNullOrWhiteSpace(propertyFinal.Name) && propertyFinal.Name.ToLower().Trim() == "codec_id")
+                                                                                    {
+                                                                                        tmp.CodecID = propertyFinal.ToObject<String>();
+                                                                                    }
+                                                                                    if (propertyFinal != null && !String.IsNullOrWhiteSpace(propertyFinal.Name) && propertyFinal.Name.ToLower().Trim() == "codec_private_data")
+                                                                                    {
+                                                                                        tmp.CodecPrivateData = propertyFinal.ToObject<String>();
+                                                                                    }
+                                                                                    if (propertyFinal != null && !String.IsNullOrWhiteSpace(propertyFinal.Name) && propertyFinal.Name.ToLower().Trim() == "default_duration")
+                                                                                    {
+                                                                                        
+                                                                                    }
+                                                                                    if (propertyFinal != null && !String.IsNullOrWhiteSpace(propertyFinal.Name) && propertyFinal.Name.ToLower().Trim() == "display_dimensions")
+                                                                                    {
+
+                                                                                    }
+                                                                                    if (propertyFinal != null && !String.IsNullOrWhiteSpace(propertyFinal.Name) && propertyFinal.Name.ToLower().Trim() == "language")
+                                                                                    {
+                                                                                        tmp.Language = propertyFinal.ToObject<String>();
+                                                                                    }
+                                                                                    if (propertyFinal != null && !String.IsNullOrWhiteSpace(propertyFinal.Name) && propertyFinal.Name.ToLower().Trim() == "minimum_timestamp")
+                                                                                    {
+                                                                                        tmp.MinimumTimestamp = propertyFinal.ToObject<Int64>();
+                                                                                    }
+                                                                                    if (propertyFinal != null && !String.IsNullOrWhiteSpace(propertyFinal.Name) && propertyFinal.Name.ToLower().Trim() == "number")
+                                                                                    {
+                                                                                        tmp.TrackNumber = propertyFinal.ToObject<Int32>();
+                                                                                    }
+                                                                                    if (propertyFinal != null && !String.IsNullOrWhiteSpace(propertyFinal.Name) && propertyFinal.Name.ToLower().Trim() == "pixel_dimensions")
+                                                                                    {
+                                                                                        tmp.ExtraInfo = propertyFinal.ToObject<String>();
+                                                                                    }
+                                                                                    if (propertyFinal != null && !String.IsNullOrWhiteSpace(propertyFinal.Name) && propertyFinal.Name.ToLower().Trim() == "uid")
+                                                                                    {
+
+                                                                                    }
+                                                                                    if (propertyFinal != null && !String.IsNullOrWhiteSpace(propertyFinal.Name) && propertyFinal.Name.ToLower().Trim() == "audio_channels")
+                                                                                    {
+                                                                                        tmp.ExtraInfo = String.IsNullOrWhiteSpace(tmp.ExtraInfo) ? "Ch:" + propertyFinal.ToObject<String>() : tmp.ExtraInfo + ", " + "Ch:" + propertyFinal.ToObject<String>();
+                                                                                    }
+                                                                                    if (propertyFinal != null && !String.IsNullOrWhiteSpace(propertyFinal.Name) && propertyFinal.Name.ToLower().Trim() == "audio_sampling_frequency")
+                                                                                    {
+                                                                                        tmp.ExtraInfo = String.IsNullOrWhiteSpace(tmp.ExtraInfo) ? propertyFinal.ToObject<String>() : tmp.ExtraInfo + ", " + propertyFinal.ToObject<String>();
+                                                                                    }
+                                                                                    if (propertyFinal != null && !String.IsNullOrWhiteSpace(propertyFinal.Name) && propertyFinal.Name.ToLower().Trim() == "track_name")
+                                                                                    {
+                                                                                        tmp.TrackName = propertyFinal.ToObject<String>();
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        if (childFinalProperty != null && !String.IsNullOrWhiteSpace(childFinalProperty.Name) && childFinalProperty.Name.ToLower().Trim() == "type")
+                                                        {
+                                                            tmp.TrackType = (MkvTrackType)Enum.Parse(typeof(MkvTrackType), childFinalProperty.ToObject<String>());
+                                                        }
+                                                    }
+                                                }
+                                                tracks.Add(tmp);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } // "tracks"
+                    }
+                }                
+            }
+
+            // Add the segments in the correct order
+            foreach (gMKVSegment seg in tracks)
+            {
+                _SegmentList.Add(seg);
+            }
+            foreach (gMKVSegment seg in attachments)
+            {
+                _SegmentList.Add(seg);
+            }
+            foreach (gMKVSegment seg in chapters)
+            {
+                _SegmentList.Add(seg);
             }
         }
 
