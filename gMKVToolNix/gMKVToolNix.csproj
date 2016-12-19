@@ -84,9 +84,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Libs\Newtonsoft.Json.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Libs\Newtonsoft.Json.dll" />
     <Content Include="Libs\Newtonsoft.Json.pdb" />
     <Content Include="Libs\Newtonsoft.Json.xml" />
   </ItemGroup>
