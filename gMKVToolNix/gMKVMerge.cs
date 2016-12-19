@@ -567,14 +567,15 @@ namespace gMKVToolNix
             {
                 endCharacter = " ";
             }
-            else
+            else if (line.Substring(line.IndexOf(propertyName + ":")).Contains("]"))
             {
                 endCharacter = "]";
             }
-            return gMKVHelper.UnescapeString(line.Substring(line.IndexOf(propertyName + ":")).
-                Substring(0, line.Substring(line.IndexOf(propertyName + ":")).IndexOf(endCharacter)).
+            String afterPropertyPart = line.Substring(line.IndexOf(propertyName + ":"));
+            return gMKVHelper.UnescapeString(afterPropertyPart.
+                Substring(0, String.IsNullOrEmpty(endCharacter) ? afterPropertyPart.Length : afterPropertyPart.IndexOf(endCharacter)).
                 Replace(propertyName + ":", String.Empty)).
-                Trim();            
+                Trim();
         }
 
         private void myProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)
