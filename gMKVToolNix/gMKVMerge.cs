@@ -748,7 +748,8 @@ namespace gMKVToolNix
                     }
                     if (outputLine.Contains("date_utc:"))
                     {
-                        tmp.Date = DateTime.ParseExact(ExtractProperty(outputLine, "date_utc"), formats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal).ToUniversalTime().
+                        tmp.Date = DateTime.ParseExact(ExtractProperty(outputLine, "date_utc"), formats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal).
+                            ToUniversalTime().
                             ToString("ddd MMM dd HH:mm:ss yyyy UTC", CultureInfo.InvariantCulture);
                     }
                     if (outputLine.Contains("duration:"))
@@ -891,19 +892,23 @@ namespace gMKVToolNix
         }
 
         private String ExtractProperty(String line, String propertyName)
-        {
+        {            
+            if(!line.Contains(propertyName + ":"))
+            {
+                return "";
+            }
             String endCharacter = "";
-            if (line.Substring(line.IndexOf(propertyName + ":")).Contains(" "))
+            String propertyPart = line.Substring(line.IndexOf(propertyName + ":"));
+            if (propertyPart.Contains(" "))
             {
                 endCharacter = " ";
             }
-            else if (line.Substring(line.IndexOf(propertyName + ":")).Contains("]"))
+            else if (propertyPart.Contains("]"))
             {
                 endCharacter = "]";
-            }
-            String afterPropertyPart = line.Substring(line.IndexOf(propertyName + ":"));
-            return gMKVHelper.UnescapeString(afterPropertyPart.
-                Substring(0, String.IsNullOrEmpty(endCharacter) ? afterPropertyPart.Length : afterPropertyPart.IndexOf(endCharacter)).
+            }            
+            return gMKVHelper.UnescapeString(propertyPart.
+                Substring(0, String.IsNullOrEmpty(endCharacter) ? propertyPart.Length : propertyPart.IndexOf(endCharacter)).
                 Replace(propertyName + ":", "")).
                 Trim();
         }

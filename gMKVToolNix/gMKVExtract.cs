@@ -657,7 +657,7 @@ namespace gMKVToolNix
             OnMkvExtractProgressUpdated(0);
             // check for existence of MKVExtract
             if (!File.Exists(_MKVExtractFilename)) { throw new Exception(String.Format("Could not find mkvextract.exe!\r\n{0}", _MKVExtractFilename)); }
-            DataReceivedEventHandler handler;
+            DataReceivedEventHandler handler = null;
             if (argUseOutputFileWriter)
             {
                 handler = myProcess_OutputDataReceived_WriteToFile;
@@ -735,27 +735,24 @@ namespace gMKVToolNix
                 _Abort = false;
                 return;
             }
-            if (e.Data != null)
+            if (!String.IsNullOrWhiteSpace(e.Data))
             {
-                if (e.Data.Trim().Length > 0)
+                // add the line to the output stringbuilder
+                _OutputFileWriter.WriteLine(e.Data);
+                // check for errors
+                if (e.Data.Contains("Error:"))
                 {
-                    // add the line to the output stringbuilder
-                    _OutputFileWriter.WriteLine(e.Data);
-                    // check for errors
-                    if (e.Data.Contains("Error:"))
-                    {
-                        _ErrorBuilder.AppendLine(e.Data.Substring(e.Data.IndexOf(":") + 1).Trim());
-                    }
-                    // check for progress
-                    if (e.Data.Contains("Progress:"))
-                    {
-                        OnMkvExtractProgressUpdated(Convert.ToInt32(e.Data.Substring(e.Data.IndexOf(":") + 1, e.Data.IndexOf("%") - e.Data.IndexOf(":") - 1)));
-                    }
-                    // debug write the output line
-                    Debug.WriteLine(e.Data);
-                    // log the output
-                    gMKVLogger.Log(e.Data);
+                    _ErrorBuilder.AppendLine(e.Data.Substring(e.Data.IndexOf(":") + 1).Trim());
                 }
+                // check for progress
+                if (e.Data.Contains("Progress:"))
+                {
+                    OnMkvExtractProgressUpdated(Convert.ToInt32(e.Data.Substring(e.Data.IndexOf(":") + 1, e.Data.IndexOf("%") - e.Data.IndexOf(":") - 1)));
+                }
+                // debug write the output line
+                Debug.WriteLine(e.Data);
+                // log the output
+                gMKVLogger.Log(e.Data);
             }
         }
 
@@ -768,27 +765,24 @@ namespace gMKVToolNix
                 _Abort = false;
                 return;
             }
-            if (e.Data != null)
+            if (!String.IsNullOrWhiteSpace(e.Data))
             {
-                if (e.Data.Trim().Length > 0)
+                // add the line to the output stringbuilder
+                _MKVExtractOutput.AppendLine(e.Data);
+                // check for errors
+                if (e.Data.Contains("Error:"))
                 {
-                    // add the line to the output stringbuilder
-                    _MKVExtractOutput.AppendLine(e.Data);
-                    // check for errors
-                    if (e.Data.Contains("Error:"))
-                    {
-                        _ErrorBuilder.AppendLine(e.Data.Substring(e.Data.IndexOf(":") + 1).Trim());
-                    }
-                    // check for progress
-                    if (e.Data.Contains("Progress:"))
-                    {
-                        OnMkvExtractProgressUpdated(Convert.ToInt32(e.Data.Substring(e.Data.IndexOf(":") + 1, e.Data.IndexOf("%") - e.Data.IndexOf(":") - 1)));
-                    }
-                    // debug write the output line
-                    Debug.WriteLine(e.Data);
-                    // log the output
-                    gMKVLogger.Log(e.Data);
+                    _ErrorBuilder.AppendLine(e.Data.Substring(e.Data.IndexOf(":") + 1).Trim());
                 }
+                // check for progress
+                if (e.Data.Contains("Progress:"))
+                {
+                    OnMkvExtractProgressUpdated(Convert.ToInt32(e.Data.Substring(e.Data.IndexOf(":") + 1, e.Data.IndexOf("%") - e.Data.IndexOf(":") - 1)));
+                }
+                // debug write the output line
+                Debug.WriteLine(e.Data);
+                // log the output
+                gMKVLogger.Log(e.Data);
             }
         }
 

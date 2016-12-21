@@ -7,7 +7,7 @@ using System.IO;
 
 namespace gMKVToolNix
 {
-    public class gMKVHelper
+    public static class gMKVHelper
     {
         /// <summary>
         /// Returns if the running Platform is Linux Or MacOSX
