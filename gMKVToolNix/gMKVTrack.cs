@@ -46,7 +46,7 @@ namespace gMKVToolNix
             set { _CodecID = value; }
         }
 
-        private String _CodecPrivate = String.Empty;
+        private String _CodecPrivate = "";
 
         public String CodecPrivate
         {
@@ -54,7 +54,7 @@ namespace gMKVToolNix
             set { _CodecPrivate = value; }
         }
 
-        private String _CodecPrivateData = String.Empty;
+        private String _CodecPrivateData = "";
 
         public String CodecPrivateData
         {

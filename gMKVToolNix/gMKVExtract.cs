@@ -57,10 +57,10 @@ namespace gMKVToolNix
         internal class TrackParameter
         {
             public MkvExtractModes ExtractMode = MkvExtractModes.tracks;
-            public String Options = String.Empty;
-            public String TrackOutput = String.Empty;
+            public String Options = "";
+            public String TrackOutput = "";
             public Boolean WriteOutputToFile = false;
-            public String OutputFilename = String.Empty;
+            public String OutputFilename = "";
 
             public TrackParameter(MkvExtractModes argExtractMode,
                 String argOptions,
@@ -86,8 +86,8 @@ namespace gMKVToolNix
             get { return gMKVHelper.IsOnLinux ? "mkvextract" : "mkvextract.exe"; }
         }
 
-        private String _MKVToolnixPath = String.Empty;
-        private String _MKVExtractFilename = String.Empty;
+        private String _MKVToolnixPath = "";
+        private String _MKVExtractFilename = "";
         private StringBuilder _MKVExtractOutput = new StringBuilder();
         private StreamWriter _OutputFileWriter = null;
         private StringBuilder _ErrorBuilder = new StringBuilder();
@@ -152,7 +152,7 @@ namespace gMKVToolNix
                 {
                     trackParameterList.Add(new TrackParameter(
                         MkvExtractModes.timecodes_v2,
-                        String.Empty,
+                        "",
                         String.Format("{0}:\"{1}\"",
                             ((gMKVTrack)argSeg).TrackID,
                             Path.Combine(
@@ -162,7 +162,7 @@ namespace gMKVToolNix
                                     ((gMKVTrack)argSeg).TrackNumber,
                                     ((gMKVTrack)argSeg).Language))),
                         false,
-                        String.Empty
+                        ""
                     ));
                 }
 
@@ -171,7 +171,7 @@ namespace gMKVToolNix
                 {
                     trackParameterList.Add(new TrackParameter(
                         MkvExtractModes.cues,
-                        String.Empty,
+                        "",
                         String.Format("{0}:\"{1}\"",
                             ((gMKVTrack)argSeg).TrackID,
                             Path.Combine(
@@ -181,7 +181,7 @@ namespace gMKVToolNix
                                     ((gMKVTrack)argSeg).TrackNumber,
                                     ((gMKVTrack)argSeg).Language))),
                         false,
-                        String.Empty
+                        ""
                     ));
                 }
 
@@ -197,8 +197,8 @@ namespace gMKVToolNix
                     argCueExtractionMode == CuesExtractionMode.OnlyCues)                    
                     )
                 {
-                    String outputFileExtension = String.Empty;
-                    String outputDelayPart = String.Empty;
+                    String outputFileExtension = "";
+                    String outputDelayPart = "";
 
                     // check the track's type in order to get the output file's extension and the delay for audio tracks
                     switch (((gMKVTrack)argSeg).TrackType)
@@ -224,7 +224,7 @@ namespace gMKVToolNix
                     // add the parameter for extracting the track
                     trackParameterList.Add(new TrackParameter(
                         MkvExtractModes.tracks,
-                        String.Empty,
+                        "",
                         String.Format("{0}:\"{1}\"",
                             ((gMKVTrack)argSeg).TrackID,
                             Path.Combine(
@@ -236,7 +236,7 @@ namespace gMKVToolNix
                                     outputDelayPart,
                                     outputFileExtension))),
                         false,
-                        String.Empty
+                        ""
                     ));
                 }
             }
@@ -257,14 +257,14 @@ namespace gMKVToolNix
                     // add the parameter for extracting the attachment
                     trackParameterList.Add(new TrackParameter(
                         MkvExtractModes.attachments,
-                        String.Empty,
+                        "",
                         String.Format("{0}:\"{1}\"",
                             ((gMKVAttachment)argSeg).ID,
                             Path.Combine(
                                 argOutputDirectory,
                                 ((gMKVAttachment)argSeg).Filename)),
                         false,
-                        String.Empty
+                        ""
                     ));
                 }
             }
@@ -282,8 +282,8 @@ namespace gMKVToolNix
                     argCueExtractionMode == CuesExtractionMode.OnlyCues)
                     )
                 {
-                    String outputFileExtension = String.Empty;
-                    String options = String.Empty;
+                    String outputFileExtension = "";
+                    String options = "";
                     // check the chapter's type to determine the output file's extension and options
                     switch (argChapterType)
                     {
@@ -305,7 +305,7 @@ namespace gMKVToolNix
                     trackParameterList.Add(new TrackParameter(
                         MkvExtractModes.chapters,
                         options,
-                        String.Empty,
+                        "",
                         true,
                         Path.Combine(
                             argOutputDirectory,
@@ -794,7 +794,7 @@ namespace gMKVToolNix
 
         private String getVideoFileExtensionFromCodecID(gMKVTrack argTrack)
         {
-            String outputFileExtension = String.Empty;
+            String outputFileExtension = "";
             if (argTrack.CodecID.ToUpper().Contains("V_MS/VFW/FOURCC"))
             {
                 outputFileExtension = "avi";
@@ -852,7 +852,7 @@ namespace gMKVToolNix
 
         private String getAudioFileExtensionFromCodecID(gMKVTrack argTrack)
         {
-            String outputFileExtension = String.Empty;
+            String outputFileExtension = "";
             if (argTrack.CodecID.ToUpper().Contains("A_MPEG/L3"))
             {
                 outputFileExtension = "mp3";
@@ -934,7 +934,7 @@ namespace gMKVToolNix
 
         private String getSubtitleFileExtensionFromCodecID(gMKVTrack argTrack)
         {
-            String outputFileExtension = String.Empty;
+            String outputFileExtension = "";
             if (argTrack.CodecID.ToUpper().Contains("S_TEXT/UTF8"))
             {
                 outputFileExtension = "srt";

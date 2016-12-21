@@ -110,12 +110,13 @@ namespace gMKVToolNix
                             throw new Exception("Could not find MKVToolNix in registry, or in the current directory, or in the ini file!\r\nPlease download and reinstall or provide a manual path!");
                         }
                     }
-                }                
-                
+                }
+
                 // check if user provided with a filename when executing the application
-                if (Environment.GetCommandLineArgs().Length > 1)
+                string[] cmdArgs = Environment.GetCommandLineArgs();
+                if (cmdArgs.Length > 1)
                 {
-                    txtInputFile.Text = Environment.GetCommandLineArgs()[1];
+                    txtInputFile.Text = cmdArgs[1];
                 }
             }
             catch (Exception ex)
@@ -296,17 +297,17 @@ namespace gMKVToolNix
             // check if output directory is locked
             if (!chkLockOutputDirectory.Checked)
             {
-                txtOutputDirectory.Text = string.Empty;
+                txtOutputDirectory.Text = "";
             }
-            txtSegmentInfo.Text = string.Empty;
+            txtSegmentInfo.Text = "";
             chkLstInputFileTracks.Items.Clear();
             ClearStatus();
         }
 
         private void ClearStatus()
         {
-            lblTrack.Text = string.Empty;
-            lblStatus.Text = string.Empty;
+            lblTrack.Text = "";
+            lblStatus.Text = "";
             prgBrStatus.Value = 0;
         }
 
@@ -321,7 +322,7 @@ namespace gMKVToolNix
                         && !File.Exists(Path.Combine(txtMKVToolnixPath.Text.Trim(), gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
                     {
                         _FromConstructor = true;
-                        txtMKVToolnixPath.Text = String.Empty;
+                        txtMKVToolnixPath.Text = "";
                         _FromConstructor = false;
                         throw new Exception("The folder does not contain MKVToolnix!");
                     }
@@ -419,7 +420,7 @@ namespace gMKVToolNix
             {
                 Debug.WriteLine(ex);
                 // Empty the text since input was wrong or something happened
-                txtInputFile.Text = String.Empty;
+                txtInputFile.Text = "";
                 gTaskbarProgress.SetState(this, gTaskbarProgress.TaskbarStates.Error);
                 ShowErrorMessage(ex.Message);
             }
@@ -861,29 +862,23 @@ namespace gMKVToolNix
 
         private void CheckNeccessaryInputFields(Boolean checkSelectedTracks, Boolean checkSelectedChapterType) 
         {
-            if (txtInputFile.Text.Trim().Length == 0)
+            if (String.IsNullOrWhiteSpace(txtInputFile.Text))
             {
                 throw new Exception("You must provide with a valid Matroska file!");
             }
-            else
+            if (!File.Exists(txtInputFile.Text.Trim()))
             {
-                if (!File.Exists(txtInputFile.Text.Trim()))
-                {
-                    throw new Exception("The input file does not exist!");
-                }
+                throw new Exception("The input file does not exist!");
             }
 
-            if (txtMKVToolnixPath.Text.Trim().Length == 0)
+            if (String.IsNullOrWhiteSpace(txtMKVToolnixPath.Text))
             {
                 throw new Exception("You must provide with MKVToolnix path!");
             }
-            else
+            if (!File.Exists(Path.Combine(txtMKVToolnixPath.Text.Trim(), gMKVHelper.MKV_MERGE_GUI_FILENAME))
+                && !File.Exists(Path.Combine(txtMKVToolnixPath.Text.Trim(), gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
             {
-                if (!File.Exists(Path.Combine(txtMKVToolnixPath.Text.Trim(), gMKVHelper.MKV_MERGE_GUI_FILENAME))
-                    && !File.Exists(Path.Combine(txtMKVToolnixPath.Text.Trim(), gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
-                {
-                    throw new Exception("The MKVToolnix path provided does not contain MKVToolnix files!");
-                }
+                throw new Exception("The MKVToolnix path provided does not contain MKVToolnix files!");
             }
 
             if (checkSelectedTracks)
@@ -1227,7 +1222,7 @@ namespace gMKVToolNix
         private void AutosizeDropDownWidth()
         {
             float longestItem = 0;
-            // Βρίσκει το μεγαλύτερο κείμενο των στοιχείων της λίστας, ώστε να ορίσει το μέγεθος της λίστας.
+            // Find the longest text from the items list, in order to define the width
             using (Graphics g = Graphics.FromHwnd(this.Handle))
             {
                 foreach (Object item in cmbExtractionMode.Items)
@@ -1241,13 +1236,13 @@ namespace gMKVToolNix
                 }
             }
 
-            // Αν υπάρχει ScrollBar, τότε αυξάνεται το μέγεθος κατά 15.
+            // If there is a ScrollBar, then increase the width by 15 pixels
             if (cmbExtractionMode.Items.Count > cmbExtractionMode.MaxDropDownItems)
             {
                 longestItem += 15;
             }
 
-            // Αλλάζει το μέγεθος της λίστας του ComboBox, αλλά ποτέ δεν θα την κάνει μικρότερη από το μέγεθος του ComboBox
+            // Change the width of the items list, byt never make it smaller than the width of the control
             cmbExtractionMode.DropDownWidth = Convert.ToInt32(Math.Max(longestItem, cmbExtractionMode.Width));
         }
 

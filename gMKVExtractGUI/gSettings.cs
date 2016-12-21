@@ -9,7 +9,7 @@ namespace gMKVToolNix
 {
     public class gSettings
     {
-        private String _MkvToolnixPath = String.Empty;
+        private String _MkvToolnixPath = "";
         public String MkvToolnixPath
         {
             get { return _MkvToolnixPath; }
@@ -95,7 +95,7 @@ namespace gMKVToolNix
 
 
         private static String _SETTINGS_FILE = "gMKVExtractGUI.ini";
-        private String _ApplicationPath = String.Empty;
+        private String _ApplicationPath = "";
 
         public gSettings(String appPath)
         {
@@ -137,7 +137,7 @@ namespace gMKVToolNix
             {
                 using (StreamReader sr = new StreamReader(Path.Combine(_ApplicationPath, _SETTINGS_FILE), Encoding.UTF8))
                 {
-                    String line = String.Empty;
+                    String line = "";
                     while ((line = sr.ReadLine()) != null)
                     {
                         if (line.StartsWith("MKVToolnix Path:"))
@@ -149,7 +149,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                _MkvToolnixPath = String.Empty;
+                                _MkvToolnixPath = "";
                             }
                         }
                         else if (line.StartsWith("Chapter Type:"))
@@ -173,7 +173,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                _OutputDirectory = String.Empty;
+                                _OutputDirectory = "";
                             }
                         }
                         else if (line.StartsWith("Lock Output Directory:"))

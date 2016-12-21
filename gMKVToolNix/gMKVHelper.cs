@@ -85,7 +85,7 @@ namespace gMKVToolNix
             }
             RegistryKey regUninstall = null;
             RegistryKey regMkvToolnix = null;
-            String valuePath = String.Empty;
+            String valuePath = "";
             Boolean subKeyFound = false;
             Boolean valueFound = false;
 

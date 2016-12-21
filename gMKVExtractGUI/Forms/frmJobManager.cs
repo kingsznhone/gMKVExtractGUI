@@ -304,13 +304,13 @@ namespace gMKVToolNix
                 {
                     UpdateCurrentProgress(0);
                     prgBrTotal.Value = 0;
-                    lblCurrentProgressValue.Text = string.Empty;
-                    lblTotalProgressValue.Text = string.Empty;
+                    lblCurrentProgressValue.Text = "";
+                    lblTotalProgressValue.Text = "";
                 }
                 else
                 {
-                    lblCurrentProgressValue.Text = string.Empty;
-                    lblTotalProgressValue.Text = string.Empty;
+                    lblCurrentProgressValue.Text = "";
+                    lblTotalProgressValue.Text = "";
                     txtCurrentTrack.Text = "Extraction completed!";
                 }
                 gTaskbarProgress.SetState(this, gTaskbarProgress.TaskbarStates.NoProgress);

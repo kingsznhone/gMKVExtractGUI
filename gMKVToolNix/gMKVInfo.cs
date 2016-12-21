@@ -65,8 +65,8 @@ namespace gMKVToolNix
             get { return gMKVHelper.IsOnLinux ? "mkvinfo" : "mkvinfo.exe"; }
         }
 
-        private String _MKVToolnixPath = String.Empty;
-        private String _MKVInfoFilename = String.Empty;
+        private String _MKVToolnixPath = "";
+        private String _MKVInfoFilename = "";
         private List<gMKVSegment> _SegmentList = new List<gMKVSegment>();
         private StringBuilder _MKVInfoOutput = new StringBuilder();
         private StringBuilder _ErrorBuilder = new StringBuilder();
@@ -125,7 +125,7 @@ namespace gMKVToolNix
 
             // add the check_mode option for mkvinfo
             List<OptionValue> optionList = new List<OptionValue>();
-            optionList.Add(new OptionValue(MkvInfoOptions.check_mode, String.Empty));
+            optionList.Add(new OptionValue(MkvInfoOptions.check_mode, ""));
 
             // Execute MKVInfo
             try
