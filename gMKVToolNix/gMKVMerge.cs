@@ -111,7 +111,8 @@ namespace gMKVToolNix
             // Start the parsing of the output
             // Since MKVToolNix v9.6.0, start parsing the JSON identification info
             FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(_MKVMergeFilename);
-            if (myFileVersionInfo.FileMajorPart >= 9 && myFileVersionInfo.FileMinorPart >= 6)
+            if (myFileVersionInfo.FileMajorPart > 9 ||
+                (myFileVersionInfo.FileMajorPart == 9 && myFileVersionInfo.FileMinorPart >= 6))
             {
                 ParseMkvMergeJsonOutput();
             }
@@ -376,7 +377,8 @@ namespace gMKVToolNix
 
                 // Since MKVToolNix v9.6.0, start parsing the JSON identification info
                 FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(_MKVMergeFilename);
-                if (myFileVersionInfo.FileMajorPart >= 9 && myFileVersionInfo.FileMinorPart >= 6)
+                if (myFileVersionInfo.FileMajorPart > 9 ||
+                    (myFileVersionInfo.FileMajorPart == 9 && myFileVersionInfo.FileMinorPart >= 6))
                 {
                     optionList.Add(new OptionValue(MkvMergeOptions.identify, ""));
                     optionList.Add(new OptionValue(MkvMergeOptions.identification_format, "json"));
