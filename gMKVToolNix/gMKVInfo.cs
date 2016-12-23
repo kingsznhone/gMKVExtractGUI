@@ -196,8 +196,8 @@ namespace gMKVToolNix
                 {
                     optionList.Add(new OptionValue(MkvInfoOptions.ui_language, "en"));
                 }
-                //optionList.Add(new OptionValue(MkvInfoOptions.command_line_charset, "\"UFT-8\""));
-                //optionList.Add(new OptionValue(MkvInfoOptions.output_charset, "\"UFT-8\""));
+                //optionList.Add(new OptionValue(MkvInfoOptions.command_line_charset, "\"UTF-8\""));
+                //optionList.Add(new OptionValue(MkvInfoOptions.output_charset, "\"UTF-8\""));
                 
                 // Since MKVToolNix v9.0.0, in Windows and Mac OSX, the default behaviour is to show the GUI
                 if (!gMKVHelper.IsOnLinux)
@@ -282,7 +282,8 @@ namespace gMKVToolNix
             gMKVSegment tmpSegment = null;
             MkvInfoParseState tmpState = MkvInfoParseState.Searching;
             Int32 attachmentID = 1;
-            foreach (String outputLine in _MKVInfoOutput.ToString().Split(new String[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+            String[] outputLines = _MKVInfoOutput.ToString().Split(new String[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (String outputLine in outputLines)
             {
                 // first determine the parse state we are in
                 //if (outputLine.Contains("Segment,"))
