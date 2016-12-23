@@ -170,13 +170,13 @@ namespace gMKVToolNix
             try
             {
                 // check if the drop data is actually a file or folder
-                if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                if (e != null && e.Data != null && e.Data.GetDataPresent(DataFormats.FileDrop))
                 {
                     // check for sender
                     if (((gTextBox)sender) == txtMKVToolnixPath)
                     {
                         // check if MKVToolnix Path is already set
-                        if (txtMKVToolnixPath.Text.Trim().Length > 0)
+                        if (!String.IsNullOrWhiteSpace(txtMKVToolnixPath.Text))
                         {
                             if (ShowQuestion("Do you really want to change MKVToolnix path?", "Are you sure?") != DialogResult.Yes)
                             {
@@ -193,12 +193,16 @@ namespace gMKVToolNix
                         }                        
                     }
                     String[] s = (String[])e.Data.GetData(DataFormats.FileDrop, false);
-                    ((gTextBox)sender).Text = s[0];
+                    if (s != null && s.Length > 0)
+                    {
+                        ((gTextBox)sender).Text = s[0];
+                    }
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -207,7 +211,7 @@ namespace gMKVToolNix
         {
             try
             {
-                if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                if (e != null && e.Data != null && e.Data.GetDataPresent(DataFormats.FileDrop))
                 {
                     if (((gTextBox)sender) == txtOutputDirectory)
                     {
@@ -219,7 +223,8 @@ namespace gMKVToolNix
                         else
                         {
                             // check if it is a directory or not
-                            if (Directory.Exists(((String[])e.Data.GetData(DataFormats.FileDrop))[0]))
+                            String[] s = (String[])e.Data.GetData(DataFormats.FileDrop);
+                            if (s != null && s.Length > 0 && Directory.Exists(s[0]))
                             {
                                 e.Effect = DragDropEffects.All;
                             }
@@ -245,15 +250,19 @@ namespace gMKVToolNix
             try
             {
                 // check if the drop data is actually a file or folder
-                if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                if (e != null && e.Data != null && e.Data.GetDataPresent(DataFormats.FileDrop))
                 {
                     String[] s = (String[])e.Data.GetData(DataFormats.FileDrop, false);
-                    txtInputFile.Text = s[0];
+                    if (s != null && s.Length > 0)
+                    {
+                        txtInputFile.Text = s[0];
+                    }
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -262,14 +271,18 @@ namespace gMKVToolNix
         {
             try
             {
-                if (e.Data.GetDataPresent(DataFormats.FileDrop))
-                    e.Effect = DragDropEffects.All;
-                else
-                    e.Effect = DragDropEffects.None;
+                if (e != null && e.Data != null)
+                {
+                    if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                        e.Effect = DragDropEffects.All;
+                    else
+                        e.Effect = DragDropEffects.None;
+                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -279,15 +292,19 @@ namespace gMKVToolNix
             try
             {
                 // check if the drop data is actually a file or folder
-                if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                if (e != null && e.Data != null && e.Data.GetDataPresent(DataFormats.FileDrop))
                 {
                     String[] s = (String[])e.Data.GetData(DataFormats.FileDrop, false);
-                    txtInputFile.Text = s[0];
+                    if (s != null && s.Length > 0)
+                    {
+                        txtInputFile.Text = s[0];
+                    }
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -339,6 +356,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -420,6 +438,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 // Empty the text since input was wrong or something happened
                 txtInputFile.Text = "";
                 gTaskbarProgress.SetState(this, gTaskbarProgress.TaskbarStates.Error);
@@ -459,6 +478,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -476,6 +496,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -502,6 +523,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -529,6 +551,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -567,6 +590,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -759,6 +783,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
 
                 gTaskbarProgress.SetState(this, gTaskbarProgress.TaskbarStates.Error);
                 gTaskbarProgress.SetOverlayIcon(this, SystemIcons.Error, "Error!");
@@ -830,6 +855,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -857,6 +883,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }

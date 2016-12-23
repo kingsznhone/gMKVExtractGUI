@@ -6,7 +6,7 @@ namespace gMKVToolNix
 {
     public delegate void LogLineAddedEventHandler(String lineAdded, DateTime actionDate);
 
-    public class gMKVLogger
+    public static class gMKVLogger
     {
         private static StringBuilder _Log = new StringBuilder();
 
@@ -22,7 +22,7 @@ namespace gMKVToolNix
             OnLogLineAdded(logMessage, actionDate);            
         }
 
-        protected static void OnLogLineAdded(String lineAdded, DateTime actionDate)
+        public static void OnLogLineAdded(String lineAdded, DateTime actionDate)
         {
             if (LogLineAdded != null)
                 LogLineAdded(lineAdded, actionDate);

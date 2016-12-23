@@ -311,8 +311,7 @@ namespace gMKVToolNix
             DataReceivedEventArgs eventArgs = (DataReceivedEventArgs)System.Runtime.Serialization.FormatterServices
                          .GetUninitializedObject(typeof(DataReceivedEventArgs));
 
-            FieldInfo f = typeof(DataReceivedEventArgs).GetField("_data",
-                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            FieldInfo f = typeof(DataReceivedEventArgs).GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)[0];
             f.SetValue(eventArgs, argData);
 
             return eventArgs;

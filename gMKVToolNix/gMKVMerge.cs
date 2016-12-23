@@ -79,6 +79,7 @@ namespace gMKVToolNix
         private List<gMKVSegment> _SegmentList = new List<gMKVSegment>();
         private StringBuilder _MKVMergeOutput = new StringBuilder();
         private StringBuilder _ErrorBuilder = new StringBuilder();
+        private gMKVVersion _Version = null;
 
         public enum MkvMergeOptions
         {
@@ -87,7 +88,8 @@ namespace gMKVToolNix
             ui_language, //Forces the translations for the language code to be used 
             command_line_charset,
             output_charset,
-            identification_format // Set the identification results format ('text', 'verbose-text', 'json')
+            identification_format, // Set the identification results format ('text', 'verbose-text', 'json')
+            version
         }
 
         public gMKVMerge(String mkvToonlixPath)
@@ -107,12 +109,15 @@ namespace gMKVToolNix
             // Clear the error builder
             _ErrorBuilder.Length = 0;
             // Execute the mkvmerge
-            ExecuteMkvMerge(argMKVFile);
+            ExecuteMkvMerge(null, argMKVFile, myProcess_OutputDataReceived);
             // Start the parsing of the output
             // Since MKVToolNix v9.6.0, start parsing the JSON identification info
-            FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(_MKVMergeFilename);
-            if (myFileVersionInfo.FileMajorPart > 9 ||
-                (myFileVersionInfo.FileMajorPart == 9 && myFileVersionInfo.FileMinorPart >= 6))
+            if(_Version == null)
+            {
+                _Version = GetMKVMergeVersion();
+            }
+            if (_Version.FileMajorPart > 9 ||
+                (_Version.FileMajorPart == 9 && _Version.FileMinorPart >= 6))
             {
                 ParseMkvMergeJsonOutput();
             }
@@ -357,7 +362,54 @@ namespace gMKVToolNix
             }
         }
 
-        private void ExecuteMkvMerge(String argMKVFile)
+        public gMKVVersion GetMKVMergeVersion()
+        {
+            if (_Version != null)
+            {
+                return _Version;
+            }
+            // check for existence of mkvmerge
+            if (!File.Exists(_MKVMergeFilename)) { throw new Exception(String.Format("Could not find {0}!" + Environment.NewLine + "{1}", MKV_MERGE_FILENAME, _MKVMergeFilename)); }
+
+            if (gMKVHelper.IsOnLinux)
+            {
+                // When on Linux, we need to run mkvmerge
+
+                // First clear the segment list
+                _SegmentList.Clear();
+                // Clear the mkvinfo output
+                _MKVMergeOutput.Length = 0;
+                // Clear the error builder
+                _ErrorBuilder.Length = 0;
+
+                // Execute mkvmerge
+                List<OptionValue> options = new List<OptionValue>();
+                options.Add(new OptionValue(MkvMergeOptions.version, ""));
+                ExecuteMkvMerge(options, "", myProcess_OutputDataReceived);
+
+                // Parse version info
+                ParseVersionOutput();
+
+                // Clear the segment list
+                _SegmentList.Clear();
+                // Clear the mkvmerge output
+                _MKVMergeOutput.Length = 0;
+            }
+            else
+            {
+                // When on Windows, we can use FileVersionInfo.GetVersionInfo
+                var version = FileVersionInfo.GetVersionInfo(_MKVMergeFilename);
+                _Version = new gMKVToolNix.gMKVVersion()
+                {
+                    FileMajorPart = version.FileMajorPart,
+                    FileMinorPart = version.FileMinorPart,
+                    FilePrivatePart = version.FilePrivatePart
+                };
+            }
+            return _Version;
+        }
+
+        private void ExecuteMkvMerge(List<OptionValue> argOptionList, String argMKVFile, DataReceivedEventHandler argHandler)
         {
             using (Process myProcess = new Process())
             {
@@ -375,23 +427,60 @@ namespace gMKVToolNix
                 //optionList.Add(new OptionValue(MkvMergeOptions.command_line_charset, "\"UTF-8\""));
                 //optionList.Add(new OptionValue(MkvMergeOptions.output_charset, "\"UTF-8\""));
 
-                // Since MKVToolNix v9.6.0, start parsing the JSON identification info
-                FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(_MKVMergeFilename);
-                if (myFileVersionInfo.FileMajorPart > 9 ||
-                    (myFileVersionInfo.FileMajorPart == 9 && myFileVersionInfo.FileMinorPart >= 6))
+                // Check the file version of the mkvmerge.exe
+                bool askedVersion = false;
+                if(argOptionList != null)
                 {
-                    optionList.Add(new OptionValue(MkvMergeOptions.identify, ""));
-                    optionList.Add(new OptionValue(MkvMergeOptions.identification_format, "json"));
+                    foreach (OptionValue val in argOptionList)
+                    {
+                        if(val.Option == MkvMergeOptions.version)
+                        {
+                            askedVersion = true;
+                            break;
+                        }
+                    }
                 }
-                else
+                if (_Version == null && !askedVersion)
                 {
-                    // For previous mkvmerge versions, keep compatibility
-                    optionList.Add(new OptionValue(MkvMergeOptions.identify_verbose, ""));
+                    _Version = GetMKVMergeVersion();
+                }
+
+                // if we didn't provide a filename, then we want to execute mkvmerge with other parameters
+                if (!String.IsNullOrWhiteSpace(argMKVFile))
+                {
+                    // Since MKVToolNix v9.6.0, start parsing the JSON identification info
+                    if (_Version != null)
+                    {
+                        if (_Version.FileMajorPart > 9 ||
+                            (_Version.FileMajorPart == 9 && _Version.FileMinorPart >= 6))
+                        {
+                            optionList.Add(new OptionValue(MkvMergeOptions.identify, ""));
+                            optionList.Add(new OptionValue(MkvMergeOptions.identification_format, "json"));
+                        }
+                        else
+                        {
+                            // For previous mkvmerge versions, keep compatibility
+                            optionList.Add(new OptionValue(MkvMergeOptions.identify_verbose, ""));
+                        }
+                    }
+                }
+
+                // check for extra options provided from the caller
+                if (argOptionList != null)
+                {
+                    optionList.AddRange(argOptionList);
                 }
 
                 ProcessStartInfo myProcessInfo = new ProcessStartInfo();
                 myProcessInfo.FileName = _MKVMergeFilename;
-                myProcessInfo.Arguments = String.Format("{0} \"{1}\"", ConvertOptionValueListToString(optionList), argMKVFile);
+                if (!String.IsNullOrWhiteSpace(argMKVFile))
+                {
+                    myProcessInfo.Arguments = String.Format("{0} \"{1}\"", ConvertOptionValueListToString(optionList), argMKVFile);
+                }
+                else
+                {
+                    myProcessInfo.Arguments = String.Format("{0}", ConvertOptionValueListToString(optionList));
+                }
                 myProcessInfo.UseShellExecute = false;
                 myProcessInfo.RedirectStandardOutput = true;
                 myProcessInfo.StandardOutputEncoding = Encoding.UTF8;
@@ -405,7 +494,8 @@ namespace gMKVToolNix
                 //myProcess.OutputDataReceived += myProcess_OutputDataReceived;
 
                 Debug.WriteLine(myProcessInfo.Arguments);
-                
+                gMKVLogger.Log(myProcessInfo.Arguments);
+
                 // Start the mkvinfo process
                 myProcess.Start();
                 
@@ -413,7 +503,7 @@ namespace gMKVToolNix
                 //myProcess.BeginOutputReadLine();
 
                 // Read the Standard output character by character
-                gMKVHelper.ReadStreamPerCharacter(myProcess, myProcess_OutputDataReceived);
+                gMKVHelper.ReadStreamPerCharacter(myProcess, argHandler);
 
                 // Wait for the process to exit
                 myProcess.WaitForExit();
@@ -423,6 +513,7 @@ namespace gMKVToolNix
 
                 // Debug write the exit code
                 Debug.WriteLine(String.Format("Exit code: {0}", myProcess.ExitCode));
+                gMKVLogger.Log(String.Format("Exit code: {0}", myProcess.ExitCode));
 
                 // Check the exit code
                 // ExitCode 1 is for warnings only, so ignore it
@@ -923,6 +1014,48 @@ namespace gMKVToolNix
                 Substring(0, String.IsNullOrEmpty(endCharacter) ? propertyPart.Length : propertyPart.IndexOf(endCharacter)).
                 Replace(propertyName + ":", "")).
                 Trim();
+        }
+
+        private void ParseVersionOutput()
+        {
+            String fileMajorVersion = "0";
+            String fileMinorVersion = "0";
+            String filePrivateVersion = "0";
+            if (_MKVMergeOutput != null && _MKVMergeOutput.Length > 0)
+            {
+                String[] outputLines = _MKVMergeOutput.ToString().Split(new String[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (String outputLine in outputLines)
+                {
+                    if (outputLine.StartsWith("mkvmerge v"))
+                    {
+                        String versionString = outputLine.Substring(9);
+                        versionString = versionString.Substring(1, versionString.IndexOf(" "));
+                        if (versionString.Contains("."))
+                        {
+                            String[] parts = versionString.Split(new String[] { "." }, StringSplitOptions.None);
+                            if (parts.Length >= 2)
+                            {
+                                fileMajorVersion = parts[0];
+                                fileMinorVersion = parts[1];
+                                if (parts.Length > 2)
+                                {
+                                    filePrivateVersion = parts[2];
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            gMKVVersion version = new gMKVToolNix.gMKVVersion()
+            {
+                FileMajorPart = Convert.ToInt32(fileMajorVersion),
+                FileMinorPart = Convert.ToInt32(fileMinorVersion),
+                FilePrivatePart = Convert.ToInt32(filePrivateVersion)
+            };
+
+            _Version = version;
         }
 
         private void myProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)

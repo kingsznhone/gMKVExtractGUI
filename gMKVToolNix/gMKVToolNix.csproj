@@ -75,6 +75,7 @@
     <Compile Include="gMKVSegmentInfo.cs" />
     <Compile Include="gMKVTrack.cs" />
     <Compile Include="gMKVHelper.cs" />
+    <Compile Include="gMKVVersion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

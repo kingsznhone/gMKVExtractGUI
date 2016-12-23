@@ -74,6 +74,7 @@ namespace gMKVToolNix
         private List<gMKVTrack> _TrackList = new List<gMKVTrack>();
         private Int32 _TrackDelaysFound = 0;
         private Int32 _VideoTrackDelay = Int32.MinValue;
+        private gMKVVersion _Version = null;
 
         public gMKVInfo(String mkvToonlixPath)
         {
@@ -177,7 +178,55 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
             }           
+        }
+
+        public gMKVVersion GetMKVInfoVersion()
+        {
+            if(_Version != null)
+            {
+                return _Version;
+            }
+            // check for existence of MKVInfo
+            if (!File.Exists(_MKVInfoFilename)) { throw new Exception(String.Format("Could not find {0}!" + Environment.NewLine + "{1}", MKV_INFO_FILENAME, _MKVInfoFilename)); }
+
+            if (gMKVHelper.IsOnLinux)
+            {
+                // When on Linux, we need to run mkvinfo 
+
+                // First clear the segment list
+                _SegmentList.Clear();
+                // Clear the mkvinfo output
+                _MKVInfoOutput.Length = 0;
+                // Clear the error builder
+                _ErrorBuilder.Length = 0;
+
+                // Execute MKVInfo
+                List<OptionValue> options = new List<OptionValue>();
+                options.Add(new OptionValue(MkvInfoOptions.version, ""));
+                ExecuteMkvInfo(options, "", myProcess_OutputDataReceived);
+
+                // Parse version info
+                ParseVersionOutput();
+
+                // Clear the segment list
+                _SegmentList.Clear();
+                // Clear the mkvinfo output
+                _MKVInfoOutput.Length = 0;
+            }
+            else
+            {
+                // When on Windows, we can use FileVersionInfo.GetVersionInfo
+                var version = FileVersionInfo.GetVersionInfo(_MKVInfoFilename);
+                _Version = new gMKVToolNix.gMKVVersion()
+                {
+                    FileMajorPart = version.FileMajorPart,
+                    FileMinorPart = version.FileMinorPart,
+                    FilePrivatePart = version.FilePrivatePart
+                };
+            }
+            return _Version;
         }
 
         private void ExecuteMkvInfo(List<OptionValue> argOptionList, String argMKVFile, DataReceivedEventHandler argHandler)
@@ -200,13 +249,32 @@ namespace gMKVToolNix
                 //optionList.Add(new OptionValue(MkvInfoOptions.output_charset, "\"UTF-8\""));
                 
                 // Since MKVToolNix v9.0.0, in Windows and Mac OSX, the default behaviour is to show the GUI
+                // In MKVToolNix v9.2.0 the default behaviour changed, so the no-gui option is not needed
                 if (!gMKVHelper.IsOnLinux)
                 {
-                    // Check the file version of the mkvInfo.exe
-                    FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(_MKVInfoFilename);
-                    if (myFileVersionInfo.FileMajorPart >= 9)
+                    // Check the file version of the mkvinfo.exe
+                    bool askedVersion = false;
+                    if (argOptionList != null)
                     {
-                        optionList.Add(new OptionValue(MkvInfoOptions.no_gui, ""));
+                        foreach (OptionValue val in argOptionList)
+                        {
+                            if (val.Option == MkvInfoOptions.version)
+                            {
+                                askedVersion = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (_Version == null && !askedVersion)
+                    {
+                        _Version = GetMKVInfoVersion();
+                    }
+                    if (_Version != null)
+                    {
+                        if (_Version.FileMajorPart == 9 && _Version.FileMinorPart < 2)
+                        {
+                            optionList.Add(new OptionValue(MkvInfoOptions.no_gui, ""));
+                        }
                     }
                 }
                 // check for extra options provided from the caller
@@ -217,7 +285,14 @@ namespace gMKVToolNix
 
                 ProcessStartInfo myProcessInfo = new ProcessStartInfo();
                 myProcessInfo.FileName = _MKVInfoFilename;
-                myProcessInfo.Arguments = String.Format("{0} \"{1}\"", ConvertOptionValueListToString(optionList), argMKVFile);
+                if(String.IsNullOrWhiteSpace(argMKVFile))
+                {
+                    myProcessInfo.Arguments = String.Format("{0}", ConvertOptionValueListToString(optionList));
+                }
+                else
+                {
+                    myProcessInfo.Arguments = String.Format("{0} \"{1}\"", ConvertOptionValueListToString(optionList), argMKVFile);
+                }                
                 myProcessInfo.UseShellExecute = false;
                 myProcessInfo.RedirectStandardOutput = true;
                 myProcessInfo.StandardOutputEncoding = Encoding.UTF8;
@@ -231,7 +306,8 @@ namespace gMKVToolNix
                 //myProcess.OutputDataReceived += argHandler;
 
                 Debug.WriteLine(myProcessInfo.Arguments);
-                
+                gMKVLogger.Log(myProcessInfo.Arguments);
+
                 // Start the mkvinfo process
                 myProcess.Start();
                 
@@ -252,7 +328,8 @@ namespace gMKVToolNix
 
                 // Debug write the exit code
                 Debug.WriteLine(String.Format("Exit code: {0}", myProcess.ExitCode));
-                
+                gMKVLogger.Log(String.Format("Exit code: {0}", myProcess.ExitCode));
+
                 _MyProcess = null;
 
                 // Check the exit code
@@ -597,6 +674,48 @@ namespace gMKVToolNix
             {
                 _SegmentList.Add(tmpSegment);
             }
+        }
+
+        private void ParseVersionOutput()
+        {
+            String fileMajorVersion = "0";
+            String fileMinorVersion = "0";
+            String filePrivateVersion = "0";
+            if (_MKVInfoOutput != null && _MKVInfoOutput.Length > 0)
+            {
+                String[] outputLines = _MKVInfoOutput.ToString().Split(new String[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (String outputLine in outputLines)
+                {
+                    if (outputLine.StartsWith("mkvinfo v"))
+                    {
+                        String versionString = outputLine.Substring(8);
+                        versionString = versionString.Substring(1, versionString.IndexOf(" "));
+                        if (versionString.Contains("."))
+                        {
+                            String[] parts = versionString.Split(new String[] { "." }, StringSplitOptions.None);
+                            if (parts.Length >= 2)
+                            {
+                                fileMajorVersion = parts[0];
+                                fileMinorVersion = parts[1];
+                                if (parts.Length > 2)
+                                {
+                                    filePrivateVersion = parts[2];
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            gMKVVersion version = new gMKVToolNix.gMKVVersion()
+            {
+                FileMajorPart = Convert.ToInt32(fileMajorVersion),
+                FileMinorPart = Convert.ToInt32(fileMinorVersion),
+                FilePrivatePart = Convert.ToInt32(filePrivateVersion)
+            };
+
+            _Version = version;
         }
 
         private void myProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)
