@@ -4,6 +4,7 @@ using System.Text;
 using System.Diagnostics;
 using Microsoft.Win32;
 using System.IO;
+using System.Reflection;
 
 namespace gMKVToolNix
 {
@@ -170,7 +171,7 @@ namespace gMKVToolNix
                 // if we didn't find the MkvMergeGUI key, all hope is lost
                 if (!subKeyFound)
                 {
-                    throw new Exception("Couldn't find MKVToolNix in your system!\r\nPlease download and install it or provide a manual path!");
+                    throw new Exception("Couldn't find MKVToolNix in your system!" + Environment.NewLine + "Please download and install it or provide a manual path!");
                 }
                 RegistryKey regGui = null;
                 Boolean foundGuiKey = false;
@@ -298,6 +299,65 @@ namespace gMKVToolNix
             gInfo = null;
 
             return segmentList;
+        }
+
+        /// <summary>
+        /// Creates a DataReceivedEventArgs instance with the given Data.
+        /// </summary>
+        /// <param name="argData"></param>
+        /// <returns></returns>
+        public static DataReceivedEventArgs GetDataReceivedEventArgs(Object argData)
+        {
+            DataReceivedEventArgs eventArgs = (DataReceivedEventArgs)System.Runtime.Serialization.FormatterServices
+                         .GetUninitializedObject(typeof(DataReceivedEventArgs));
+
+            FieldInfo f = typeof(DataReceivedEventArgs).GetField("_data",
+                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            f.SetValue(eventArgs, argData);
+
+            return eventArgs;
+        }
+
+        /// <summary>
+        /// Reads a Process's standard output stream character by character and calls the user defined method for each line
+        /// </summary>
+        /// <param name="argProcess"></param>
+        /// <param name="argHandler"></param>
+        public static void ReadStreamPerCharacter(Process argProcess, DataReceivedEventHandler argHandler)
+        {
+            StreamReader reader = argProcess.StandardOutput;
+            StringBuilder line = new StringBuilder();
+            while (true)
+            {
+                if (!reader.EndOfStream)
+                {
+                    String c = ((char)reader.Read()).ToString();
+                    if (c == "\r")
+                    {
+                        if (((char)reader.Peek()).ToString() == "\n")
+                        {
+                            // consume the next character
+                            reader.Read();
+                        }
+
+                        argHandler(argProcess, GetDataReceivedEventArgs(line.ToString()));
+                        line.Length = 0;
+                    }
+                    else if (c == "\n")
+                    {
+                        argHandler(argProcess, GetDataReceivedEventArgs(line.ToString()));
+                        line.Length = 0;
+                    }
+                    else
+                    {
+                        line.Append(c);
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
     }
 }

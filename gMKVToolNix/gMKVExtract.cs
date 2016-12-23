@@ -342,7 +342,7 @@ namespace gMKVToolNix
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex);
-                    _ErrorBuilder.AppendLine(String.Format("Segment: {0}\r\nException: {1}\r\n", seg, ex.Message));
+                    _ErrorBuilder.AppendLine(String.Format("Segment: {0}" + Environment.NewLine + "Exception: {1}\r\n", seg, ex.Message));
                 }                
             }
 
@@ -396,7 +396,7 @@ namespace gMKVToolNix
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex);
-                    _ErrorBuilder.AppendLine(String.Format("Track output: {0}\r\nException: {1}\r\n", finalPar.TrackOutput, ex.Message));
+                    _ErrorBuilder.AppendLine(String.Format("Track output: {0}" + Environment.NewLine + "Exception: {1}" + Environment.NewLine, finalPar.TrackOutput, ex.Message));
                 }
                 finally
                 {
@@ -498,7 +498,7 @@ namespace gMKVToolNix
                         catch (Exception exc)
                         {
                             Debug.WriteLine(exc);
-                            _ErrorBuilder.AppendLine(String.Format("Track output: {0}\r\nException: {1}\r\n", finalPar.TrackOutput, exc.Message));
+                            _ErrorBuilder.AppendLine(String.Format("Track output: {0}" + Environment.NewLine + "Exception: {1}" + Environment.NewLine, finalPar.TrackOutput, exc.Message));
                         }
                     }
                 }
@@ -656,7 +656,7 @@ namespace gMKVToolNix
         {
             OnMkvExtractProgressUpdated(0);
             // check for existence of MKVExtract
-            if (!File.Exists(_MKVExtractFilename)) { throw new Exception(String.Format("Could not find mkvextract.exe!\r\n{0}", _MKVExtractFilename)); }
+            if (!File.Exists(_MKVExtractFilename)) { throw new Exception(String.Format("Could not find mkvextract.exe!" + Environment.NewLine + "{0}", _MKVExtractFilename)); }
             DataReceivedEventHandler handler = null;
             if (argUseOutputFileWriter)
             {
@@ -695,17 +695,25 @@ namespace gMKVToolNix
                 myProcessInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 myProcess.StartInfo = myProcessInfo;
                 
-                myProcess.OutputDataReceived += argHandler;
+                //// Register the event for reading the StandardOutput
+                //myProcess.OutputDataReceived += argHandler;
 
                 Debug.WriteLine(myProcessInfo.Arguments);
+
                 // Start the mkvinfo process
                 myProcess.Start();
-                // Start reading the output
-                myProcess.BeginOutputReadLine();
+
+                //// Start reading the output
+                //myProcess.BeginOutputReadLine();
+
+                // Read the Standard output character by character
+                gMKVHelper.ReadStreamPerCharacter(myProcess, argHandler);
+
                 // Wait for the process to exit
                 myProcess.WaitForExit();
-                // unregister the event
-                myProcess.OutputDataReceived -= argHandler;
+                
+                //// unregister the event
+                //myProcess.OutputDataReceived -= argHandler;
 
                 // Debug write the exit code
                 Debug.WriteLine(String.Format("Exit code: {0}", myProcess.ExitCode));
@@ -715,7 +723,8 @@ namespace gMKVToolNix
                 if (myProcess.ExitCode > 1)
                 {
                     // something went wrong!
-                    throw new Exception(String.Format("Mkvextract exited with error code {0}!\r\n\r\nErrors reported:\r\n{1}",
+                    throw new Exception(String.Format("Mkvextract exited with error code {0}!" 
+                        + Environment.NewLine + Environment.NewLine + "Errors reported:" + Environment.NewLine + "{1}",
                         myProcess.ExitCode, _ErrorBuilder.ToString()));
                 }
                 else if (myProcess.ExitCode < 0)

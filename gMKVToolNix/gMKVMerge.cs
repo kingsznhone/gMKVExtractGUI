@@ -99,7 +99,7 @@ namespace gMKVToolNix
         public List<gMKVSegment> GetMKVSegments(String argMKVFile)
         {
             // check for existence of MKVMerge
-            if (!File.Exists(_MKVMergeFilename)) { throw new Exception(String.Format("Could not find {0}!\r\n{1}", MKV_MERGE_FILENAME, _MKVMergeFilename)); }
+            if (!File.Exists(_MKVMergeFilename)) { throw new Exception(String.Format("Could not find {0}!" + Environment.NewLine + "{1}", MKV_MERGE_FILENAME, _MKVMergeFilename)); }
             // First clear the segment list
             _SegmentList.Clear();
             // Clear the mkvmerge output
@@ -400,17 +400,26 @@ namespace gMKVToolNix
                 myProcessInfo.CreateNoWindow = true;
                 myProcessInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 myProcess.StartInfo = myProcessInfo;
-                myProcess.OutputDataReceived += myProcess_OutputDataReceived;
+
+                //// Register the event for reading the StandardOutput
+                //myProcess.OutputDataReceived += myProcess_OutputDataReceived;
 
                 Debug.WriteLine(myProcessInfo.Arguments);
+                
                 // Start the mkvinfo process
                 myProcess.Start();
-                // Start reading the output
-                myProcess.BeginOutputReadLine();
+                
+                //// Start reading the output
+                //myProcess.BeginOutputReadLine();
+
+                // Read the Standard output character by character
+                gMKVHelper.ReadStreamPerCharacter(myProcess, myProcess_OutputDataReceived);
+
                 // Wait for the process to exit
                 myProcess.WaitForExit();
-                // unregister the event
-                myProcess.OutputDataReceived -= myProcess_OutputDataReceived;
+            
+                //// unregister the event
+                //myProcess.OutputDataReceived -= myProcess_OutputDataReceived;
 
                 // Debug write the exit code
                 Debug.WriteLine(String.Format("Exit code: {0}", myProcess.ExitCode));
@@ -420,7 +429,8 @@ namespace gMKVToolNix
                 if (myProcess.ExitCode > 1)
                 {
                     // something went wrong!
-                    throw new Exception(String.Format("Mkvmerge exited with error code {0}!\r\n\r\nErrors reported:\r\n{1}",
+                    throw new Exception(String.Format("Mkvmerge exited with error code {0}!" + 
+                        Environment.NewLine + Environment.NewLine + "Errors reported:" + Environment.NewLine + "{1}",
                         myProcess.ExitCode, _ErrorBuilder.ToString()));
                 }
             }

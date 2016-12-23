@@ -24,7 +24,7 @@ namespace gMKVToolNix
 
         protected void ShowErrorMessage(String argMessage)
         {
-            MessageBox.Show("An error has occured!\r\n\r\n" + argMessage, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("An error has occured!" + Environment.NewLine + Environment.NewLine + argMessage, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         protected void ShowSuccessMessage(String argMessage)

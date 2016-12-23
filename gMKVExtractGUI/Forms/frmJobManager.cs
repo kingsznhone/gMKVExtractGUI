@@ -198,7 +198,7 @@ namespace gMKVToolNix
                 }
                 catch (Exception ex)
                 {
-                    _ExceptionBuilder.AppendFormat("Exception for job {0}: {1}\r\n", jobInfo.ToString(), ex.Message);
+                    _ExceptionBuilder.AppendFormat("Exception for job {0}: {1}{2}", jobInfo.ToString(), ex.Message, Environment.NewLine);
                 }
                 finally
                 {

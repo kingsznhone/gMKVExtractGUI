@@ -84,7 +84,7 @@ namespace gMKVToolNix
         public List<gMKVSegment> GetMKVSegments(String argMKVFile)
         {
             // check for existence of MKVInfo
-            if (!File.Exists(_MKVInfoFilename)) { throw new Exception(String.Format("Could not find {0}!\r\n{1}", MKV_INFO_FILENAME, _MKVInfoFilename)); }
+            if (!File.Exists(_MKVInfoFilename)) { throw new Exception(String.Format("Could not find {0}!" + Environment.NewLine + "{1}", MKV_INFO_FILENAME, _MKVInfoFilename)); }
             // First clear the segment list
             _SegmentList.Clear();
             // Clear the mkvinfo output
@@ -103,7 +103,7 @@ namespace gMKVToolNix
         public void FindAndSetDelays(List<gMKVSegment> argSegmentsList, String argMKVFile)
         {
             // check for existence of MKVInfo
-            if (!File.Exists(_MKVInfoFilename)) { throw new Exception(String.Format("Could not find {0}!\r\n{1}", MKV_INFO_FILENAME, _MKVInfoFilename)); }
+            if (!File.Exists(_MKVInfoFilename)) { throw new Exception(String.Format("Could not find {0}!" + Environment.NewLine + "{1}", MKV_INFO_FILENAME, _MKVInfoFilename)); }
             // check for list of track numbers
             if (argSegmentsList == null || argSegmentsList.Count == 0) { throw new Exception("No mkv segments were provided!"); }
             // clear the track list 
@@ -226,19 +226,29 @@ namespace gMKVToolNix
                 myProcessInfo.CreateNoWindow = true;
                 myProcessInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 myProcess.StartInfo = myProcessInfo;
-                myProcess.OutputDataReceived += argHandler;
+
+                //// Register the event for reading the StandardOutput
+                //myProcess.OutputDataReceived += argHandler;
 
                 Debug.WriteLine(myProcessInfo.Arguments);
+                
                 // Start the mkvinfo process
                 myProcess.Start();
+                
                 // Get the Process
                 _MyProcess = myProcess;
-                // Start reading the output
-                myProcess.BeginOutputReadLine();
+
+                //// Start reading the output
+                //myProcess.BeginOutputReadLine();
+
+                // Read the Standard output character by character
+                gMKVHelper.ReadStreamPerCharacter(myProcess, argHandler);
+
                 // Wait for the process to exit
                 myProcess.WaitForExit();
-                // unregister the event
-                myProcess.OutputDataReceived -= argHandler;
+
+                //// unregister the event
+                //myProcess.OutputDataReceived -= argHandler;
 
                 // Debug write the exit code
                 Debug.WriteLine(String.Format("Exit code: {0}", myProcess.ExitCode));
@@ -250,7 +260,8 @@ namespace gMKVToolNix
                 if (myProcess.ExitCode > 1)
                 {
                     // something went wrong!
-                    throw new Exception(String.Format("Mkvinfo exited with error code {0}!\r\n\r\nErrors reported:\r\n{1}",
+                    throw new Exception(String.Format("Mkvinfo exited with error code {0}!" + 
+                        Environment.NewLine + Environment.NewLine + "Errors reported:" + Environment.NewLine + "{1}",
                         myProcess.ExitCode, _ErrorBuilder.ToString()));
                 }
             }

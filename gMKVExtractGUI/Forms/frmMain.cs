@@ -107,7 +107,7 @@ namespace gMKVToolNix
                         }
                         else
                         {
-                            throw new Exception("Could not find MKVToolNix in registry, or in the current directory, or in the ini file!\r\nPlease download and reinstall or provide a manual path!");
+                            throw new Exception("Could not find MKVToolNix in registry, or in the current directory, or in the ini file!" + Environment.NewLine + "Please download and reinstall or provide a manual path!");
                         }
                     }
                 }
@@ -378,7 +378,7 @@ namespace gMKVToolNix
                     // check if input file is valid
                     if (!File.Exists(txtInputFile.Text.Trim()))
                     {
-                        throw new Exception("The input file \r\n\r\n" + txtInputFile.Text.Trim()+ "\r\n\r\ndoes not exist!");
+                        throw new Exception("The input file " + Environment.NewLine + Environment.NewLine + txtInputFile.Text.Trim() + Environment.NewLine + Environment.NewLine + "does not exist!");
                     }
                     // check if file is an mkv file
                     String inputExtension = Path.GetExtension(txtInputFile.Text.Trim()).ToLower();
@@ -388,7 +388,7 @@ namespace gMKVToolNix
                         && inputExtension != ".mk3d"
                         && inputExtension != ".webm")
                     {
-                        throw new Exception("The input file \r\n\r\n" + txtInputFile.Text.Trim() + "\r\n\r\nis not a valid matroska file!");
+                        throw new Exception("The input file " + Environment.NewLine + Environment.NewLine + txtInputFile.Text.Trim() + Environment.NewLine + Environment.NewLine + "is not a valid matroska file!");
                     }
                     // check if output directory is locked
                     if (!chkLockOutputDirectory.Checked)
@@ -403,7 +403,8 @@ namespace gMKVToolNix
                     {
                         if (seg is gMKVSegmentInfo)
                         {
-                            txtSegmentInfo.Text = String.Format("Writing Application: {0}\r\nMuxing Application: {1}\r\nDuration: {2}\r\nDate: {3}", 
+                            txtSegmentInfo.Text = String.Format("Writing Application: {1}{0}Muxing Application: {2}{0}Duration: {3}{0}Date: {4}",
+                                Environment.NewLine,
                                 ((gMKVSegmentInfo)seg).WritingApplication,
                                 ((gMKVSegmentInfo)seg).MuxingApplication,
                                 ((gMKVSegmentInfo)seg).Duration,
