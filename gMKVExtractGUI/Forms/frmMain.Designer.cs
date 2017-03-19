@@ -368,7 +368,7 @@
             // 
             this.lblExtractionMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblExtractionMode.AutoSize = true;
-            this.lblExtractionMode.Location = new System.Drawing.Point(361, 26);
+            this.lblExtractionMode.Location = new System.Drawing.Point(360, 26);
             this.lblExtractionMode.Name = "lblExtractionMode";
             this.lblExtractionMode.Size = new System.Drawing.Size(45, 15);
             this.lblExtractionMode.TabIndex = 9;
