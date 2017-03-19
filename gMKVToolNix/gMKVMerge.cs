@@ -375,8 +375,6 @@ namespace gMKVToolNix
             {
                 // When on Linux, we need to run mkvmerge
 
-                // First clear the segment list
-                _SegmentList.Clear();
                 // Clear the mkvinfo output
                 _MKVMergeOutput.Length = 0;
                 // Clear the error builder
@@ -385,13 +383,62 @@ namespace gMKVToolNix
                 // Execute mkvmerge
                 List<OptionValue> options = new List<OptionValue>();
                 options.Add(new OptionValue(MkvMergeOptions.version, ""));
-                ExecuteMkvMerge(options, "", myProcess_OutputDataReceived);
+
+                using (Process myProcess = new Process())
+                {
+                    // if on Linux, the language output must be defined from the environment variables LC_ALL, LANG, and LC_MESSAGES
+                    // After talking with Mosu, the language output is defined from ui-language, with different language codes for Windows and Linux
+                    if (gMKVHelper.IsOnLinux)
+                    {
+                        options.Add(new OptionValue(MkvMergeOptions.ui_language, "en_US"));
+                    }
+                    else
+                    {
+                        options.Add(new OptionValue(MkvMergeOptions.ui_language, "en"));
+                    }
+
+                    ProcessStartInfo myProcessInfo = new ProcessStartInfo();
+                    myProcessInfo.FileName = _MKVMergeFilename;
+                    myProcessInfo.Arguments = String.Format("{0}", ConvertOptionValueListToString(options));
+                    myProcessInfo.UseShellExecute = false;
+                    myProcessInfo.RedirectStandardOutput = true;
+                    myProcessInfo.StandardOutputEncoding = Encoding.UTF8;
+                    myProcessInfo.RedirectStandardError = true;
+                    myProcessInfo.StandardErrorEncoding = Encoding.UTF8;
+                    myProcessInfo.CreateNoWindow = true;
+                    myProcessInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    myProcess.StartInfo = myProcessInfo;
+
+                    Debug.WriteLine(myProcessInfo.Arguments);
+                    gMKVLogger.Log(myProcessInfo.Arguments);
+
+                    // Start the mkvinfo process
+                    myProcess.Start();
+
+                    // Read the Standard output character by character
+                    gMKVHelper.ReadStreamPerCharacter(myProcess, myProcess_OutputDataReceived);
+
+                    // Wait for the process to exit
+                    myProcess.WaitForExit();
+
+                    // Debug write the exit code
+                    Debug.WriteLine(String.Format("Exit code: {0}", myProcess.ExitCode));
+                    gMKVLogger.Log(String.Format("Exit code: {0}", myProcess.ExitCode));
+
+                    // Check the exit code
+                    // ExitCode 1 is for warnings only, so ignore it
+                    if (myProcess.ExitCode > 1)
+                    {
+                        // something went wrong!
+                        throw new Exception(String.Format("Mkvmerge exited with error code {0}!" +
+                            Environment.NewLine + Environment.NewLine + "Errors reported:" + Environment.NewLine + "{1}",
+                            myProcess.ExitCode, _ErrorBuilder.ToString()));
+                    }
+                }
 
                 // Parse version info
                 ParseVersionOutput();
 
-                // Clear the segment list
-                _SegmentList.Clear();
                 // Clear the mkvmerge output
                 _MKVMergeOutput.Length = 0;
             }
@@ -428,19 +475,7 @@ namespace gMKVToolNix
                 //optionList.Add(new OptionValue(MkvMergeOptions.output_charset, "\"UTF-8\""));
 
                 // Check the file version of the mkvmerge.exe
-                bool askedVersion = false;
-                if(argOptionList != null)
-                {
-                    foreach (OptionValue val in argOptionList)
-                    {
-                        if(val.Option == MkvMergeOptions.version)
-                        {
-                            askedVersion = true;
-                            break;
-                        }
-                    }
-                }
-                if (_Version == null && !askedVersion)
+                if (_Version == null)
                 {
                     _Version = GetMKVMergeVersion();
                 }

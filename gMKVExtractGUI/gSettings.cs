@@ -95,7 +95,7 @@ namespace gMKVToolNix
 
 
         private static String _SETTINGS_FILE = "gMKVExtractGUI.ini";
-        private String _ApplicationPath = "";
+        private String _SettingsPath = "";
 
         public gSettings(String appPath)
         {
@@ -119,23 +119,26 @@ namespace gMKVToolNix
             // use the current user appdata folder
             if (userHasPermission)
             {
-                _ApplicationPath = appPath;
+                _SettingsPath = appPath;
             }
             else
             {
-                _ApplicationPath = Application.UserAppDataPath;
+                _SettingsPath = Application.UserAppDataPath;
             }
+
+            // Log the detected settings path
+            gMKVLogger.Log(String.Format("Detected settings path: {0}", _SettingsPath));
         }
 
         public void Reload()
         {
-            if (!File.Exists(Path.Combine(_ApplicationPath, _SETTINGS_FILE)))
+            if (!File.Exists(Path.Combine(_SettingsPath, _SETTINGS_FILE)))
             {
                 Save();
             }
             else
             {
-                using (StreamReader sr = new StreamReader(Path.Combine(_ApplicationPath, _SETTINGS_FILE), Encoding.UTF8))
+                using (StreamReader sr = new StreamReader(Path.Combine(_SettingsPath, _SETTINGS_FILE), Encoding.UTF8))
                 {
                     String line = "";
                     while ((line = sr.ReadLine()) != null)
@@ -149,6 +152,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading MKVToolnix Path! {0}", ex.Message));
                                 _MkvToolnixPath = "";
                             }
                         }
@@ -161,6 +165,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading Chapter Type! {0}", ex.Message));
                                 _ChapterType = MkvChapterTypes.XML;
                             }
                         }
@@ -173,6 +178,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading Output Directory! {0}", ex.Message));
                                 _OutputDirectory = "";
                             }
                         }
@@ -185,6 +191,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading Lock Output Directory! {0}", ex.Message));
                                 _LockedOutputDirectory = false;
                             }
                         }
@@ -197,6 +204,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading Initial Window Position X! {0}", ex.Message));
                                 _WindowPosX = 0;
                             }
                         }
@@ -209,6 +217,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading Initial Window Position Y! {0}", ex.Message));
                                 _WindowPosY = 0;
                             }
                         }
@@ -221,6 +230,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading Initial Window Size Width! {0}", ex.Message));
                                 _WindowSizeWidth = 640;
                             }
                         }
@@ -233,6 +243,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading Initial Window Size Height! {0}", ex.Message));
                                 _WindowSizeHeight = 600;
                             }
                         }
@@ -245,6 +256,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading Job Mode! {0}", ex.Message));
                                 _JobMode = false;
                             }
                         }
@@ -257,7 +269,8 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                _WindowSizeHeight = 600;
+                                gMKVLogger.Log(String.Format("Error reading Window State! {0}", ex.Message));
+                                _WindowState = FormWindowState.Normal;
                             }
                         }
                         else if (line.StartsWith("Show Popup:"))
@@ -269,6 +282,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading Show Popup! {0}", ex.Message));
                                 _ShowPopup = true;
                             }
                         }
@@ -281,7 +295,8 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                _ShowPopup = true;
+                                gMKVLogger.Log(String.Format("Error reading Show Popup In Job Manager! {0}", ex.Message));
+                                _ShowPopupInJobManager = true;
                             }
                         }
                     }
@@ -291,7 +306,7 @@ namespace gMKVToolNix
 
         public void Save()
         {
-            using (StreamWriter sw = new StreamWriter(Path.Combine(_ApplicationPath, _SETTINGS_FILE), false, Encoding.UTF8))
+            using (StreamWriter sw = new StreamWriter(Path.Combine(_SettingsPath, _SETTINGS_FILE), false, Encoding.UTF8))
             {
                 sw.WriteLine(String.Format("MKVToolnix Path:{0}", _MkvToolnixPath));
                 sw.WriteLine(String.Format("Chapter Type:{0}", _ChapterType));
