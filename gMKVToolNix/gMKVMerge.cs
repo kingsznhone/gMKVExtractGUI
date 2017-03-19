@@ -453,6 +453,14 @@ namespace gMKVToolNix
                     FilePrivatePart = version.FilePrivatePart
                 };
             }
+            if (_Version != null)
+            {
+                gMKVLogger.Log(String.Format("Detected mkvmerge version: {0}.{1}.{2}",
+                    _Version.FileMajorPart,
+                    _Version.FileMinorPart,
+                    _Version.FilePrivatePart
+                ));
+            }
             return _Version;
         }
 
