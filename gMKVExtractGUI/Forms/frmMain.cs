@@ -79,11 +79,29 @@ namespace gMKVToolNix
                 chkShowPopup.Checked = _Settings.ShowPopup;
 
                 _FromConstructor = false;
-                
+
                 // Find MKVToolnix path
                 try
                 {
-                    txtMKVToolnixPath.Text = gMKVHelper.GetMKVToolnixPathViaRegistry();
+                    if (!gMKVHelper.IsOnLinux)
+                    {
+                        // When on Windows, check the registry first
+                        gMKVLogger.Log("Checking registry for mkvmerge...");
+                        txtMKVToolnixPath.Text = gMKVHelper.GetMKVToolnixPathViaRegistry();
+                    }
+                    else
+                    {
+                        // When on Linux, check the usr/bin first
+                        if (File.Exists(Path.Combine("/usr", "bin", gMKVHelper.MKV_MERGE_GUI_FILENAME))
+                            || File.Exists(Path.Combine("/usr", "bin", gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
+                        {                            
+                            txtMKVToolnixPath.Text = Path.Combine("/usr", "bin");
+                        }
+                        else
+                        {
+                            throw new Exception(String.Format("mkvmerge was not found in path {0}!", Path.Combine("usr", "bin")));
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
