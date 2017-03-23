@@ -138,6 +138,7 @@ namespace gMKVToolNix
             }
             else
             {
+                gMKVLogger.Log("Begin loading settings...");
                 using (StreamReader sr = new StreamReader(Path.Combine(_SettingsPath, _SETTINGS_FILE), Encoding.UTF8))
                 {
                     String line = "";
@@ -301,11 +302,13 @@ namespace gMKVToolNix
                         }
                     }
                 }
+                gMKVLogger.Log("Finished loading settings!");
             }
         }
 
         public void Save()
         {
+            gMKVLogger.Log("Saving settings...");
             using (StreamWriter sw = new StreamWriter(Path.Combine(_SettingsPath, _SETTINGS_FILE), false, Encoding.UTF8))
             {
                 sw.WriteLine(String.Format("MKVToolnix Path:{0}", _MkvToolnixPath));

@@ -35,6 +35,8 @@
             this.btnRefresh = new System.Windows.Forms.Button();
             this.btnCopy = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
+            this.btnClear = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
             this.tlpMain.SuspendLayout();
             this.grpLog.SuspendLayout();
             this.grpActions.SuspendLayout();
@@ -84,6 +86,8 @@
             // 
             // grpActions
             // 
+            this.grpActions.Controls.Add(this.btnSave);
+            this.grpActions.Controls.Add(this.btnClear);
             this.grpActions.Controls.Add(this.btnRefresh);
             this.grpActions.Controls.Add(this.btnCopy);
             this.grpActions.Controls.Add(this.btnClose);
@@ -128,6 +132,26 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
+            // btnClear
+            // 
+            this.btnClear.Location = new System.Drawing.Point(6, 15);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(93, 40);
+            this.btnClear.TabIndex = 3;
+            this.btnClear.Text = "Clear Log";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(105, 15);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(93, 40);
+            this.btnSave.TabIndex = 4;
+            this.btnSave.Text = "Save...";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
             // frmLog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -157,5 +181,7 @@
         private System.Windows.Forms.Button btnCopy;
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Button btnSave;
     }
 }

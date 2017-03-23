@@ -64,19 +64,23 @@ namespace gMKVToolNix
                 
                 // Load settings
                 _Settings.Reload();
-                
+
                 // Set form size and position from settings
+                gMKVLogger.Log("Begin setting form size and position from settings...");
                 this.StartPosition = FormStartPosition.Manual;
                 this.Location = new Point(_Settings.WindowPosX, _Settings.WindowPosY);
                 this.Size = new System.Drawing.Size(_Settings.WindowSizeWidth, _Settings.WindowSizeHeight);
                 this.WindowState = _Settings.WindowState;
+                gMKVLogger.Log("Finished setting form size and position from settings!");
 
-                // Set chapter type, output durectory and job mode from settings
+                // Set chapter type, output directory and job mode from settings
+                gMKVLogger.Log("Begin setting chapter type, output directory and job mode from settings...");
                 cmbChapterType.SelectedItem = Enum.GetName(typeof(MkvChapterTypes), _Settings.ChapterType);
                 txtOutputDirectory.Text = _Settings.OutputDirectory;
                 chkLockOutputDirectory.Checked = _Settings.LockedOutputDirectory;
                 chkJobMode.Checked = _Settings.JobMode;
                 chkShowPopup.Checked = _Settings.ShowPopup;
+                gMKVLogger.Log("Finished setting chapter type, output directory and job mode from settings!");
 
                 _FromConstructor = false;
 
@@ -106,6 +110,7 @@ namespace gMKVToolNix
                 catch (Exception ex)
                 {
                     Debug.WriteLine(ex);
+                    gMKVLogger.Log(ex.Message);
                     // MKVToolnix was not found in registry
                     // check in the current directory
                     if (File.Exists(Path.Combine(GetCurrentDirectory(), gMKVHelper.MKV_MERGE_GUI_FILENAME))
@@ -125,6 +130,7 @@ namespace gMKVToolNix
                         }
                         else
                         {
+                            gMKVLogger.Log("Could not find MKVToolNix in registry, or in the current directory, or in the ini file!");
                             throw new Exception("Could not find MKVToolNix in registry, or in the current directory, or in the ini file!" + Environment.NewLine + "Please download and reinstall or provide a manual path!");
                         }
                     }
@@ -134,6 +140,7 @@ namespace gMKVToolNix
                 string[] cmdArgs = Environment.GetCommandLineArgs();
                 if (cmdArgs.Length > 1)
                 {
+                    gMKVLogger.Log(String.Format("Found command line arguments: {0}", cmdArgs[1]));
                     txtInputFile.Text = cmdArgs[1];
                 }
             }

@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using gMKVToolNix;
 using System.Diagnostics;
+using System.IO;
 
 namespace gMKVToolNix
 {
@@ -83,5 +84,49 @@ namespace gMKVToolNix
             this.Hide();
         }
 
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (ShowQuestion("Are you sure you want to clear the log?", "Are you sure?") == DialogResult.Yes)
+                {
+                    gMKVLogger.Clear();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                ShowErrorMessage(ex.Message);
+            }
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.Title = "Select filename for log...";
+                sfd.CheckFileExists = true;
+                sfd.DefaultExt = "txt";
+                sfd.Filter = "*.txt|*.txt";
+                sfd.FileName = String.Format("[{0}][{1}][gMKVExtractGUI_v{2}].txt", 
+                    DateTime.Now.ToString("yyyy-MM-dd"),
+                    DateTime.Now.ToString("HH-mm-ss"),
+                    Assembly.GetExecutingAssembly().GetName().Version);
+                if(sfd.ShowDialog() == DialogResult.Yes)
+                {
+                    using(StreamWriter sw = new StreamWriter(sfd.FileName, false, Encoding.UTF8))
+                    {
+                        sw.Write(gMKVLogger.LogText);
+                    }
+                    ShowSuccessMessage(String.Format("The log was saved to {0}!", sfd.FileName));
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                ShowErrorMessage(ex.Message);
+            }
+        }
     }
 }

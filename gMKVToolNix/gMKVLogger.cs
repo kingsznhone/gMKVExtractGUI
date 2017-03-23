@@ -14,6 +14,11 @@ namespace gMKVToolNix
 
         public static event LogLineAddedEventHandler LogLineAdded;
 
+        public static void Clear()
+        {
+            _Log.Length = 0;
+        }
+
         public static void Log(String message)
         {
             DateTime actionDate = DateTime.Now;
