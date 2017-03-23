@@ -78,7 +78,7 @@ namespace gMKVToolNix
         {
             if (IsTaskbarSupported()) 
             {
-                Debug.WriteLine(String.Format("{1}: HRESULT:0x{0:X8}", Instance().SetOverlayIcon(frm.Handle, icn == null ? IntPtr.Zero : icn.Handle, description == null ? "" : description), description == null ? "" : description));
+                Debug.WriteLine(String.Format("{1}: HRESULT:0x{0:X8}", Instance().SetOverlayIcon(frm.Handle, icn == null ? IntPtr.Zero : icn.Handle, description ?? ""), description ?? ""));
             }
         }
     }
