@@ -410,7 +410,7 @@ namespace gMKVToolNix
                     myProcess.StartInfo = myProcessInfo;
 
                     Debug.WriteLine(myProcessInfo.Arguments);
-                    gMKVLogger.Log(myProcessInfo.Arguments);
+                    gMKVLogger.Log(String.Format("\"{0}\" {1}", _MKVMergeFilename, myProcessInfo.Arguments));
 
                     // Start the mkvinfo process
                     myProcess.Start();
@@ -537,7 +537,7 @@ namespace gMKVToolNix
                 //myProcess.OutputDataReceived += myProcess_OutputDataReceived;
 
                 Debug.WriteLine(myProcessInfo.Arguments);
-                gMKVLogger.Log(myProcessInfo.Arguments);
+                gMKVLogger.Log(String.Format("\"{0}\" {1}", _MKVMergeFilename, myProcessInfo.Arguments));
 
                 // Start the mkvinfo process
                 myProcess.Start();

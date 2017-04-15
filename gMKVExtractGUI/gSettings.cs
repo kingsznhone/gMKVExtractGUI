@@ -134,6 +134,7 @@ namespace gMKVToolNix
         {
             if (!File.Exists(Path.Combine(_SettingsPath, _SETTINGS_FILE)))
             {
+                gMKVLogger.Log(String.Format("Settings file '{0}' not found! Saving defaults...", Path.Combine(_SettingsPath, _SETTINGS_FILE)));
                 Save();
             }
             else

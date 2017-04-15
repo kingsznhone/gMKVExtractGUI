@@ -656,7 +656,7 @@ namespace gMKVToolNix
         {
             OnMkvExtractProgressUpdated(0);
             // check for existence of MKVExtract
-            if (!File.Exists(_MKVExtractFilename)) { throw new Exception(String.Format("Could not find mkvextract.exe!" + Environment.NewLine + "{0}", _MKVExtractFilename)); }
+            if (!File.Exists(_MKVExtractFilename)) { throw new Exception(String.Format("Could not find {0}!" + Environment.NewLine + "{1}", MKV_EXTRACT_FILENAME, _MKVExtractFilename)); }
             DataReceivedEventHandler handler = null;
             if (argUseOutputFileWriter)
             {
@@ -699,6 +699,7 @@ namespace gMKVToolNix
                 //myProcess.OutputDataReceived += argHandler;
 
                 Debug.WriteLine(myProcessInfo.Arguments);
+                gMKVLogger.Log(String.Format("\"{0}\" {1}", _MKVExtractFilename, myProcessInfo.Arguments));
 
                 // Start the mkvinfo process
                 myProcess.Start();

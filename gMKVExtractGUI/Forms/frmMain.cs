@@ -43,6 +43,8 @@ namespace gMKVToolNix
         {
             try
             {
+                _FromConstructor = true;
+
                 InitializeComponent();
 
                 // Set form icon from the executing assembly
@@ -56,9 +58,7 @@ namespace gMKVToolNix
 
                 btnAbort.Enabled = false;
                 btnAbortAll.Enabled = false;
-                
-                _FromConstructor = true;
-                
+                                
                 cmbChapterType.DataSource = Enum.GetNames(typeof(MkvChapterTypes));
                 cmbExtractionMode.DataSource = Enum.GetNames(typeof(FormMkvExtractionMode));
                 
@@ -371,6 +371,7 @@ namespace gMKVToolNix
 
                     // Write the value to the ini file
                     _Settings.MkvToolnixPath = txtMKVToolnixPath.Text.Trim();
+                    gMKVLogger.Log("Changing MkvToolnixPath");
                     _Settings.Save();
 
                     // Clear the input text
@@ -396,6 +397,7 @@ namespace gMKVToolNix
                     {
                         // Write the value to the ini file
                         _Settings.ChapterType = (MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem);
+                        gMKVLogger.Log("Changing ChapterType");
                         _Settings.Save();
                     }
                 }
@@ -515,6 +517,7 @@ namespace gMKVToolNix
                 if (!_FromConstructor)
                 {
                     _Settings.OutputDirectory = txtOutputDirectory.Text;
+                    gMKVLogger.Log("Changing OutputDirectory");
                     _Settings.Save();
                 }
             }
@@ -542,6 +545,7 @@ namespace gMKVToolNix
                 if (!_FromConstructor)
                 {
                     _Settings.LockedOutputDirectory = chkLockOutputDirectory.Checked;
+                    gMKVLogger.Log("Changing LockedOutputDirectory");
                     _Settings.Save();
                 }
             }
@@ -1184,6 +1188,7 @@ namespace gMKVToolNix
                     _Settings.WindowPosX = this.Location.X;
                     _Settings.WindowPosY = this.Location.Y;
                     _Settings.WindowState = this.WindowState;
+                    gMKVLogger.Log("Changing WindowPosX, WindowPosY, WindowState");
                     _Settings.Save();
                 }
             }
@@ -1202,6 +1207,7 @@ namespace gMKVToolNix
                     _Settings.WindowSizeWidth = this.Size.Width;
                     _Settings.WindowSizeHeight = this.Size.Height;
                     _Settings.WindowState = this.WindowState;
+                    gMKVLogger.Log("Changing WindowSizeWidth, WindowSizeHeight, WindowState");
                     _Settings.Save();
                 }
             }
@@ -1219,6 +1225,7 @@ namespace gMKVToolNix
             if (!_FromConstructor)
             {
                 _Settings.JobMode = chkJobMode.Checked;
+                gMKVLogger.Log("Changing JobMode");
                 _Settings.Save();
             }
         }
@@ -1228,6 +1235,7 @@ namespace gMKVToolNix
             if (!_FromConstructor)
             {
                 _Settings.ShowPopup = chkShowPopup.Checked;
+                gMKVLogger.Log("Changing ShowPopup");
                 _Settings.Save();
             }
         }
@@ -1245,6 +1253,7 @@ namespace gMKVToolNix
                 if (!_FromConstructor)
                 {
                     _Settings.WindowState = this.WindowState;
+                    gMKVLogger.Log("Changing WindowState");
                     _Settings.Save();
                 }
             }
