@@ -32,7 +32,8 @@ namespace gMKVToolNix
         redirect_output,
         help,
         version,
-        check_for_updates
+        check_for_updates,
+        gui_mode
     }
 
     public enum TimecodesExtractionMode
@@ -78,6 +79,30 @@ namespace gMKVToolNix
             public TrackParameter() { }
         }
 
+        internal class OptionValue
+        {
+            private MkvExtractGlobalOptions _Option;
+            private String _Parameter;
+
+            public MkvExtractGlobalOptions Option
+            {
+                get { return _Option; }
+                set { _Option = value; }
+            }
+
+            public String Parameter
+            {
+                get { return _Parameter; }
+                set { _Parameter = value; }
+            }
+
+            public OptionValue(MkvExtractGlobalOptions opt, String par)
+            {
+                _Option = opt;
+                _Parameter = par;
+            }
+        }
+
         /// <summary>
         /// Gets the mkvextract executable filename
         /// </summary>
@@ -91,6 +116,7 @@ namespace gMKVToolNix
         private StringBuilder _MKVExtractOutput = new StringBuilder();
         private StreamWriter _OutputFileWriter = null;
         private StringBuilder _ErrorBuilder = new StringBuilder();
+        private gMKVVersion _Version = null;
 
         public event MkvExtractProgressUpdatedEventHandler MkvExtractProgressUpdated;
         public event MkvExtractTrackUpdatedEventHandler MkvExtractTrackUpdated;
@@ -676,15 +702,54 @@ namespace gMKVToolNix
             {
                 ProcessStartInfo myProcessInfo = new ProcessStartInfo();
                 myProcessInfo.FileName = _MKVExtractFilename;
+
+                // Check the file version of the mkvextract
+                if (_Version == null)
+                {
+                    _Version = GetMKVExtractVersion();
+                }
+
+                String parameters = "";
+                String LC_ALL = "";
+                String LANG = "";
+                String LC_MESSAGES = "";
+
+                // Since MKVToolNix v9.7.0, start using the --gui-mode option
+                if (_Version.FileMajorPart > 9 ||
+                    (_Version.FileMajorPart == 9 && _Version.FileMinorPart >= 7))
+                {
+                    parameters = "--gui-mode";
+                }
+                else {
+                    // Before MKVToolNix 9.7.0, the safest way to ensure English output on Linux is throught the EnvironmentVariables
+                    if (gMKVHelper.IsOnLinux)
+                    {
+                        // Get the original values
+                        LC_ALL = Environment.GetEnvironmentVariable("LC_ALL", EnvironmentVariableTarget.Process);
+                        LANG = Environment.GetEnvironmentVariable("LANG", EnvironmentVariableTarget.Process);
+                        LC_MESSAGES = Environment.GetEnvironmentVariable("LC_MESSAGES", EnvironmentVariableTarget.Process);
+
+                        gMKVLogger.Log(String.Format("Detected Environment Variables: LC_ALL=\"{0}\",LANG=\"{1}\",LC_MESSAGES=\"{2}\"",
+                            LC_ALL, LANG, LC_MESSAGES));
+
+                        // Set the english locale
+                        Environment.SetEnvironmentVariable("LC_ALL", "en_US.UTF-8", EnvironmentVariableTarget.Process);
+                        Environment.SetEnvironmentVariable("LANG", "en_US.UTF-8", EnvironmentVariableTarget.Process);
+                        Environment.SetEnvironmentVariable("LC_MESSAGES", "en_US.UTF-8", EnvironmentVariableTarget.Process);
+
+                        gMKVLogger.Log("Setting Environment Variables: LC_ALL=LANG=LC_MESSAGES=\"en_US.UTF-8\"");
+                    }
+                }
+
                 // if on Linux, the language output must be defined from the environment variables LC_ALL, LANG, and LC_MESSAGES
                 // After talking with Mosu, the language output is defined from ui-language, with different language codes for Windows and Linux
                 if (gMKVHelper.IsOnLinux)
                 {
-                    myProcessInfo.Arguments = String.Format("--ui-language en_US {0}", argParameters);
+                    myProcessInfo.Arguments = String.Format("{0} --ui-language en_US {1}", parameters, argParameters);
                 }
                 else
                 {
-                    myProcessInfo.Arguments = String.Format("--ui-language en {0}", argParameters);                    
+                    myProcessInfo.Arguments = String.Format("{0} --ui-language en {1}", parameters, argParameters);
                 }                    
                 myProcessInfo.UseShellExecute = false;
                 myProcessInfo.RedirectStandardOutput = true;
@@ -733,7 +798,125 @@ namespace gMKVToolNix
                     // user aborted the current procedure!
                     throw new Exception("User aborted the current process!");
                 }
+
+                // Before MKVToolNix 9.7.0, the safest way to ensure English output on Linux is throught the EnvironmentVariables
+                if (gMKVHelper.IsOnLinux)
+                {
+                    if (_Version.FileMajorPart < 9 ||
+                        (_Version.FileMajorPart == 9 && _Version.FileMinorPart < 7))
+                    {
+                        // Reset the environment vairables to their original values
+                        Environment.SetEnvironmentVariable("LC_ALL", LC_ALL, EnvironmentVariableTarget.Process);
+                        Environment.SetEnvironmentVariable("LANG", LANG, EnvironmentVariableTarget.Process);
+                        Environment.SetEnvironmentVariable("LC_MESSAGES", LC_MESSAGES, EnvironmentVariableTarget.Process);
+
+                        gMKVLogger.Log(String.Format("Resetting Environment Variables: LC_ALL=\"{0}\",LANG=\"{1}\",LC_MESSAGES=\"{2}\"",
+                            LC_ALL, LANG, LC_MESSAGES));
+                    }
+                }
             }
+        }
+
+        public gMKVVersion GetMKVExtractVersion()
+        {
+            if (_Version != null)
+            {
+                return _Version;
+            }
+            // check for existence of mkvextract
+            if (!File.Exists(_MKVExtractFilename)) { throw new Exception(String.Format("Could not find {0}!" + Environment.NewLine + "{1}", MKV_EXTRACT_FILENAME, _MKVExtractFilename)); }
+
+            if (gMKVHelper.IsOnLinux)
+            {
+                // When on Linux, we need to run mkvextract
+
+                // Clear the mkvextract output
+                _MKVExtractOutput.Length = 0;
+                // Clear the error builder
+                _ErrorBuilder.Length = 0;
+
+                // Execute mkvextract
+                List<OptionValue> options = new List<OptionValue>();
+                options.Add(new OptionValue(MkvExtractGlobalOptions.version, ""));
+
+                using (Process myProcess = new Process())
+                {
+                    // if on Linux, the language output must be defined from the environment variables LC_ALL, LANG, and LC_MESSAGES
+                    // After talking with Mosu, the language output is defined from ui-language, with different language codes for Windows and Linux
+                    if (gMKVHelper.IsOnLinux)
+                    {
+                        options.Add(new OptionValue(MkvExtractGlobalOptions.ui_language, "en_US"));
+                    }
+                    else
+                    {
+                        options.Add(new OptionValue(MkvExtractGlobalOptions.ui_language, "en"));
+                    }
+
+                    ProcessStartInfo myProcessInfo = new ProcessStartInfo();
+                    myProcessInfo.FileName = _MKVExtractFilename;
+                    myProcessInfo.Arguments = String.Format("{0}", ConvertOptionValueListToString(options));
+                    myProcessInfo.UseShellExecute = false;
+                    myProcessInfo.RedirectStandardOutput = true;
+                    myProcessInfo.StandardOutputEncoding = Encoding.UTF8;
+                    myProcessInfo.RedirectStandardError = true;
+                    myProcessInfo.StandardErrorEncoding = Encoding.UTF8;
+                    myProcessInfo.CreateNoWindow = true;
+                    myProcessInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    myProcess.StartInfo = myProcessInfo;
+
+                    Debug.WriteLine(myProcessInfo.Arguments);
+                    gMKVLogger.Log(String.Format("\"{0}\" {1}", _MKVExtractFilename, myProcessInfo.Arguments));
+
+                    // Start the mkvextract process
+                    myProcess.Start();
+
+                    // Read the Standard output character by character
+                    gMKVHelper.ReadStreamPerCharacter(myProcess, myProcess_OutputDataReceived);
+
+                    // Wait for the process to exit
+                    myProcess.WaitForExit();
+
+                    // Debug write the exit code
+                    Debug.WriteLine(String.Format("Exit code: {0}", myProcess.ExitCode));
+                    gMKVLogger.Log(String.Format("Exit code: {0}", myProcess.ExitCode));
+
+                    // Check the exit code
+                    // ExitCode 1 is for warnings only, so ignore it
+                    if (myProcess.ExitCode > 1)
+                    {
+                        // something went wrong!
+                        throw new Exception(String.Format("Mkvmerge exited with error code {0}!" +
+                            Environment.NewLine + Environment.NewLine + "Errors reported:" + Environment.NewLine + "{1}",
+                            myProcess.ExitCode, _ErrorBuilder.ToString()));
+                    }
+                }
+
+                // Parse version info
+                ParseVersionOutput();
+
+                // Clear the mkvextract output
+                _MKVExtractOutput.Length = 0;
+            }
+            else
+            {
+                // When on Windows, we can use FileVersionInfo.GetVersionInfo
+                var version = FileVersionInfo.GetVersionInfo(_MKVExtractFilename);
+                _Version = new gMKVToolNix.gMKVVersion()
+                {
+                    FileMajorPart = version.FileMajorPart,
+                    FileMinorPart = version.FileMinorPart,
+                    FilePrivatePart = version.FilePrivatePart
+                };
+            }
+            if (_Version != null)
+            {
+                gMKVLogger.Log(String.Format("Detected mkvextract version: {0}.{1}.{2}",
+                    _Version.FileMajorPart,
+                    _Version.FileMinorPart,
+                    _Version.FilePrivatePart
+                ));
+            }
+            return _Version;
         }
 
         void myProcess_OutputDataReceived_WriteToFile(object sender, DataReceivedEventArgs e)
@@ -749,15 +932,24 @@ namespace gMKVToolNix
             {
                 // add the line to the output stringbuilder
                 _OutputFileWriter.WriteLine(e.Data);
-                // check for errors
-                if (e.Data.Contains("Error:"))
+                // check for progress (in gui-mode)
+                if (e.Data.Contains("#GUI#progress"))
                 {
-                    _ErrorBuilder.AppendLine(e.Data.Substring(e.Data.IndexOf(":") + 1).Trim());
+                    OnMkvExtractProgressUpdated(Convert.ToInt32(e.Data.Substring(e.Data.IndexOf(" ") + 1, e.Data.IndexOf("%") - e.Data.IndexOf(" ") - 1)));
                 }
                 // check for progress
-                if (e.Data.Contains("Progress:"))
+                else if (e.Data.Contains("Progress:"))
                 {
                     OnMkvExtractProgressUpdated(Convert.ToInt32(e.Data.Substring(e.Data.IndexOf(":") + 1, e.Data.IndexOf("%") - e.Data.IndexOf(":") - 1)));
+                }
+                else if (e.Data.Contains("#GUI#error"))
+                {
+                    _ErrorBuilder.AppendLine(e.Data.Substring(e.Data.IndexOf(" ") + 1).Trim());
+                }
+                // check for errors
+                else if (e.Data.Contains("Error:"))
+                {
+                    _ErrorBuilder.AppendLine(e.Data.Substring(e.Data.IndexOf(":") + 1).Trim());
                 }
                 // debug write the output line
                 Debug.WriteLine(e.Data);
@@ -779,21 +971,72 @@ namespace gMKVToolNix
             {
                 // add the line to the output stringbuilder
                 _MKVExtractOutput.AppendLine(e.Data);
-                // check for errors
-                if (e.Data.Contains("Error:"))
+                // check for progress (in gui-mode)
+                if (e.Data.Contains("#GUI#progress"))
                 {
-                    _ErrorBuilder.AppendLine(e.Data.Substring(e.Data.IndexOf(":") + 1).Trim());
+                    OnMkvExtractProgressUpdated(Convert.ToInt32(e.Data.Substring(e.Data.IndexOf(" ") + 1, e.Data.IndexOf("%") - e.Data.IndexOf(" ") - 1)));
                 }
                 // check for progress
-                if (e.Data.Contains("Progress:"))
+                else if (e.Data.Contains("Progress:"))
                 {
-                    OnMkvExtractProgressUpdated(Convert.ToInt32(e.Data.Substring(e.Data.IndexOf(":") + 1, e.Data.IndexOf("%") - e.Data.IndexOf(":") - 1)));
+                    OnMkvExtractProgressUpdated(Convert.ToInt32(e.Data.Substring(e.Data.IndexOf(":") + 1, e.Data.IndexOf("%") - e.Data.IndexOf(":") - 1)));                    
+                }
+                else if (e.Data.Contains("#GUI#error"))
+                {
+                    _ErrorBuilder.AppendLine(e.Data.Substring(e.Data.IndexOf(" ") + 1).Trim());
+                }
+                // check for errors
+                else if (e.Data.Contains("Error:"))
+                {
+                    _ErrorBuilder.AppendLine(e.Data.Substring(e.Data.IndexOf(":") + 1).Trim());
                 }
                 // debug write the output line
                 Debug.WriteLine(e.Data);
                 // log the output
                 gMKVLogger.Log(e.Data);
             }
+        }
+
+        private void ParseVersionOutput()
+        {
+            String fileMajorVersion = "0";
+            String fileMinorVersion = "0";
+            String filePrivateVersion = "0";
+            if (_MKVExtractOutput != null && _MKVExtractOutput.Length > 0)
+            {
+                String[] outputLines = _MKVExtractOutput.ToString().Split(new String[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (String outputLine in outputLines)
+                {
+                    if (outputLine.StartsWith("mkvextract v"))
+                    {
+                        String versionString = outputLine.Substring(11);
+                        versionString = versionString.Substring(1, versionString.IndexOf(" "));
+                        if (versionString.Contains("."))
+                        {
+                            String[] parts = versionString.Split(new String[] { "." }, StringSplitOptions.None);
+                            if (parts.Length >= 2)
+                            {
+                                fileMajorVersion = parts[0];
+                                fileMinorVersion = parts[1];
+                                if (parts.Length > 2)
+                                {
+                                    filePrivateVersion = parts[2];
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            gMKVVersion version = new gMKVToolNix.gMKVVersion()
+            {
+                FileMajorPart = Convert.ToInt32(fileMajorVersion),
+                FileMinorPart = Convert.ToInt32(fileMinorVersion),
+                FilePrivatePart = Convert.ToInt32(filePrivateVersion)
+            };
+
+            _Version = version;
         }
 
         private String getVideoFileExtensionFromCodecID(gMKVTrack argTrack)
@@ -976,6 +1219,21 @@ namespace gMKVToolNix
                 outputFileExtension = "sub";
             }
             return outputFileExtension;
+        }
+
+        private String ConvertOptionValueListToString(List<OptionValue> listOptionValue)
+        {
+            StringBuilder optionString = new StringBuilder();
+            foreach (OptionValue optVal in listOptionValue)
+            {
+                optionString.AppendFormat(" {0} {1}", ConvertEnumOptionToStringOption(optVal.Option), optVal.Parameter);
+            }
+            return optionString.ToString();
+        }
+
+        private String ConvertEnumOptionToStringOption(MkvExtractGlobalOptions enumOption)
+        {
+            return String.Format("--{0}", Enum.GetName(typeof(MkvExtractGlobalOptions), enumOption).Replace("_", "-"));
         }
     }
 }

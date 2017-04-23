@@ -295,11 +295,38 @@ namespace gMKVToolNix
             {
                 // add the default options for running mkvinfo
                 List<OptionValue> optionList = new List<OptionValue>();
+
+                // Detect version
+                if (_Version == null)
+                {
+                    _Version = GetMKVInfoVersion();
+                }
+
+                String LC_ALL = "";
+                String LANG = "";
+                String LC_MESSAGES = "";
+
                 // if on Linux, the language output must be defined from the environment variables LC_ALL, LANG, and LC_MESSAGES
                 // After talking with Mosu, the language output is defined from ui-language, with different language codes for Windows and Linux
+                // It appears that the safest way to ensure english output is through the environment variables
                 if (gMKVHelper.IsOnLinux)
                 {
                     optionList.Add(new OptionValue(MkvInfoOptions.ui_language, "en_US"));
+
+                    // Get the original values
+                    LC_ALL = Environment.GetEnvironmentVariable("LC_ALL", EnvironmentVariableTarget.Process);
+                    LANG = Environment.GetEnvironmentVariable("LANG", EnvironmentVariableTarget.Process);
+                    LC_MESSAGES = Environment.GetEnvironmentVariable("LC_MESSAGES", EnvironmentVariableTarget.Process);
+
+                    gMKVLogger.Log(String.Format("Detected Environment Variables: LC_ALL=\"{0}\",LANG=\"{1}\",LC_MESSAGES=\"{2}\"",
+                        LC_ALL, LANG, LC_MESSAGES));
+
+                    // Set the english locale
+                    Environment.SetEnvironmentVariable("LC_ALL", "en_US.UTF-8", EnvironmentVariableTarget.Process);
+                    Environment.SetEnvironmentVariable("LANG", "en_US.UTF-8", EnvironmentVariableTarget.Process);
+                    Environment.SetEnvironmentVariable("LC_MESSAGES", "en_US.UTF-8", EnvironmentVariableTarget.Process);
+
+                    gMKVLogger.Log("Setting Environment Variables: LC_ALL=LANG=LC_MESSAGES=\"en_US.UTF-8\"");
                 }
                 else
                 {
@@ -312,16 +339,9 @@ namespace gMKVToolNix
                 // In MKVToolNix v9.2.0 the default behaviour changed, so the no-gui option is not needed
                 if (!gMKVHelper.IsOnLinux)
                 {
-                    if (_Version == null)
+                    if (_Version.FileMajorPart == 9 && _Version.FileMinorPart < 2)
                     {
-                        _Version = GetMKVInfoVersion();
-                    }
-                    if (_Version != null)
-                    {
-                        if (_Version.FileMajorPart == 9 && _Version.FileMinorPart < 2)
-                        {
-                            optionList.Add(new OptionValue(MkvInfoOptions.no_gui, ""));
-                        }
+                        optionList.Add(new OptionValue(MkvInfoOptions.no_gui, ""));
                     }
                 }
                 // check for extra options provided from the caller
@@ -332,7 +352,7 @@ namespace gMKVToolNix
 
                 ProcessStartInfo myProcessInfo = new ProcessStartInfo();
                 myProcessInfo.FileName = _MKVInfoFilename;
-                // if we didn't provide a filename, then we want to execute mkvmerge with other parameters
+                // if we didn't provide a filename, then we want to execute mkvinfo with other parameters
                 if (!String.IsNullOrWhiteSpace(argMKVFile))
                 {
                     myProcessInfo.Arguments = String.Format("{0} \"{1}\"", ConvertOptionValueListToString(optionList), argMKVFile);
@@ -388,6 +408,17 @@ namespace gMKVToolNix
                     throw new Exception(String.Format("Mkvinfo exited with error code {0}!" + 
                         Environment.NewLine + Environment.NewLine + "Errors reported:" + Environment.NewLine + "{1}",
                         myProcess.ExitCode, _ErrorBuilder.ToString()));
+                }
+
+                if (gMKVHelper.IsOnLinux)
+                {
+                    // Reset the environment vairables to their original values
+                    Environment.SetEnvironmentVariable("LC_ALL", LC_ALL, EnvironmentVariableTarget.Process);
+                    Environment.SetEnvironmentVariable("LANG", LANG, EnvironmentVariableTarget.Process);
+                    Environment.SetEnvironmentVariable("LC_MESSAGES", LC_MESSAGES, EnvironmentVariableTarget.Process);
+
+                    gMKVLogger.Log(String.Format("Resetting Environment Variables: LC_ALL=\"{0}\",LANG=\"{1}\",LC_MESSAGES=\"{2}\"",
+                        LC_ALL, LANG, LC_MESSAGES));
                 }
             }
         }

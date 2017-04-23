@@ -375,7 +375,7 @@ namespace gMKVToolNix
             {
                 // When on Linux, we need to run mkvmerge
 
-                // Clear the mkvinfo output
+                // Clear the mkvmerge output
                 _MKVMergeOutput.Length = 0;
                 // Clear the error builder
                 _ErrorBuilder.Length = 0;
@@ -412,7 +412,7 @@ namespace gMKVToolNix
                     Debug.WriteLine(myProcessInfo.Arguments);
                     gMKVLogger.Log(String.Format("\"{0}\" {1}", _MKVMergeFilename, myProcessInfo.Arguments));
 
-                    // Start the mkvinfo process
+                    // Start the mkvmerge process
                     myProcess.Start();
 
                     // Read the Standard output character by character
@@ -469,6 +469,17 @@ namespace gMKVToolNix
             using (Process myProcess = new Process())
             {
                 List<OptionValue> optionList = new List<OptionValue>();
+
+                // Check the file version of the mkvmerge.exe
+                if (_Version == null)
+                {
+                    _Version = GetMKVMergeVersion();
+                }
+
+                String LC_ALL = "";
+                String LANG = "";
+                String LC_MESSAGES = "";
+
                 // if on Linux, the language output must be defined from the environment variables LC_ALL, LANG, and LC_MESSAGES
                 // After talking with Mosu, the language output is defined from ui-language, with different language codes for Windows and Linux
                 if (gMKVHelper.IsOnLinux)
@@ -482,28 +493,38 @@ namespace gMKVToolNix
                 //optionList.Add(new OptionValue(MkvMergeOptions.command_line_charset, "\"UTF-8\""));
                 //optionList.Add(new OptionValue(MkvMergeOptions.output_charset, "\"UTF-8\""));
 
-                // Check the file version of the mkvmerge.exe
-                if (_Version == null)
-                {
-                    _Version = GetMKVMergeVersion();
-                }
-
                 // if we didn't provide a filename, then we want to execute mkvmerge with other parameters
                 if (!String.IsNullOrWhiteSpace(argMKVFile))
                 {
                     // Since MKVToolNix v9.6.0, start parsing the JSON identification info
-                    if (_Version != null)
+                    if (_Version.FileMajorPart > 9 ||
+                        (_Version.FileMajorPart == 9 && _Version.FileMinorPart >= 6))
                     {
-                        if (_Version.FileMajorPart > 9 ||
-                            (_Version.FileMajorPart == 9 && _Version.FileMinorPart >= 6))
+                        optionList.Add(new OptionValue(MkvMergeOptions.identify, ""));
+                        optionList.Add(new OptionValue(MkvMergeOptions.identification_format, "json"));
+                    }
+                    else
+                    {
+                        // For previous mkvmerge versions, keep compatibility
+                        optionList.Add(new OptionValue(MkvMergeOptions.identify_verbose, ""));
+
+                        // Before JSON output, the safest way to ensure English output on Linux is throught the EnvironmentVariables
+                        if (gMKVHelper.IsOnLinux)
                         {
-                            optionList.Add(new OptionValue(MkvMergeOptions.identify, ""));
-                            optionList.Add(new OptionValue(MkvMergeOptions.identification_format, "json"));
-                        }
-                        else
-                        {
-                            // For previous mkvmerge versions, keep compatibility
-                            optionList.Add(new OptionValue(MkvMergeOptions.identify_verbose, ""));
+                            // Get the original values
+                            LC_ALL = Environment.GetEnvironmentVariable("LC_ALL", EnvironmentVariableTarget.Process);
+                            LANG = Environment.GetEnvironmentVariable("LANG", EnvironmentVariableTarget.Process);
+                            LC_MESSAGES = Environment.GetEnvironmentVariable("LC_MESSAGES", EnvironmentVariableTarget.Process);
+
+                            gMKVLogger.Log(String.Format("Detected Environment Variables: LC_ALL=\"{0}\",LANG=\"{1}\",LC_MESSAGES=\"{2}\"",
+                                LC_ALL, LANG, LC_MESSAGES));
+
+                            // Set the english locale
+                            Environment.SetEnvironmentVariable("LC_ALL", "en_US.UTF-8", EnvironmentVariableTarget.Process);
+                            Environment.SetEnvironmentVariable("LANG", "en_US.UTF-8", EnvironmentVariableTarget.Process);
+                            Environment.SetEnvironmentVariable("LC_MESSAGES", "en_US.UTF-8", EnvironmentVariableTarget.Process);
+
+                            gMKVLogger.Log("Setting Environment Variables: LC_ALL=LANG=LC_MESSAGES=\"en_US.UTF-8\"");
                         }
                     }
                 }
@@ -566,6 +587,22 @@ namespace gMKVToolNix
                     throw new Exception(String.Format("Mkvmerge exited with error code {0}!" + 
                         Environment.NewLine + Environment.NewLine + "Errors reported:" + Environment.NewLine + "{1}",
                         myProcess.ExitCode, _ErrorBuilder.ToString()));
+                }
+
+                // Before JSON output, the safest way to ensure English output on Linux is throught the EnvironmentVariables
+                if (gMKVHelper.IsOnLinux)
+                {
+                    if (_Version.FileMajorPart < 9 ||
+                        (_Version.FileMajorPart == 9 && _Version.FileMinorPart < 6))
+                    {
+                        // Reset the environment vairables to their original values
+                        Environment.SetEnvironmentVariable("LC_ALL", LC_ALL, EnvironmentVariableTarget.Process);
+                        Environment.SetEnvironmentVariable("LANG", LANG, EnvironmentVariableTarget.Process);
+                        Environment.SetEnvironmentVariable("LC_MESSAGES", LC_MESSAGES, EnvironmentVariableTarget.Process);
+
+                        gMKVLogger.Log(String.Format("Resetting Environment Variables: LC_ALL=\"{0}\",LANG=\"{1}\",LC_MESSAGES=\"{2}\"",
+                            LC_ALL, LANG, LC_MESSAGES));
+                    }
                 }
             }
         }
