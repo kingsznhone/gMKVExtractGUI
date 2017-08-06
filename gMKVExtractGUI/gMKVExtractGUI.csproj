@@ -68,6 +68,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\ControlExtensions.cs" />
+    <Compile Include="Controls\ExceptionExtensions.cs" />
+    <Compile Include="Controls\gComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\gDataGridView.cs">
       <SubType>Component</SubType>
     </Compile>
