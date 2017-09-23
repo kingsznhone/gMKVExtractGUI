@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -11,15 +12,35 @@ namespace gMKVToolNix
     {
         public gForm() :base()
         {
-            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            SetStyle(ControlStyles.Opaque, true);
             this.DoubleBuffered = true;
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
         }
 
+        /// <summary>
+        /// Returns the full path and filename of the executing assembly
+        /// </summary>
+        /// <returns></returns>
+        protected String GetExecutingAssemblyLocation()
+        {
+            return Assembly.GetExecutingAssembly().Location;
+        }
+
+        /// <summary>
+        /// Returns the current directory of the executing assembly
+        /// </summary>
+        /// <returns></returns>
         protected String GetCurrentDirectory()
         {
             return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        }
+
+        /// <summary>
+        /// Returns the version of the executing assembly
+        /// </summary>
+        /// <returns></returns>
+        protected Version GetCurrentVersion()
+        {
+            return Assembly.GetExecutingAssembly().GetName().Version;
         }
 
         protected void ShowErrorMessage(String argMessage)
@@ -35,6 +56,34 @@ namespace gMKVToolNix
         protected DialogResult ShowQuestion(String argQuestion, String argTitle)
         {
             return MessageBox.Show(argQuestion, argTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+        }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // gForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Name = "gForm";
+            this.ResumeLayout(false);
+        }
+
+        protected void ToggleControls(Control argRootControl, Boolean argStatus)
+        {
+            foreach (Control ctrl in argRootControl.Controls)
+            {
+                if (ctrl is IContainer)
+                {
+                    ToggleControls(ctrl, argStatus);
+                }
+                else
+                {
+                    ctrl.Enabled = argStatus;
+                }
+            }
         }
 
     }

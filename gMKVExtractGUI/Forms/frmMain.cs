@@ -48,7 +48,7 @@ namespace gMKVToolNix
                 InitializeComponent();
 
                 // Set form icon from the executing assembly
-                Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
+                Icon = Icon.ExtractAssociatedIcon(this.GetExecutingAssemblyLocation());
                 
                 // Set form title 
                 Text = String.Format("gMKVExtractGUI v{0} -- By Gpower2", Assembly.GetExecutingAssembly().GetName().Version);
