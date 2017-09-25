@@ -256,35 +256,72 @@ namespace gMKVToolNix.Forms
                     String[] s = (String[])e.Data.GetData(DataFormats.FileDrop, false);                    
                     if (s != null && s.Length > 0)
                     {
+                        tlpMain.Enabled = false;
+                        Cursor = Cursors.WaitCursor;
+                        txtSegmentInfo.Text = "Getting files...";
+
                         List<string> fileList = new List<string>();
                         // Check if directories were provided
                         if (s.Any(f => Directory.Exists(f)))
                         {
                             // Check if they contain subdirectories
                             List<string> subDirList = new List<string>();
-                            s.Where(f => Directory.Exists(f)).ToList().ForEach(t => subDirList.AddRange(Directory.GetDirectories(t, "*", SearchOption.TopDirectoryOnly).ToList()));
+
+                            using (Task ta = Task.Factory.StartNew(() =>
+                             {
+                                 s.Where(f => Directory.Exists(f)).ToList().ForEach(t => subDirList.AddRange(Directory.GetDirectories(t, "*", SearchOption.TopDirectoryOnly).ToList()));
+                             }))
+                            {
+                                while (!ta.IsCompleted) { Application.DoEvents(); }
+                                if (ta.Exception != null) { throw ta.Exception; }
+                            }
+
                             if (subDirList.Any())
                             {
+                                Cursor = Cursors.Default;
                                 var result = ShowQuestion("Do you want to include files in sub directories?", "Sub directories found!");
+                                Cursor = Cursors.WaitCursor;
                                 if (result == DialogResult.Yes)
                                 {
-                                    // Add the subdirectory files
-                                    s.Where(f => Directory.Exists(f)).ToList().ForEach(t => fileList.AddRange(Directory.GetFiles(t, "*", SearchOption.AllDirectories).ToList()));
+                                    using (Task ta = Task.Factory.StartNew(() =>
+                                    {
+                                        // Add the subdirectory files
+                                        s.Where(f => Directory.Exists(f)).ToList().ForEach(t => fileList.AddRange(Directory.GetFiles(t, "*", SearchOption.AllDirectories).ToList()));
+                                    }))
+                                    {
+                                        while (!ta.IsCompleted) { Application.DoEvents(); }
+                                        if (ta.Exception != null) { throw ta.Exception; }
+                                    }
                                 }
                                 else if (result == DialogResult.No)
                                 {
-                                    // Add the top level directory files
-                                    s.Where(f => Directory.Exists(f)).ToList().ForEach(t => fileList.AddRange(Directory.GetFiles(t, "*", SearchOption.TopDirectoryOnly).ToList()));
+                                    using (Task ta = Task.Factory.StartNew(() =>
+                                    {
+                                        // Add the top level directory files
+                                        s.Where(f => Directory.Exists(f)).ToList().ForEach(t => fileList.AddRange(Directory.GetFiles(t, "*", SearchOption.TopDirectoryOnly).ToList()));
+                                    }))
+                                    {
+                                        while (!ta.IsCompleted) { Application.DoEvents(); }
+                                        if (ta.Exception != null) { throw ta.Exception; }
+                                    }
                                 }
                                 else if (result == DialogResult.Cancel)
                                 {
+                                    Cursor = Cursors.Default;
                                     return;
                                 }
                             }
                             else
                             {
-                                // Since there are no subdirectories, add the files from the directory
-                                s.Where(f => Directory.Exists(f)).ToList().ForEach(t => fileList.AddRange(Directory.GetFiles(t, "*", SearchOption.TopDirectoryOnly).ToList()));
+                                using (Task ta = Task.Factory.StartNew(() =>
+                                {
+                                    // Since there are no subdirectories, add the files from the directory
+                                    s.Where(f => Directory.Exists(f)).ToList().ForEach(t => fileList.AddRange(Directory.GetFiles(t, "*", SearchOption.TopDirectoryOnly).ToList()));
+                                }))
+                                {
+                                    while (!ta.IsCompleted) { Application.DoEvents(); }
+                                    if (ta.Exception != null) { throw ta.Exception; }
+                                }
                             }
                         }
                         // Add the files provided
@@ -307,6 +344,9 @@ namespace gMKVToolNix.Forms
 
                         // Add files to the TreeView
                         AddFileNodes(txtMKVToolnixPath.Text, fileList);
+
+                        Cursor = Cursors.Default;
+                        tlpMain.Enabled = true;
                     }
                 }
             }
@@ -314,6 +354,7 @@ namespace gMKVToolNix.Forms
             {
                 Debug.WriteLine(ex);
                 gMKVLogger.Log(ex.ToString());
+                Cursor = Cursors.Default;
                 ShowErrorMessage(ex.Message);
                 tlpMain.Enabled = true;
             }
@@ -897,9 +938,6 @@ namespace gMKVToolNix.Forms
                     _Settings.MkvToolnixPath = txtMKVToolnixPath.Text.Trim();
                     gMKVLogger.Log("Changing MkvToolnixPath");
                     _Settings.Save();
-
-                    // Clear the input text ???
-                    // txtInputFile.Clear();
                 }
                 _gMkvExtract = new gMKVExtract(txtMKVToolnixPath.Text);
             }
