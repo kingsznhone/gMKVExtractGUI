@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
+using System.Collections;
 
 namespace gMKVToolNix
 {
@@ -79,6 +80,61 @@ namespace gMKVToolNix
 
         public void AddJob(gMKVJobInfo argJobInfo)
         {
+            // Check if the same job already exists
+            bool foundSame = false;
+            foreach (var jobInfo in _JobList)
+            {
+                gMKVJob j = jobInfo.Job;
+                gMKVJob argJ = argJobInfo.Job;
+                bool foundDifferent = false;
+                if (j.ExtractionMode == argJ.ExtractionMode
+                    && j.MKVToolnixPath == argJ.MKVToolnixPath
+                    && j.ParametersList.Count == argJ.ParametersList.Count)
+                {
+                    for (int i = 0; i < j.ParametersList.Count; i++)
+                    {
+                        object item = j.ParametersList[i];
+                        if (item is IList)
+                        {
+                            if (((IList)item).Count == ((IList)argJ.ParametersList[i]).Count)
+                            {
+                                for (int ii = 0; ii < ((IList)item).Count; ii++)
+                                {
+                                    if (!((IList)item)[ii].Equals(((IList)argJ.ParametersList[i])[ii]))
+                                    {
+                                        foundDifferent = true;
+                                        break;
+                                    }
+                                }
+                                if (foundDifferent)
+                                {
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                foundDifferent = true;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            if(!item.Equals(argJ.ParametersList[i]))
+                            {
+                                foundDifferent = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!foundDifferent)
+                    {
+                        foundSame = true;
+                        break;
+                    }
+                }
+            }
+            if (foundSame) { return; }
+
             _JobList.Add(argJobInfo);
         }
 
