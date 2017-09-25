@@ -45,7 +45,8 @@ namespace gMKVToolNix
                 //    Environment.SetEnvironmentVariable("LANG", "en_US.UTF-8", EnvironmentVariableTarget.Process);
                 //    Environment.SetEnvironmentVariable("LC_MESSAGES", "en_US.UTF-8", EnvironmentVariableTarget.Process);
                 //}
-                Application.Run(new frmMain());
+                //Application.Run(new frmMain());
+                Application.Run(new frmMain2());
             }
         }
 

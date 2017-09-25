@@ -119,7 +119,7 @@ namespace gMKVToolNix
                 }
             }
 
-            // if value was not found, let's Win64 registry
+            // if value was not found, search Win64 registry
             if (!valueFound)
             {
                 subKeyFound = false;

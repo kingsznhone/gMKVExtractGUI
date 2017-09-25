@@ -1,4 +1,6 @@
-﻿namespace gMKVToolNix
+﻿using gMKVToolNix.Controls;
+
+namespace gMKVToolNix
 {
     partial class frmMain
     {
@@ -54,10 +56,10 @@
             this.chkJobMode = new System.Windows.Forms.CheckBox();
             this.btnExtract = new System.Windows.Forms.Button();
             this.lblExtractionMode = new System.Windows.Forms.Label();
-            this.cmbExtractionMode = new System.Windows.Forms.ComboBox();
+            this.cmbExtractionMode = new gMKVToolNix.Controls.gComboBox();
             this.btnShowLog = new System.Windows.Forms.Button();
             this.lblChapterType = new System.Windows.Forms.Label();
-            this.cmbChapterType = new System.Windows.Forms.ComboBox();
+            this.cmbChapterType = new gMKVToolNix.Controls.gComboBox();
             this.grpConfig = new gMKVToolNix.gGroupBox();
             this.btnBrowseMKVToolnixPath = new System.Windows.Forms.Button();
             this.txtMKVToolnixPath = new gMKVToolNix.gTextBox();
@@ -378,12 +380,12 @@
             // 
             this.cmbExtractionMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbExtractionMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbExtractionMode.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
             this.cmbExtractionMode.FormattingEnabled = true;
             this.cmbExtractionMode.Location = new System.Drawing.Point(411, 22);
             this.cmbExtractionMode.Name = "cmbExtractionMode";
             this.cmbExtractionMode.Size = new System.Drawing.Size(102, 23);
             this.cmbExtractionMode.TabIndex = 8;
-            this.cmbExtractionMode.DropDown += new System.EventHandler(this.cmbExtractionMode_DropDown);
             // 
             // btnShowLog
             // 
@@ -409,6 +411,7 @@
             // 
             this.cmbChapterType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbChapterType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbChapterType.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
             this.cmbChapterType.FormattingEnabled = true;
             this.cmbChapterType.Location = new System.Drawing.Point(281, 22);
             this.cmbChapterType.Name = "cmbChapterType";
@@ -532,12 +535,14 @@
             // lblTrack
             // 
             this.lblTrack.Name = "lblTrack";
-            this.lblTrack.Size = new System.Drawing.Size(0, 31);
+            this.lblTrack.Size = new System.Drawing.Size(33, 31);
+            this.lblTrack.Text = "track";
             // 
             // lblStatus
             // 
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(0, 31);
+            this.lblStatus.Size = new System.Drawing.Size(38, 31);
+            this.lblStatus.Text = "status";
             // 
             // grpLog
             // 
@@ -607,14 +612,14 @@
         private gTableLayoutPanel tableLayoutPanel1;
         private gRichTextBox txtSegmentInfo;
         private System.Windows.Forms.Label lblChapterType;
-        private System.Windows.Forms.ComboBox cmbChapterType;
+        private gComboBox cmbChapterType;
         private System.Windows.Forms.ToolStripStatusLabel lblTrack;
         private System.Windows.Forms.Button btnShowLog;
         private System.Windows.Forms.CheckBox chkLockOutputDirectory;
         private System.Windows.Forms.Button btnAbort;
         private System.Windows.Forms.Button btnAbortAll;
         private System.Windows.Forms.Label lblExtractionMode;
-        private System.Windows.Forms.ComboBox cmbExtractionMode;
+        private gComboBox cmbExtractionMode;
         private System.Windows.Forms.Button btnExtract;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem selectAllTracksToolStripMenuItem;

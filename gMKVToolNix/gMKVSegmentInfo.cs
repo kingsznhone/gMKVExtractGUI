@@ -47,5 +47,37 @@ namespace gMKVToolNix
             set { _Date = value; }
         }
 
+        private String _Filename;
+
+        /// <summary>
+        /// The segment's file filename
+        /// </summary>
+        public String Filename
+        {
+            get { return _Filename; }
+            set { _Filename = value; }
+        }
+
+        private String _Directory;
+
+        /// <summary>
+        /// The segment's file directory
+        /// </summary>
+        public String Directory
+        {
+            get { return _Directory; }
+            set { _Directory = value; }
+        }
+
+        /// <summary>
+        /// Returns the segment's full file path
+        /// </summary>
+        public String Path
+        {
+            get
+            {
+                return System.IO.Path.Combine(Directory ?? "", Filename ?? "");
+            }
+        }
     }
 }

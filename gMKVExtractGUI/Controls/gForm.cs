@@ -53,9 +53,14 @@ namespace gMKVToolNix
             MessageBox.Show(argMessage, "Success!", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        protected DialogResult ShowQuestion(String argQuestion, String argTitle)
+        protected DialogResult ShowQuestion(String argQuestion, String argTitle, bool argShowCancel = true)
         {
-            return MessageBox.Show(argQuestion, argTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            MessageBoxButtons msgBoxBtns = MessageBoxButtons.YesNoCancel;
+            if (!argShowCancel)
+            {
+                msgBoxBtns = MessageBoxButtons.YesNo;
+            }
+            return MessageBox.Show(argQuestion, argTitle, msgBoxBtns, MessageBoxIcon.Question);
         }
 
         private void InitializeComponent()

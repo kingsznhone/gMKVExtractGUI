@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Threading;
 using System.Media;
+using gMKVToolNix.Forms;
 
 namespace gMKVToolNix
 {
@@ -27,7 +28,7 @@ namespace gMKVToolNix
     public delegate void UpdateProgressDelegate(Object val);
     public delegate void UpdateTrackLabelDelegate(Object val);
 
-    public partial class frmMain : gForm
+    public partial class frmMain : gForm, IFormMain
     {
         private frmLog _LogForm = null;
         private frmJobManager _JobManagerForm = null;
@@ -61,7 +62,9 @@ namespace gMKVToolNix
                                 
                 cmbChapterType.DataSource = Enum.GetNames(typeof(MkvChapterTypes));
                 cmbExtractionMode.DataSource = Enum.GetNames(typeof(FormMkvExtractionMode));
-                
+
+                ClearStatus();
+
                 // Load settings
                 _Settings.Reload();
 
@@ -130,8 +133,18 @@ namespace gMKVToolNix
                         }
                         else
                         {
-                            gMKVLogger.Log("Could not find MKVToolNix in registry, or in the current directory, or in the ini file!");
-                            throw new Exception("Could not find MKVToolNix in registry, or in the current directory, or in the ini file!" + Environment.NewLine + "Please download and reinstall or provide a manual path!");
+                            // Select exception message according to running OS
+                            String exceptionMessage = "";
+                            if (gMKVHelper.IsOnLinux)
+                            {
+                                exceptionMessage = "Could not find MKVToolNix in /usr/bin, or in the current directory, or in the ini file!";
+                            }
+                            else
+                            {
+                                exceptionMessage = "Could not find MKVToolNix in registry, or in the current directory, or in the ini file!";
+                            }
+                            gMKVLogger.Log(exceptionMessage);
+                            throw new Exception(exceptionMessage + Environment.NewLine + "Please download and reinstall or provide a manual path!");
                         }
                     }
                 }
@@ -418,7 +431,7 @@ namespace gMKVToolNix
                 // empty all the controls in any case
                 ClearControls();
                 // if user provided with a filename
-                if (txtInputFile.Text.Trim().Length > 0)
+                if (!String.IsNullOrWhiteSpace(txtInputFile.Text))
                 {                    
                     // check if input file is valid
                     if (!File.Exists(txtInputFile.Text.Trim()))
@@ -535,7 +548,7 @@ namespace gMKVToolNix
             {
                 if (sender == chkLockOutputDirectory)
                 {
-                    if (txtOutputDirectory.Text.Trim().Length == 0)
+                    if (String.IsNullOrWhiteSpace(txtOutputDirectory.Text))
                     {
                         chkLockOutputDirectory.Checked = false;
                     }
@@ -590,7 +603,7 @@ namespace gMKVToolNix
             try
             {
                 // check if MKVToolnix Path is already set
-                if (txtMKVToolnixPath.Text.Trim().Length > 0)
+                if (!String.IsNullOrWhiteSpace(txtMKVToolnixPath.Text))
                 {
                     if (ShowQuestion("Do you really want to change MKVToolnix path?", "Are you sure?") != DialogResult.Yes)
                     {
@@ -1015,6 +1028,8 @@ namespace gMKVToolNix
             Application.DoEvents();
         }
 
+        #region "Context Menu"
+
         private void SetContextMenuText()
         {
             Int32 videoTracksCount = 0;
@@ -1177,6 +1192,16 @@ namespace gMKVToolNix
             SetContextMenuText();
         }
 
+        #endregion
+
+        public void SetTableLayoutMainStatus(Boolean argStatus)
+        {
+            tlpMain.Enabled = argStatus;
+            Application.DoEvents();
+        }
+
+        #region "Form Events"
+
         private void frmMain_Move(object sender, EventArgs e)
         {
             try
@@ -1217,35 +1242,6 @@ namespace gMKVToolNix
             }
         }
 
-        private void chkJobMode_CheckedChanged(object sender, EventArgs e)
-        {
-            _JobMode = chkJobMode.Checked;
-            btnExtract.Text = _JobMode ? "Add job" : "Extract";
-            btnShowLog.Text = _JobMode ? "Jobs..." : "Log...";
-            if (!_FromConstructor)
-            {
-                _Settings.JobMode = chkJobMode.Checked;
-                gMKVLogger.Log("Changing JobMode");
-                _Settings.Save();
-            }
-        }
-
-        private void chkShowPopup_CheckedChanged(object sender, EventArgs e)
-        {
-            if (!_FromConstructor)
-            {
-                _Settings.ShowPopup = chkShowPopup.Checked;
-                gMKVLogger.Log("Changing ShowPopup");
-                _Settings.Save();
-            }
-        }
-
-        public void SetTableLayoutMainStatus(Boolean argStatus)
-        {
-            tlpMain.Enabled = argStatus;
-            Application.DoEvents();
-        }
-
         private void frmMain_ClientSizeChanged(object sender, EventArgs e)
         {
             try
@@ -1281,44 +1277,29 @@ namespace gMKVToolNix
             }
         }
 
-        private void AutosizeDropDownWidth()
+        #endregion
+
+        private void chkJobMode_CheckedChanged(object sender, EventArgs e)
         {
-            float longestItem = 0;
-            // Find the longest text from the items list, in order to define the width
-            using (Graphics g = Graphics.FromHwnd(this.Handle))
+            _JobMode = chkJobMode.Checked;
+            btnExtract.Text = _JobMode ? "Add job" : "Extract";
+            btnShowLog.Text = _JobMode ? "Jobs..." : "Log...";
+            if (!_FromConstructor)
             {
-                foreach (Object item in cmbExtractionMode.Items)
-                {
-                    String textRepresentation = cmbExtractionMode.GetItemText(item);
-                    float itemWidth = g.MeasureString(textRepresentation, Font).Width;
-                    if (itemWidth > longestItem)
-                    {
-                        longestItem = itemWidth;
-                    }
-                }
-            }
-
-            // If there is a ScrollBar, then increase the width by 15 pixels
-            if (cmbExtractionMode.Items.Count > cmbExtractionMode.MaxDropDownItems)
-            {
-                longestItem += 15;
-            }
-
-            // Change the width of the items list, byt never make it smaller than the width of the control
-            cmbExtractionMode.DropDownWidth = Convert.ToInt32(Math.Max(longestItem, cmbExtractionMode.Width));
-        }
-
-        private void cmbExtractionMode_DropDown(object sender, EventArgs e)
-        {
-            try
-            {
-                AutosizeDropDownWidth();
-            }
-            catch (Exception ex)
-            {
-                ShowErrorMessage(ex.Message);
+                _Settings.JobMode = chkJobMode.Checked;
+                gMKVLogger.Log("Changing JobMode");
+                _Settings.Save();
             }
         }
 
+        private void chkShowPopup_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!_FromConstructor)
+            {
+                _Settings.ShowPopup = chkShowPopup.Checked;
+                gMKVLogger.Log("Changing ShowPopup");
+                _Settings.Save();
+            }
+        }
     }
 }

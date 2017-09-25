@@ -1,4 +1,5 @@
-﻿using System;
+﻿using gMKVToolNix.Forms;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,13 +11,14 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace gMKVToolNix
 {
     public partial class frmJobManager : gForm
     {
         private StringBuilder _ExceptionBuilder = new StringBuilder();
-        private frmMain _MainForm = null;
+        private IFormMain _MainForm = null;
         private Int32 _CurrentJob = 0;
         private Int32 _TotalJobs = 0;
         private gMKVExtract _gMkvExtract = null;
@@ -28,16 +30,16 @@ namespace gMKVToolNix
 
         private Boolean _AbortAll = false;
         
-        public frmJobManager(frmMain argMainForm)
+        public frmJobManager(IFormMain argMainForm)
         {
             try
             {
                 InitializeComponent();
 
+                _MainForm = argMainForm;
+
                 Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
                 Text = String.Format("gMKVExtractGUI v{0} -- Job Manager", Assembly.GetExecutingAssembly().GetName().Version);
-
-                _MainForm = argMainForm;
 
                 _FromConstructor = true;
 
@@ -127,15 +129,7 @@ namespace gMKVToolNix
                 {
                     if (grdJobs.SelectedRows.Count > 0)
                     {
-                        List<Int32> selectionList = new List<Int32>();
-                        foreach (DataGridViewRow item in grdJobs.SelectedRows)
-                        {
-                            selectionList.Add(item.Index);
-                        }
-                        foreach (Int32 idx in selectionList)
-                        {
-                            grdJobs.Rows.RemoveAt(idx);
-                        }
+                        grdJobs.SelectedRows.Cast<DataGridViewRow>().ToList().ForEach(r => grdJobs.Rows.Remove(r));
                     }
                 }
             }

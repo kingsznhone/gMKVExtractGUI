@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 
 namespace gMKVToolNix
 {
@@ -94,8 +95,20 @@ namespace gMKVToolNix
 
         public gMKVMerge(String mkvToonlixPath)
         {
+            if (String.IsNullOrWhiteSpace(mkvToonlixPath))
+            {
+                throw new Exception("The MKVToolNix path was not provided!");
+            }
+            if(!Directory.Exists(mkvToonlixPath))
+            {
+                throw new Exception(String.Format("The MKVToolNix path {0} does not exist!", mkvToonlixPath));
+            }
             _MKVToolnixPath = mkvToonlixPath;
-            _MKVMergeFilename = Path.Combine(_MKVToolnixPath, MKV_MERGE_FILENAME);            
+            _MKVMergeFilename = Path.Combine(_MKVToolnixPath, MKV_MERGE_FILENAME);
+            if (!File.Exists(_MKVMergeFilename))
+            {
+                throw new Exception(String.Format("Could not find {0}!" + Environment.NewLine + "{1}", MKV_MERGE_FILENAME, _MKVMergeFilename));
+            }
         }
 
         public List<gMKVSegment> GetMKVSegments(String argMKVFile)
@@ -124,6 +137,13 @@ namespace gMKVToolNix
             else
             {
                 ParseMkvMergeOutput();
+            }
+            // Add the file properties in gMKVSegmentInfo
+            if (_SegmentList.Any(s => s is gMKVSegmentInfo))
+            {
+                var seg = _SegmentList.FirstOrDefault(s => s is gMKVSegmentInfo);
+                ((gMKVSegmentInfo)seg).Directory = Path.GetDirectoryName(argMKVFile);
+                ((gMKVSegmentInfo)seg).Filename = Path.GetFileName(argMKVFile);
             }
             return _SegmentList;
         }

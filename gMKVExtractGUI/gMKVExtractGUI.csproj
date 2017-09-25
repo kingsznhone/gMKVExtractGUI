@@ -121,6 +121,7 @@
     <Compile Include="Forms\frmMain2.Designer.cs">
       <DependentUpon>frmMain2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\IFormMain.cs" />
     <Compile Include="gSettings.cs" />
     <Compile Include="Controls\gTaskbarProgress.cs" />
     <Compile Include="Controls\gRichTextBox.cs">
