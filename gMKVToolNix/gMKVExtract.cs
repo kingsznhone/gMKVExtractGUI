@@ -51,7 +51,7 @@ namespace gMKVToolNix
     }
 
     public delegate void MkvExtractProgressUpdatedEventHandler(Int32 progress);
-    public delegate void MkvExtractTrackUpdatedEventHandler(String trackName);
+    public delegate void MkvExtractTrackUpdatedEventHandler(String filename, String trackName);
 
     public class gMKVExtract
     {
@@ -410,7 +410,7 @@ namespace gMKVToolNix
                         _OutputFileWriter = new StreamWriter(finalPar.OutputFilename, false, new UTF8Encoding(false, true));
                     }
 
-                    OnMkvExtractTrackUpdated(Enum.GetName(finalPar.ExtractMode.GetType(), finalPar.ExtractMode));
+                    OnMkvExtractTrackUpdated(argMKVFile, Enum.GetName(finalPar.ExtractMode.GetType(), finalPar.ExtractMode));
                     ExtractMkvSegment(argMKVFile, 
                         String.Format("{0} {1} \"{2}\" {3}", 
                             Enum.GetName(finalPar.ExtractMode.GetType(),finalPar.ExtractMode),
@@ -601,7 +601,7 @@ namespace gMKVToolNix
                 String.Format("{0}_cuesheet.cue", Path.GetFileNameWithoutExtension(argMKVFile)));
             try
             {
-                OnMkvExtractTrackUpdated("Cue Sheet");
+                OnMkvExtractTrackUpdated(argMKVFile, "Cue Sheet");
                 _OutputFileWriter = new StreamWriter(cueFile, false, new UTF8Encoding(false, true));
                 ExtractMkvSegment(argMKVFile, par, true);
             }
@@ -646,7 +646,7 @@ namespace gMKVToolNix
                 String.Format("{0}_tags.xml", Path.GetFileNameWithoutExtension(argMKVFile)));
             try
             {
-                OnMkvExtractTrackUpdated("Tags");
+                OnMkvExtractTrackUpdated(argMKVFile, "Tags");
                 _OutputFileWriter = new StreamWriter(tagsFile, false, new UTF8Encoding(false, true));
                 ExtractMkvSegment(argMKVFile, par, true);
             }
@@ -672,10 +672,10 @@ namespace gMKVToolNix
                 MkvExtractProgressUpdated(progress);
         }
 
-        protected void OnMkvExtractTrackUpdated(String trackName)
+        protected void OnMkvExtractTrackUpdated(String filename, String trackName)
         {
             if (MkvExtractTrackUpdated != null)
-                MkvExtractTrackUpdated(trackName);
+                MkvExtractTrackUpdated(filename, trackName);
         }
 
         private void ExtractMkvSegment(String argMKVFile, String argParameters, Boolean argUseOutputFileWriter)

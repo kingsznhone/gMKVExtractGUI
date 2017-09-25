@@ -80,6 +80,8 @@ namespace gMKVToolNix.Forms
             this.uncheckAllChapterTracksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uncheckAllAttachmentTracksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.prgBrTotalStatus = new System.Windows.Forms.ToolStripProgressBar();
+            this.lblTotalStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip.SuspendLayout();
             this.tlpMain.SuspendLayout();
             this.grpActions.SuspendLayout();
@@ -96,7 +98,9 @@ namespace gMKVToolNix.Forms
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.prgBrStatus,
             this.lblTrack,
-            this.lblStatus});
+            this.lblStatus,
+            this.prgBrTotalStatus,
+            this.lblTotalStatus});
             this.statusStrip.Location = new System.Drawing.Point(0, 525);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(624, 36);
@@ -107,7 +111,7 @@ namespace gMKVToolNix.Forms
             // 
             this.prgBrStatus.AutoSize = false;
             this.prgBrStatus.Name = "prgBrStatus";
-            this.prgBrStatus.Size = new System.Drawing.Size(200, 30);
+            this.prgBrStatus.Size = new System.Drawing.Size(100, 30);
             // 
             // lblTrack
             // 
@@ -457,90 +461,90 @@ namespace gMKVToolNix.Forms
             // checkAllTracksToolStripMenuItem
             // 
             this.checkAllTracksToolStripMenuItem.Name = "checkAllTracksToolStripMenuItem";
-            this.checkAllTracksToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.checkAllTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.checkAllTracksToolStripMenuItem.Text = "Check All Tracks";
             this.checkAllTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllTracksToolStripMenuItem_Click);
             // 
             // checkAllVideoTracksToolStripMenuItem
             // 
             this.checkAllVideoTracksToolStripMenuItem.Name = "checkAllVideoTracksToolStripMenuItem";
-            this.checkAllVideoTracksToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.checkAllVideoTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.checkAllVideoTracksToolStripMenuItem.Text = "Check All Video Tracks";
             this.checkAllVideoTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllVideoTracksToolStripMenuItem_Click);
             // 
             // checkAllAudioTracksToolStripMenuItem
             // 
             this.checkAllAudioTracksToolStripMenuItem.Name = "checkAllAudioTracksToolStripMenuItem";
-            this.checkAllAudioTracksToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.checkAllAudioTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.checkAllAudioTracksToolStripMenuItem.Text = "Check All Audio Tracks";
             this.checkAllAudioTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllAudioTracksToolStripMenuItem_Click);
             // 
             // checkAllSubtitleTracksToolStripMenuItem
             // 
             this.checkAllSubtitleTracksToolStripMenuItem.Name = "checkAllSubtitleTracksToolStripMenuItem";
-            this.checkAllSubtitleTracksToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.checkAllSubtitleTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.checkAllSubtitleTracksToolStripMenuItem.Text = "Check All Subtitle Tracks";
             this.checkAllSubtitleTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllSubtitleTracksToolStripMenuItem_Click);
             // 
             // checkAllChapterTracksToolStripMenuItem
             // 
             this.checkAllChapterTracksToolStripMenuItem.Name = "checkAllChapterTracksToolStripMenuItem";
-            this.checkAllChapterTracksToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.checkAllChapterTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.checkAllChapterTracksToolStripMenuItem.Text = "Check All Chapter Tracks";
             this.checkAllChapterTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllChapterTracksToolStripMenuItem_Click);
             // 
             // checkAllAttachmentTracksToolStripMenuItem
             // 
             this.checkAllAttachmentTracksToolStripMenuItem.Name = "checkAllAttachmentTracksToolStripMenuItem";
-            this.checkAllAttachmentTracksToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.checkAllAttachmentTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.checkAllAttachmentTracksToolStripMenuItem.Text = "Check All Attachment Tracks";
             this.checkAllAttachmentTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllAttachmentTracksToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(223, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(236, 6);
             // 
             // uncheckAllTracksToolStripMenuItem
             // 
             this.uncheckAllTracksToolStripMenuItem.Name = "uncheckAllTracksToolStripMenuItem";
-            this.uncheckAllTracksToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.uncheckAllTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.uncheckAllTracksToolStripMenuItem.Text = "Uncheck All Tracks";
             this.uncheckAllTracksToolStripMenuItem.Click += new System.EventHandler(this.uncheckAllTracksToolStripMenuItem_Click);
             // 
             // removeAllInputFilesToolStripMenuItem
             // 
             this.removeAllInputFilesToolStripMenuItem.Name = "removeAllInputFilesToolStripMenuItem";
-            this.removeAllInputFilesToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.removeAllInputFilesToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.removeAllInputFilesToolStripMenuItem.Text = "Remove All Input Files";
             this.removeAllInputFilesToolStripMenuItem.Click += new System.EventHandler(this.removeAllInputFilesToolStripMenuItem_Click);
             // 
             // removeSelectedInputFileToolStripMenuItem
             // 
             this.removeSelectedInputFileToolStripMenuItem.Name = "removeSelectedInputFileToolStripMenuItem";
-            this.removeSelectedInputFileToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.removeSelectedInputFileToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.removeSelectedInputFileToolStripMenuItem.Text = "Remove Selected Input File";
             this.removeSelectedInputFileToolStripMenuItem.Click += new System.EventHandler(this.removeSelectedInputFileToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(223, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(236, 6);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(223, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(236, 6);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(223, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(236, 6);
             // 
             // addInputFileToolStripMenuItem
             // 
             this.addInputFileToolStripMenuItem.Name = "addInputFileToolStripMenuItem";
-            this.addInputFileToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.addInputFileToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.addInputFileToolStripMenuItem.Text = "Add Input File(s)...";
             this.addInputFileToolStripMenuItem.Click += new System.EventHandler(this.addInputFileToolStripMenuItem_Click);
             // 
@@ -583,6 +587,17 @@ namespace gMKVToolNix.Forms
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(236, 6);
+            // 
+            // prgBrTotalStatus
+            // 
+            this.prgBrTotalStatus.Name = "prgBrTotalStatus";
+            this.prgBrTotalStatus.Size = new System.Drawing.Size(100, 30);
+            // 
+            // lblTotalStatus
+            // 
+            this.lblTotalStatus.Name = "lblTotalStatus";
+            this.lblTotalStatus.Size = new System.Drawing.Size(38, 31);
+            this.lblTotalStatus.Text = "status";
             // 
             // frmMain2
             // 
@@ -666,5 +681,7 @@ namespace gMKVToolNix.Forms
         private System.Windows.Forms.ToolStripMenuItem uncheckAllChapterTracksToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem uncheckAllAttachmentTracksToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripProgressBar prgBrTotalStatus;
+        private System.Windows.Forms.ToolStripStatusLabel lblTotalStatus;
     }
 }

@@ -26,7 +26,7 @@ namespace gMKVToolNix
     }
 
     public delegate void UpdateProgressDelegate(Object val);
-    public delegate void UpdateTrackLabelDelegate(Object val);
+    public delegate void UpdateTrackLabelDelegate(Object filename, Object val);
 
     public partial class frmMain : gForm, IFormMain
     {
@@ -862,9 +862,9 @@ namespace gMKVToolNix
             }
         }
 
-        void g_MkvExtractTrackUpdated(string trackName)
+        void g_MkvExtractTrackUpdated(string filename, string trackName)
         {
-            this.Invoke(new UpdateTrackLabelDelegate(UpdateTrackLabel), new object[] { trackName });
+            this.Invoke(new UpdateTrackLabelDelegate(UpdateTrackLabel), new object[] { filename, trackName });
         }
 
         void g_MkvExtractProgressUpdated(int progress)
@@ -1022,7 +1022,7 @@ namespace gMKVToolNix
             Application.DoEvents();
         }
 
-        public void UpdateTrackLabel(Object val)
+        public void UpdateTrackLabel(Object filename, Object val)
         {
             lblTrack.Text = (String)val;
             Application.DoEvents();

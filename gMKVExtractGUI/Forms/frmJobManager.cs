@@ -96,9 +96,9 @@ namespace gMKVToolNix
             btnSaveJobs.Enabled = argStatus;
         }
 
-        void _gMkvExtract_MkvExtractTrackUpdated(string trackName)
+        void _gMkvExtract_MkvExtractTrackUpdated(string filename, string trackName)
         {
-            this.Invoke(new UpdateTrackLabelDelegate(UpdateTrackLabel), new object[] { trackName });
+            this.Invoke(new UpdateTrackLabelDelegate(UpdateTrackLabel), new object[] { filename, trackName });
             Debug.WriteLine(trackName);
         }
 
@@ -216,9 +216,9 @@ namespace gMKVToolNix
             Application.DoEvents();
         }
 
-        public void UpdateTrackLabel(Object val)
+        public void UpdateTrackLabel(Object filename, Object val)
         {
-            txtCurrentTrack.Text = (String)val;
+            txtCurrentTrack.Text = String.Format("{0} from {1}", val, Path.GetFileName((string)filename));
             Application.DoEvents();
         }
 

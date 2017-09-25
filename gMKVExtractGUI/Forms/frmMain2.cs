@@ -26,7 +26,7 @@ namespace gMKVToolNix.Forms
     }
 
     public delegate void UpdateProgressDelegate(Object val);
-    public delegate void UpdateTrackLabelDelegate(Object val);
+    public delegate void UpdateTrackLabelDelegate(Object filename, Object val);
 
     public partial class frmMain2 : gForm, IFormMain
     {
@@ -40,6 +40,9 @@ namespace gMKVToolNix.Forms
         private Boolean _FromConstructor = false;
 
         private Boolean _ExtractRunning = false;
+
+        private Int32 _CurrentJob = 0;
+        private Int32 _TotalJobs = 0;
 
         public frmMain2()
         {
@@ -153,8 +156,7 @@ namespace gMKVToolNix.Forms
                 if (cmdArgs.Length > 1)
                 {
                     gMKVLogger.Log(String.Format("Found command line arguments: {0}", cmdArgs[1]));
-                    //???
-                    //txtInputFile.Text = cmdArgs[1];
+                    AddFileNodes(txtMKVToolnixPath.Text, new List<string>() { cmdArgs[1] });
                 }
             }
             catch (Exception ex)
@@ -526,9 +528,9 @@ namespace gMKVToolNix.Forms
             }
         }
 
-        void g_MkvExtractTrackUpdated(string trackName)
+        void g_MkvExtractTrackUpdated(string filename, string trackName)
         {
-            this.Invoke(new UpdateTrackLabelDelegate(UpdateTrackLabel), new object[] { trackName });
+            this.Invoke(new UpdateTrackLabelDelegate(UpdateTrackLabel), new object[] { filename, trackName });
         }
 
         void g_MkvExtractProgressUpdated(int progress)
@@ -539,13 +541,16 @@ namespace gMKVToolNix.Forms
         public void UpdateProgress(Object val)
         {
             prgBrStatus.Value = Convert.ToInt32(val);
+            prgBrTotalStatus.Value = (_CurrentJob - 1) * 100 + Convert.ToInt32(val);
             lblStatus.Text = String.Format("{0}%", Convert.ToInt32(val));
+            lblTotalStatus.Text = String.Format("{0}%", prgBrTotalStatus.Value / _TotalJobs);
             gTaskbarProgress.SetValue(this, Convert.ToUInt64(val), (UInt64)100);
             Application.DoEvents();
         }
 
-        public void UpdateTrackLabel(Object val)
+        public void UpdateTrackLabel(Object filename, Object val)
         {
+            txtSegmentInfo.Text = String.Format("Extracting {0} from {1}...", val, Path.GetFileName((string)filename));
             lblTrack.Text = (String)val;
             Application.DoEvents();
         }
@@ -663,7 +668,6 @@ namespace gMKVToolNix.Forms
                 List<TreeNode> parentNodes = checkedNodes.Where(t => t.Parent != null && t.Parent.Tag != null && t.Parent.Tag is gMKVSegmentInfo).Select(t => t.Parent).Distinct().ToList<TreeNode>();
 
                 Thread myThread = null;
-                List<Object> parameterList = new List<object>();
                 List<gMKVJob> jobs = new List<gMKVJob>();
                 List<gMKVSegment> segments = null;
 
@@ -677,6 +681,7 @@ namespace gMKVToolNix.Forms
                     {
                         outputDirectory = infoSegment.Directory;
                     }
+                    List<Object> parameterList = new List<object>();
                     switch (extractionMode)
                     {
                         case FormMkvExtractionMode.Tracks:
@@ -686,22 +691,16 @@ namespace gMKVToolNix.Forms
                             parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
                             parameterList.Add(TimecodesExtractionMode.NoTimecodes);
                             parameterList.Add(CuesExtractionMode.NoCues);
-
-                            jobs.Add(new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList));
                             break;
                         case FormMkvExtractionMode.Cue_Sheet:
                             parameterList = new List<object>();
                             parameterList.Add(infoSegment.Path);
                             parameterList.Add(outputDirectory);
-
-                            jobs.Add(new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList));
                             break;
                         case FormMkvExtractionMode.Tags:
                             parameterList = new List<object>();
                             parameterList.Add(infoSegment.Path);
                             parameterList.Add(outputDirectory);
-
-                            jobs.Add(new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList));
                             break;
                         case FormMkvExtractionMode.Timecodes:
                             parameterList = new List<object>();
@@ -711,8 +710,6 @@ namespace gMKVToolNix.Forms
                             parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
                             parameterList.Add(TimecodesExtractionMode.OnlyTimecodes);
                             parameterList.Add(CuesExtractionMode.NoCues);
-
-                            jobs.Add(new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList));
                             break;
                         case FormMkvExtractionMode.Tracks_And_Timecodes:
                             parameterList = new List<object>();
@@ -722,8 +719,6 @@ namespace gMKVToolNix.Forms
                             parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
                             parameterList.Add(TimecodesExtractionMode.WithTimecodes);
                             parameterList.Add(CuesExtractionMode.NoCues);
-
-                            jobs.Add(new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList));
                             break;
                         case FormMkvExtractionMode.Cues:
                             parameterList = new List<object>();
@@ -733,8 +728,6 @@ namespace gMKVToolNix.Forms
                             parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
                             parameterList.Add(TimecodesExtractionMode.NoTimecodes);
                             parameterList.Add(CuesExtractionMode.OnlyCues);
-
-                            jobs.Add(new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList));
                             break;
                         case FormMkvExtractionMode.Tracks_And_Cues:
                             parameterList = new List<object>();
@@ -744,8 +737,6 @@ namespace gMKVToolNix.Forms
                             parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
                             parameterList.Add(TimecodesExtractionMode.NoTimecodes);
                             parameterList.Add(CuesExtractionMode.WithCues);
-
-                            jobs.Add(new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList));
                             break;
                         case FormMkvExtractionMode.Tracks_And_Cues_And_Timecodes:
                             parameterList = new List<object>();
@@ -755,10 +746,9 @@ namespace gMKVToolNix.Forms
                             parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
                             parameterList.Add(TimecodesExtractionMode.WithTimecodes);
                             parameterList.Add(CuesExtractionMode.WithCues);
-
-                            jobs.Add(new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList));
                             break;
                     }
+                    jobs.Add(new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList));
                 }
 
                 if (chkJobs.Checked)
@@ -775,11 +765,18 @@ namespace gMKVToolNix.Forms
                 }
                 else
                 {
+                    _CurrentJob = 0;
+                    _TotalJobs = jobs.Count;
+
                     prgBrStatus.Minimum = 0;
                     prgBrStatus.Maximum = 100;
+                    prgBrTotalStatus.Maximum = _TotalJobs * 100;
+                    prgBrTotalStatus.Visible = true;
 
                     foreach (var job in jobs)
                     {
+                        // increate the current job index
+                        _CurrentJob++;
                         // start the thread
                         myThread = new Thread(new ParameterizedThreadStart(job.ExtractMethod(_gMkvExtract)));
                         myThread.Start(job.ParametersList);
@@ -869,7 +866,10 @@ namespace gMKVToolNix.Forms
         {
             lblTrack.Text = "";
             lblStatus.Text = "";
+            lblTotalStatus.Text = "";
             prgBrStatus.Value = 0;
+            prgBrTotalStatus.Value = 0;
+            prgBrTotalStatus.Visible = false;
         }
 
         private void txtMKVToolnixPath_TextChanged(object sender, EventArgs e)
@@ -1207,6 +1207,7 @@ namespace gMKVToolNix.Forms
 
         private void chkJobs_CheckedChanged(object sender, EventArgs e)
         {
+            btnExtract.Text = chkJobs.Checked ? "Add job" : "Extract";
             if (!_FromConstructor)
             {
                 _Settings.JobMode = chkJobs.Checked;
