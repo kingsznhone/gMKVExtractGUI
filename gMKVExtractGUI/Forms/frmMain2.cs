@@ -1255,14 +1255,14 @@ namespace gMKVToolNix.Forms
             List<TreeNode> allNodes = trvInputFiles.AllNodes;
             List<TreeNode> checkedNodes = trvInputFiles.CheckedNodes;
 
-            Int32 allTracksCount = allNodes.Count(n => n != null && n.Tag != null && n.Tag is gMKVTrack);
+            Int32 allTracksCount = allNodes.Count(n => n != null && n.Tag != null && (n.Tag is gMKVTrack || n.Tag is gMKVChapter || n.Tag is gMKVAttachment));
             Int32 videoTracksCount = allNodes.Count(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.video);
             Int32 audioTracksCount = allNodes.Count(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.audio);
             Int32 subtitleTracksCount = allNodes.Count(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.subtitles);
             Int32 chapterTracksCount = allNodes.Count(n => n != null && n.Tag != null && n.Tag is gMKVChapter);
             Int32 attachmentTracksCount = allNodes.Count(n => n != null && n.Tag != null && n.Tag is gMKVAttachment);
 
-            Int32 checkedAllTracksCount = checkedNodes.Count(n => n != null && n.Tag != null && n.Tag is gMKVTrack);
+            Int32 checkedAllTracksCount = checkedNodes.Count(n => n != null && n.Tag != null && (n.Tag is gMKVTrack || n.Tag is gMKVChapter || n.Tag is gMKVAttachment));
             Int32 checkedVideoTracksCount = checkedNodes.Count(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.video);
             Int32 checkedAudioTracksCount = checkedNodes.Count(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.audio);
             Int32 checkedSubtitleTracksCount = checkedNodes.Count(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.subtitles);
@@ -1271,79 +1271,288 @@ namespace gMKVToolNix.Forms
 
             Int32 allInputFilesCount = allNodes.Count(n => n != null && n.Tag != null && n.Tag is gMKVSegmentInfo);
 
-            checkAllTracksToolStripMenuItem.Enabled = (allTracksCount - checkedAllTracksCount > 0);
-            checkAllVideoTracksToolStripMenuItem.Enabled = (videoTracksCount - checkedVideoTracksCount > 0);
-            checkAllAudioTracksToolStripMenuItem.Enabled = (audioTracksCount - checkedAudioTracksCount > 0);
-            checkAllSubtitleTracksToolStripMenuItem.Enabled = (subtitleTracksCount - checkedSubtitleTracksCount > 0);
-            checkAllChapterTracksToolStripMenuItem.Enabled = (chapterTracksCount - checkedChapterTracksCount > 0);
-            checkAllAttachmentTracksToolStripMenuItem.Enabled = (attachmentTracksCount - checkedAttachmentTracksCount > 0);
+            checkTracksToolStripMenuItem.Enabled = (allTracksCount - checkedAllTracksCount > 0);
+            checkVideoTracksToolStripMenuItem.Enabled = (videoTracksCount - checkedVideoTracksCount > 0);
+            checkAudioTracksToolStripMenuItem.Enabled = (audioTracksCount - checkedAudioTracksCount > 0);
+            checkSubtitleTracksToolStripMenuItem.Enabled = (subtitleTracksCount - checkedSubtitleTracksCount > 0);
+            checkChapterTracksToolStripMenuItem.Enabled = (chapterTracksCount - checkedChapterTracksCount > 0);
+            checkAttachmentTracksToolStripMenuItem.Enabled = (attachmentTracksCount - checkedAttachmentTracksCount > 0);
 
-            uncheckAllTracksToolStripMenuItem.Enabled = (checkedAllTracksCount > 0);
-            uncheckAllVideoTracksToolStripMenuItem.Enabled = (checkedVideoTracksCount > 0);
-            uncheckAllAudioTracksToolStripMenuItem.Enabled = (checkedAudioTracksCount > 0);
-            uncheckAllSubtitleTracksToolStripMenuItem.Enabled = (checkedSubtitleTracksCount > 0);
-            uncheckAllChapterTracksToolStripMenuItem.Enabled = (checkedChapterTracksCount > 0);
-            uncheckAllAttachmentTracksToolStripMenuItem.Enabled = (checkedAttachmentTracksCount > 0);
+            uncheckTracksToolStripMenuItem.Enabled = (checkedAllTracksCount > 0);
+            uncheckVideoTracksToolStripMenuItem.Enabled = (checkedVideoTracksCount > 0);
+            uncheckAudioTracksToolStripMenuItem.Enabled = (checkedAudioTracksCount > 0);
+            uncheckSubtitleTracksToolStripMenuItem.Enabled = (checkedSubtitleTracksCount > 0);
+            uncheckChapterTracksToolStripMenuItem.Enabled = (checkedChapterTracksCount > 0);
+            uncheckAttachmentTracksToolStripMenuItem.Enabled = (checkedAttachmentTracksCount > 0);
 
             removeAllInputFilesToolStripMenuItem.Enabled = (allInputFilesCount > 0);
             removeSelectedInputFileToolStripMenuItem.Enabled = (trvInputFiles.SelectedNode != null && trvInputFiles.SelectedNode.Tag != null);
 
-            checkAllTracksToolStripMenuItem.Text = String.Format("Check All Tracks ({0}/{1})", checkedAllTracksCount, allTracksCount);
-            checkAllVideoTracksToolStripMenuItem.Text = String.Format("Check All Video Tracks ({0}/{1})", checkedVideoTracksCount, videoTracksCount);
-            checkAllAudioTracksToolStripMenuItem.Text = String.Format("Check All Audio Tracks ({0}/{1})", checkedAudioTracksCount, audioTracksCount);
-            checkAllSubtitleTracksToolStripMenuItem.Text = String.Format("Check All Subtitle Tracks ({0}/{1})", checkedSubtitleTracksCount, subtitleTracksCount);
-            checkAllChapterTracksToolStripMenuItem.Text = String.Format("Check All Chapter Tracks ({0}/{1})", checkedChapterTracksCount, chapterTracksCount);
-            checkAllAttachmentTracksToolStripMenuItem.Text = String.Format("Check All Attachment Tracks ({0}/{1})", checkedAttachmentTracksCount, attachmentTracksCount);
+            checkTracksToolStripMenuItem.Text = String.Format("Check All Tracks ({0}/{1})", checkedAllTracksCount, allTracksCount);
 
-            uncheckAllTracksToolStripMenuItem.Text = String.Format("Uncheck All Tracks ({0}/{1})", (allTracksCount - checkedAllTracksCount), allTracksCount);
-            uncheckAllVideoTracksToolStripMenuItem.Text = String.Format("Uncheck All Video Tracks ({0}/{1})", videoTracksCount - checkedVideoTracksCount, videoTracksCount);
-            uncheckAllAudioTracksToolStripMenuItem.Text = String.Format("Uncheck All Audio Tracks ({0}/{1})", audioTracksCount - checkedAudioTracksCount, audioTracksCount);
-            uncheckAllSubtitleTracksToolStripMenuItem.Text = String.Format("Uncheck All Subtitle Tracks ({0}/{1})", subtitleTracksCount - checkedSubtitleTracksCount, subtitleTracksCount);
-            uncheckAllChapterTracksToolStripMenuItem.Text = String.Format("Uncheck All Chapter Tracks ({0}/{1})", chapterTracksCount - checkedChapterTracksCount, chapterTracksCount);
-            uncheckAllAttachmentTracksToolStripMenuItem.Text = String.Format("Uncheck All Attachment Tracks ({0}/{1})", attachmentTracksCount - checkedAttachmentTracksCount, attachmentTracksCount);
+            checkVideoTracksToolStripMenuItem.Text = String.Format("Check Video Tracks... ({0}/{1})", checkedVideoTracksCount, videoTracksCount);
+            checkAudioTracksToolStripMenuItem.Text = String.Format("Check Audio Tracks... ({0}/{1})", checkedAudioTracksCount, audioTracksCount);
+            checkSubtitleTracksToolStripMenuItem.Text = String.Format("Check Subtitle Tracks... ({0}/{1})", checkedSubtitleTracksCount, subtitleTracksCount);
+            checkChapterTracksToolStripMenuItem.Text = String.Format("Check Chapter Tracks... ({0}/{1})", checkedChapterTracksCount, chapterTracksCount);
+            checkAttachmentTracksToolStripMenuItem.Text = String.Format("Check Attachment Tracks... ({0}/{1})", checkedAttachmentTracksCount, attachmentTracksCount);
+
+            allVideoTracksToolStripMenuItem.Text = String.Format("All Video Tracks ({0}/{1})", checkedVideoTracksCount, videoTracksCount);
+            allAudioTracksToolStripMenuItem.Text = String.Format("All Audio Tracks ({0}/{1})", checkedAudioTracksCount, audioTracksCount);
+            allSubtitleTracksToolStripMenuItem.Text = String.Format("All Subtitle Tracks ({0}/{1})", checkedSubtitleTracksCount, subtitleTracksCount);
+            allChapterTracksToolStripMenuItem.Text = String.Format("All Chapter Tracks ({0}/{1})", checkedChapterTracksCount, chapterTracksCount);
+            allAttachmentTracksToolStripMenuItem.Text = String.Format("All Attachment Tracks ({0}/{1})", checkedAttachmentTracksCount, attachmentTracksCount);
+
+            uncheckTracksToolStripMenuItem.Text = String.Format("Uncheck All Tracks ({0}/{1})", (allTracksCount - checkedAllTracksCount), allTracksCount);
+
+            uncheckVideoTracksToolStripMenuItem.Text = String.Format("Uncheck Video Tracks... ({0}/{1})", videoTracksCount - checkedVideoTracksCount, videoTracksCount);
+            uncheckAudioTracksToolStripMenuItem.Text = String.Format("Uncheck Audio Tracks... ({0}/{1})", audioTracksCount - checkedAudioTracksCount, audioTracksCount);
+            uncheckSubtitleTracksToolStripMenuItem.Text = String.Format("Uncheck Subtitle Tracks... ({0}/{1})", subtitleTracksCount - checkedSubtitleTracksCount, subtitleTracksCount);
+            uncheckChapterTracksToolStripMenuItem.Text = String.Format("Uncheck Chapter Tracks... ({0}/{1})", chapterTracksCount - checkedChapterTracksCount, chapterTracksCount);
+            uncheckAttachmentTracksToolStripMenuItem.Text = String.Format("Uncheck Attachment Tracks... ({0}/{1})", attachmentTracksCount - checkedAttachmentTracksCount, attachmentTracksCount);
+
+            allVideoTracksToolStripMenuItem1.Text = String.Format("All Video Tracks ({0}/{1})", videoTracksCount - checkedVideoTracksCount, videoTracksCount);
+            allAudioTracksToolStripMenuItem1.Text = String.Format("All Audio Tracks ({0}/{1})", audioTracksCount - checkedAudioTracksCount, audioTracksCount);
+            allSubtitleTracksToolStripMenuItem1.Text = String.Format("All Subtitle Tracks ({0}/{1})", subtitleTracksCount - checkedSubtitleTracksCount, subtitleTracksCount);
+            allChapterTracksToolStripMenuItem1.Text = String.Format("All Chapter Tracks ({0}/{1})", chapterTracksCount - checkedChapterTracksCount, chapterTracksCount);
+            allAttachmentTracksToolStripMenuItem1.Text = String.Format("All Attachment Tracks ({0}/{1})", attachmentTracksCount - checkedAttachmentTracksCount, attachmentTracksCount);
 
             removeAllInputFilesToolStripMenuItem.Text = String.Format("Remove All Input Files ({0})", allInputFilesCount);
 
-            if (removeSelectedInputFileToolStripMenuItem.Enabled)
+            removeSelectedInputFileToolStripMenuItem.Text = "Remove Selected Input File";
+
+            checkVideoTracksToolStripMenuItem.DropDownItems.Clear();
+            checkVideoTracksToolStripMenuItem.DropDownItems.Add(allVideoTracksToolStripMenuItem);
+            uncheckVideoTracksToolStripMenuItem.DropDownItems.Clear();
+            uncheckVideoTracksToolStripMenuItem.DropDownItems.Add(allVideoTracksToolStripMenuItem1);
+
+            checkAudioTracksToolStripMenuItem.DropDownItems.Clear();
+            checkAudioTracksToolStripMenuItem.DropDownItems.Add(allAudioTracksToolStripMenuItem);
+            uncheckAudioTracksToolStripMenuItem.DropDownItems.Clear();
+            uncheckAudioTracksToolStripMenuItem.DropDownItems.Add(allAudioTracksToolStripMenuItem1);
+
+            checkSubtitleTracksToolStripMenuItem.DropDownItems.Clear();
+            checkSubtitleTracksToolStripMenuItem.DropDownItems.Add(allSubtitleTracksToolStripMenuItem);
+            uncheckSubtitleTracksToolStripMenuItem.DropDownItems.Clear();
+            uncheckSubtitleTracksToolStripMenuItem.DropDownItems.Add(allSubtitleTracksToolStripMenuItem1);
+            
+            // Get all video track languages
+            List<string> videoLanguages = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.video).
+                Select(n => (n.Tag as gMKVTrack).Language).Distinct().ToList();
+            foreach (var lang in videoLanguages)
             {
-                TreeNode selNode = trvInputFiles.SelectedNode;
-                if (!(selNode.Tag is gMKVSegmentInfo))
-                {
-                    selNode = selNode.Parent;
-                }
-                removeSelectedInputFileToolStripMenuItem.Text = String.Format("Remove Selected Input File ({0})", (selNode.Tag as gMKVSegmentInfo).Filename);
+                Int32 totalLanguages = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.video && (n.Tag as gMKVTrack).Language == lang).Count();
+                Int32 checkedLanguages = trvInputFiles.CheckedNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.video && (n.Tag as gMKVTrack).Language == lang).Count();
+                checkVideoTracksToolStripMenuItem.DropDownItems.Add(
+                    new ToolStripMenuItem(String.Format("All Video Tracks [lang: {0}] ({1}/{2})", lang, checkedLanguages, totalLanguages), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.video, true, lang); }
+                    )
+                );
+                uncheckVideoTracksToolStripMenuItem.DropDownItems.Add(
+                    new ToolStripMenuItem(String.Format("All Video Tracks [lang: {0}] ({1}/{2})", lang, totalLanguages - checkedLanguages, totalLanguages), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.video, false, lang); }
+                    )
+                );
             }
-            else
+
+            // Get all video track Codec_id 
+            List<string> videoCodecs = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.video).
+                Select(n => (n.Tag as gMKVTrack).CodecID).Distinct().ToList();
+            foreach (var codec in videoCodecs)
             {
-                removeSelectedInputFileToolStripMenuItem.Text = "Remove Selected Input File";
+                Int32 totalLanguages = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.video && (n.Tag as gMKVTrack).CodecID == codec).Count();
+                Int32 checkedLanguages = trvInputFiles.CheckedNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.video && (n.Tag as gMKVTrack).CodecID == codec).Count();
+                checkVideoTracksToolStripMenuItem.DropDownItems.Add(
+                    new ToolStripMenuItem(String.Format("All Video Tracks [{0}] ({1}/{2})", codec, checkedLanguages, totalLanguages), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.video, true, null, null, codec); }
+                    )
+                );
+                uncheckVideoTracksToolStripMenuItem.DropDownItems.Add(
+                    new ToolStripMenuItem(String.Format("All Video Tracks [{0}] ({1}/{2})", codec, totalLanguages - checkedLanguages, totalLanguages), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.video, false, null, null, codec); }
+                    )
+                );
             }
+
+            // Get all video track extra info
+            List<string> videoExtra = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.video).
+                Select(n => (n.Tag as gMKVTrack).ExtraInfo).Distinct().ToList();
+            foreach (var extra in videoExtra)
+            {
+                Int32 totalLanguages = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.video && (n.Tag as gMKVTrack).ExtraInfo == extra).Count();
+                Int32 checkedLanguages = trvInputFiles.CheckedNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.video && (n.Tag as gMKVTrack).ExtraInfo == extra).Count();
+                checkVideoTracksToolStripMenuItem.DropDownItems.Add(
+                    new ToolStripMenuItem(String.Format("All Video Tracks [{0}] ({1}/{2})", extra, checkedLanguages, totalLanguages), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.video, true, null, extra); }
+                    )
+                );
+                uncheckVideoTracksToolStripMenuItem.DropDownItems.Add(
+                    new ToolStripMenuItem(String.Format("All Video Tracks [{0}] ({1}/{2})", extra, totalLanguages - checkedLanguages, totalLanguages), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.video, false, null, extra); }
+                    )
+                );
+            }
+
+            // Get all audio track languages
+            List<string> audioLanguages = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.audio).
+                Select(n => (n.Tag as gMKVTrack).Language).Distinct().ToList();
+            foreach (var lang in audioLanguages)
+            {
+                Int32 totalLanguages = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.audio && (n.Tag as gMKVTrack).Language == lang).Count();
+                Int32 checkedLanguages = trvInputFiles.CheckedNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.audio && (n.Tag as gMKVTrack).Language == lang).Count();
+                checkAudioTracksToolStripMenuItem.DropDownItems.Add(
+                    new ToolStripMenuItem(String.Format("All Audio Tracks [lang: {0}] ({1}/{2})", lang, checkedLanguages, totalLanguages), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.audio, true, lang); }
+                    )
+                );
+                uncheckAudioTracksToolStripMenuItem.DropDownItems.Add(
+                    new ToolStripMenuItem(String.Format("All Audio Tracks [lang: {0}] ({1}/{2})", lang, totalLanguages - checkedLanguages, totalLanguages), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.audio, false, lang); }
+                    )
+                );
+            }
+
+            // Get all audio track Codec_id 
+            List<string> audioCodecs = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.audio).
+                Select(n => (n.Tag as gMKVTrack).CodecID).Distinct().ToList();
+            foreach (var codec in audioCodecs)
+            {
+                Int32 totalLanguages = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.audio && (n.Tag as gMKVTrack).CodecID == codec).Count();
+                Int32 checkedLanguages = trvInputFiles.CheckedNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.audio && (n.Tag as gMKVTrack).CodecID == codec).Count();
+                checkAudioTracksToolStripMenuItem.DropDownItems.Add(
+                    new ToolStripMenuItem(String.Format("All Audio Tracks [{0}] ({1}/{2})", codec, checkedLanguages, totalLanguages), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.audio, true, null, null, codec); }
+                    )
+                );
+                uncheckAudioTracksToolStripMenuItem.DropDownItems.Add(
+                    new ToolStripMenuItem(String.Format("All Audio Tracks [{0}] ({1}/{2})", codec, totalLanguages - checkedLanguages, totalLanguages), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.audio, false, null, null, codec); }
+                    )
+                );
+            }
+
+            // Get all audio track extra info
+            List<string> audioExtraInfo = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.audio).
+                Select(n => (n.Tag as gMKVTrack).ExtraInfo).Distinct().ToList();
+            foreach (var extra in audioExtraInfo)
+            {
+                Int32 totalLanguages = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.audio && (n.Tag as gMKVTrack).ExtraInfo == extra).Count();
+                Int32 checkedLanguages = trvInputFiles.CheckedNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.audio && (n.Tag as gMKVTrack).ExtraInfo == extra).Count();
+                checkAudioTracksToolStripMenuItem.DropDownItems.Add(
+                    new ToolStripMenuItem(String.Format("All Audio Tracks [{0}] ({1}/{2})", extra, checkedLanguages, totalLanguages), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.audio, true, null, extra); }
+                    )
+                );
+                uncheckAudioTracksToolStripMenuItem.DropDownItems.Add(
+                    new ToolStripMenuItem(String.Format("All Audio Tracks [{0}] ({1}/{2})", extra, totalLanguages - checkedLanguages, totalLanguages), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.audio, false, null, extra); }
+                    )
+                );
+            }
+
+            // Get all subtitle track languages
+            List<string> subLanguages = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.subtitles).
+                Select(n => (n.Tag as gMKVTrack).Language).Distinct().ToList();
+            foreach (var lang in subLanguages)
+            {
+                Int32 totalLanguages = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.subtitles && (n.Tag as gMKVTrack).Language == lang).Count();
+                Int32 checkedLanguages = trvInputFiles.CheckedNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.subtitles && (n.Tag as gMKVTrack).Language == lang).Count();
+                checkSubtitleTracksToolStripMenuItem.DropDownItems.Add(
+                    new ToolStripMenuItem(String.Format("All Subtitle Tracks [lang: {0}] ({1}/{2})", lang, checkedLanguages, totalLanguages), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.subtitle, true, lang); }
+                    )
+                );
+                uncheckSubtitleTracksToolStripMenuItem.DropDownItems.Add(
+                    new ToolStripMenuItem(String.Format("All Subtitle Tracks [lang: {0}] ({1}/{2})", lang, totalLanguages - checkedLanguages, totalLanguages), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.subtitle, false, lang); }
+                    )
+                );
+            }
+
+            // Get all subtitle track codec_id
+            List<string> subCodecs = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.subtitles).
+                Select(n => (n.Tag as gMKVTrack).CodecID).Distinct().ToList();
+            foreach (var codec in subCodecs)
+            {
+                Int32 totalLanguages = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.subtitles && (n.Tag as gMKVTrack).CodecID == codec).Count();
+                Int32 checkedLanguages = trvInputFiles.CheckedNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.subtitles && (n.Tag as gMKVTrack).CodecID == codec).Count();
+                checkSubtitleTracksToolStripMenuItem.DropDownItems.Add(
+                    new ToolStripMenuItem(String.Format("All Subtitle Tracks [{0}] ({1}/{2})", codec, checkedLanguages, totalLanguages), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.subtitle, true, null, null, codec); }
+                    )
+                );
+                uncheckSubtitleTracksToolStripMenuItem.DropDownItems.Add(
+                    new ToolStripMenuItem(String.Format("All Subtitle Tracks [{0}] ({1}/{2})", codec, totalLanguages - checkedLanguages, totalLanguages), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.subtitle, false, null, null, codec); }
+                    )
+                );
+            }
+
         }
 
-        private void SetCheckedTracks(TrackSelectionMode argSelectionMode, bool argCheck)
-        { 
+        private void SetCheckedTracks(TrackSelectionMode argSelectionMode, bool argCheck, string argLanguageFilter = null, string argExtraInfoFilter = null, string argCodecIdFilter = null)
+        {
+            List<TreeNode> nodes = null;
             switch (argSelectionMode)
             {
                 case TrackSelectionMode.video:
-                    trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.video).ToList().ForEach(n => n.Checked = argCheck);
+                    nodes = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.video).ToList();
+                    if (!String.IsNullOrWhiteSpace(argLanguageFilter))
+                    {
+                        nodes = nodes.Where(n => (n.Tag as gMKVTrack).Language == argLanguageFilter).ToList();
+                    }
+                    if (!String.IsNullOrWhiteSpace(argExtraInfoFilter))
+                    {
+                        nodes = nodes.Where(n => (n.Tag as gMKVTrack).ExtraInfo == argExtraInfoFilter).ToList();
+                    }
+                    if (!String.IsNullOrWhiteSpace(argCodecIdFilter))
+                    {
+                        nodes = nodes.Where(n => (n.Tag as gMKVTrack).CodecID == argCodecIdFilter).ToList();
+                    }
                     break;
                 case TrackSelectionMode.audio:
-                    trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.audio).ToList().ForEach(n => n.Checked = argCheck);
+                    nodes = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.audio).ToList();
+                    if (!String.IsNullOrWhiteSpace(argLanguageFilter))
+                    {
+                        nodes = nodes.Where(n => (n.Tag as gMKVTrack).Language == argLanguageFilter).ToList();
+                    }
+                    if (!String.IsNullOrWhiteSpace(argExtraInfoFilter))
+                    {
+                        nodes = nodes.Where(n => (n.Tag as gMKVTrack).ExtraInfo == argExtraInfoFilter).ToList();
+                    }
+                    if (!String.IsNullOrWhiteSpace(argCodecIdFilter))
+                    {
+                        nodes = nodes.Where(n => (n.Tag as gMKVTrack).CodecID == argCodecIdFilter).ToList();
+                    }
                     break;
                 case TrackSelectionMode.subtitle:
-                    trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.subtitles).ToList().ForEach(n => n.Checked = argCheck);
+                    nodes = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.subtitles).ToList();
+                    if (!String.IsNullOrWhiteSpace(argLanguageFilter))
+                    {
+                        nodes = nodes.Where(n => (n.Tag as gMKVTrack).Language == argLanguageFilter).ToList();
+                    }
+                    if (!String.IsNullOrWhiteSpace(argExtraInfoFilter))
+                    {
+                        nodes = nodes.Where(n => (n.Tag as gMKVTrack).ExtraInfo == argExtraInfoFilter).ToList();
+                    }
+                    if (!String.IsNullOrWhiteSpace(argCodecIdFilter))
+                    {
+                        nodes = nodes.Where(n => (n.Tag as gMKVTrack).CodecID == argCodecIdFilter).ToList();
+                    }
                     break;
                 case TrackSelectionMode.chapter:
-                    trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVChapter).ToList().ForEach(n => n.Checked = argCheck);
+                    nodes = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVChapter).ToList();
                     break;
                 case TrackSelectionMode.attachment:
-                    trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVAttachment).ToList().ForEach(n => n.Checked = argCheck);
+                    nodes = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVAttachment).ToList();
                     break;
                 case TrackSelectionMode.all:
-                    trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && !(n.Tag is gMKVSegmentInfo)).ToList().ForEach(n => n.Checked = argCheck);
+                    nodes = trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && !(n.Tag is gMKVSegmentInfo)).ToList();
                     break;
                 default:
+
                     break;
             }
+            nodes.ForEach(n => n.Checked = argCheck);
         }
 
         private void contextMenuStrip_Opening(object sender, CancelEventArgs e)
@@ -1351,62 +1560,62 @@ namespace gMKVToolNix.Forms
             SetContextMenuText();
         }
 
-        private void checkAllTracksToolStripMenuItem_Click(object sender, EventArgs e)
+        private void checkTracksToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SetCheckedTracks(TrackSelectionMode.all, true);
         }
 
-        private void checkAllVideoTracksToolStripMenuItem_Click(object sender, EventArgs e)
+        private void allVideoTracksToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SetCheckedTracks(TrackSelectionMode.video, true);
         }
 
-        private void checkAllAudioTracksToolStripMenuItem_Click(object sender, EventArgs e)
+        private void allAudioTracksToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SetCheckedTracks(TrackSelectionMode.audio, true);
         }
 
-        private void checkAllSubtitleTracksToolStripMenuItem_Click(object sender, EventArgs e)
+        private void allSubtitleTracksToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SetCheckedTracks(TrackSelectionMode.subtitle, true);
         }
 
-        private void checkAllChapterTracksToolStripMenuItem_Click(object sender, EventArgs e)
+        private void allChapterTracksToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SetCheckedTracks(TrackSelectionMode.chapter, true);
         }
 
-        private void checkAllAttachmentTracksToolStripMenuItem_Click(object sender, EventArgs e)
+        private void allAttachmentTracksToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SetCheckedTracks(TrackSelectionMode.attachment, true);
         }
 
-        private void uncheckAllTracksToolStripMenuItem_Click(object sender, EventArgs e)
+        private void uncheckTracksToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SetCheckedTracks(TrackSelectionMode.all, false);
         }
 
-        private void uncheckAllVideoTracksToolStripMenuItem_Click(object sender, EventArgs e)
+        private void allVideoTracksToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             SetCheckedTracks(TrackSelectionMode.video, false);
         }
 
-        private void uncheckAllAudioTracksToolStripMenuItem_Click(object sender, EventArgs e)
+        private void allAudioTracksToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             SetCheckedTracks(TrackSelectionMode.audio, false);
         }
 
-        private void uncheckAllSubtitleTracksToolStripMenuItem_Click(object sender, EventArgs e)
+        private void allSubtitleTracksToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             SetCheckedTracks(TrackSelectionMode.subtitle, false);
         }
 
-        private void uncheckAllChapterTracksToolStripMenuItem_Click(object sender, EventArgs e)
+        private void allChapterTracksToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             SetCheckedTracks(TrackSelectionMode.chapter, false);
         }
 
-        private void uncheckAllAttachmentTracksToolStripMenuItem_Click(object sender, EventArgs e)
+        private void allAttachmentTracksToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             SetCheckedTracks(TrackSelectionMode.attachment, false);
         }
@@ -1471,7 +1680,7 @@ namespace gMKVToolNix.Forms
         {
             trvInputFiles.CollapseAll();
         }
-        
+
         #endregion
     }
 }
