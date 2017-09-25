@@ -33,11 +33,12 @@ namespace gMKVToolNix.Forms
             this.components = new System.ComponentModel.Container();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.prgBrStatus = new System.Windows.Forms.ToolStripProgressBar();
-            this.lblTrack = new System.Windows.Forms.ToolStripStatusLabel();
             this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.prgBrTotalStatus = new System.Windows.Forms.ToolStripProgressBar();
+            this.lblTotalStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.tlpMain = new gMKVToolNix.gTableLayoutPanel();
             this.grpActions = new gMKVToolNix.gGroupBox();
-            this.chkJobs = new System.Windows.Forms.CheckBox();
+            this.btnAddJobs = new System.Windows.Forms.Button();
             this.btnShowJobs = new System.Windows.Forms.Button();
             this.chkShowPopup = new System.Windows.Forms.CheckBox();
             this.btnExtract = new System.Windows.Forms.Button();
@@ -55,12 +56,9 @@ namespace gMKVToolNix.Forms
             this.btnBrowseMKVToolnixPath = new System.Windows.Forms.Button();
             this.grpInputFiles = new gMKVToolNix.gGroupBox();
             this.trvInputFiles = new gMKVToolNix.gTreeView();
-            this.grpSelectedFileInfo = new gMKVToolNix.gGroupBox();
-            this.txtSegmentInfo = new gMKVToolNix.gRichTextBox();
-            this.btnAbort = new System.Windows.Forms.Button();
-            this.btnAbortAll = new System.Windows.Forms.Button();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.checkAllTracksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.checkAllVideoTracksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkAllAudioTracksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkAllSubtitleTracksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,28 +66,32 @@ namespace gMKVToolNix.Forms
             this.checkAllAttachmentTracksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.uncheckAllTracksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.removeAllInputFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.removeSelectedInputFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.addInputFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uncheckAllVideoTracksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uncheckAllAudioTracksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uncheckAllSubtitleTracksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uncheckAllChapterTracksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uncheckAllAttachmentTracksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.prgBrTotalStatus = new System.Windows.Forms.ToolStripProgressBar();
-            this.lblTotalStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.removeAllInputFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.removeSelectedInputFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.addInputFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.expandAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.collapseAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.grpSelectedFileInfo = new gMKVToolNix.gGroupBox();
+            this.txtSegmentInfo = new gMKVToolNix.gRichTextBox();
+            this.btnAbort = new System.Windows.Forms.Button();
+            this.btnAbortAll = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.tlpMain.SuspendLayout();
             this.grpActions.SuspendLayout();
             this.grpOutputDirectory.SuspendLayout();
             this.grpConfig.SuspendLayout();
             this.grpInputFiles.SuspendLayout();
-            this.grpSelectedFileInfo.SuspendLayout();
             this.contextMenuStrip.SuspendLayout();
+            this.grpSelectedFileInfo.SuspendLayout();
             this.SuspendLayout();
             // 
             // statusStrip
@@ -97,7 +99,6 @@ namespace gMKVToolNix.Forms
             this.statusStrip.AutoSize = false;
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.prgBrStatus,
-            this.lblTrack,
             this.lblStatus,
             this.prgBrTotalStatus,
             this.lblTotalStatus});
@@ -113,17 +114,24 @@ namespace gMKVToolNix.Forms
             this.prgBrStatus.Name = "prgBrStatus";
             this.prgBrStatus.Size = new System.Drawing.Size(100, 30);
             // 
-            // lblTrack
-            // 
-            this.lblTrack.Name = "lblTrack";
-            this.lblTrack.Size = new System.Drawing.Size(33, 31);
-            this.lblTrack.Text = "track";
-            // 
             // lblStatus
             // 
+            this.lblStatus.AutoSize = false;
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(38, 31);
+            this.lblStatus.Size = new System.Drawing.Size(40, 31);
             this.lblStatus.Text = "status";
+            // 
+            // prgBrTotalStatus
+            // 
+            this.prgBrTotalStatus.Name = "prgBrTotalStatus";
+            this.prgBrTotalStatus.Size = new System.Drawing.Size(100, 30);
+            // 
+            // lblTotalStatus
+            // 
+            this.lblTotalStatus.AutoSize = false;
+            this.lblTotalStatus.Name = "lblTotalStatus";
+            this.lblTotalStatus.Size = new System.Drawing.Size(40, 31);
+            this.lblTotalStatus.Text = "status";
             // 
             // tlpMain
             // 
@@ -148,7 +156,7 @@ namespace gMKVToolNix.Forms
             // 
             // grpActions
             // 
-            this.grpActions.Controls.Add(this.chkJobs);
+            this.grpActions.Controls.Add(this.btnAddJobs);
             this.grpActions.Controls.Add(this.btnShowJobs);
             this.grpActions.Controls.Add(this.chkShowPopup);
             this.grpActions.Controls.Add(this.btnExtract);
@@ -165,22 +173,20 @@ namespace gMKVToolNix.Forms
             this.grpActions.TabStop = false;
             this.grpActions.Text = "Actions";
             // 
-            // chkJobs
+            // btnAddJobs
             // 
-            this.chkJobs.AutoSize = true;
-            this.chkJobs.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-            this.chkJobs.Location = new System.Drawing.Point(201, 24);
-            this.chkJobs.Name = "chkJobs";
-            this.chkJobs.Size = new System.Drawing.Size(49, 19);
-            this.chkJobs.TabIndex = 14;
-            this.chkJobs.Text = "Jobs";
-            this.chkJobs.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-            this.chkJobs.UseVisualStyleBackColor = true;
-            this.chkJobs.CheckedChanged += new System.EventHandler(this.chkJobs_CheckedChanged);
+            this.btnAddJobs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAddJobs.Location = new System.Drawing.Point(467, 17);
+            this.btnAddJobs.Name = "btnAddJobs";
+            this.btnAddJobs.Size = new System.Drawing.Size(70, 30);
+            this.btnAddJobs.TabIndex = 14;
+            this.btnAddJobs.Text = "Add Jobs";
+            this.btnAddJobs.UseVisualStyleBackColor = true;
+            this.btnAddJobs.Click += new System.EventHandler(this.btnExtract_btnAddJobs_Click);
             // 
             // btnShowJobs
             // 
-            this.btnShowJobs.Location = new System.Drawing.Point(71, 18);
+            this.btnShowJobs.Location = new System.Drawing.Point(70, 17);
             this.btnShowJobs.Name = "btnShowJobs";
             this.btnShowJobs.Size = new System.Drawing.Size(60, 30);
             this.btnShowJobs.TabIndex = 13;
@@ -192,7 +198,7 @@ namespace gMKVToolNix.Forms
             // 
             this.chkShowPopup.AutoSize = true;
             this.chkShowPopup.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
-            this.chkShowPopup.Location = new System.Drawing.Point(134, 24);
+            this.chkShowPopup.Location = new System.Drawing.Point(134, 23);
             this.chkShowPopup.Name = "chkShowPopup";
             this.chkShowPopup.Size = new System.Drawing.Size(61, 19);
             this.chkShowPopup.TabIndex = 12;
@@ -204,23 +210,23 @@ namespace gMKVToolNix.Forms
             // btnExtract
             // 
             this.btnExtract.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExtract.Location = new System.Drawing.Point(521, 18);
+            this.btnExtract.Location = new System.Drawing.Point(541, 17);
             this.btnExtract.Name = "btnExtract";
-            this.btnExtract.Size = new System.Drawing.Size(90, 30);
+            this.btnExtract.Size = new System.Drawing.Size(70, 30);
             this.btnExtract.TabIndex = 10;
             this.btnExtract.Text = "Extract";
             this.btnExtract.UseVisualStyleBackColor = true;
-            this.btnExtract.Click += new System.EventHandler(this.btnExtract_Click);
+            this.btnExtract.Click += new System.EventHandler(this.btnExtract_btnAddJobs_Click);
             // 
             // lblExtractionMode
             // 
             this.lblExtractionMode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblExtractionMode.AutoSize = true;
-            this.lblExtractionMode.Location = new System.Drawing.Point(361, 26);
+            this.lblExtractionMode.Location = new System.Drawing.Point(314, 25);
             this.lblExtractionMode.Name = "lblExtractionMode";
-            this.lblExtractionMode.Size = new System.Drawing.Size(45, 15);
+            this.lblExtractionMode.Size = new System.Drawing.Size(42, 15);
             this.lblExtractionMode.TabIndex = 9;
-            this.lblExtractionMode.Text = "Extract:";
+            this.lblExtractionMode.Text = "Extract";
             // 
             // cmbExtractionMode
             // 
@@ -228,14 +234,14 @@ namespace gMKVToolNix.Forms
             this.cmbExtractionMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbExtractionMode.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
             this.cmbExtractionMode.FormattingEnabled = true;
-            this.cmbExtractionMode.Location = new System.Drawing.Point(411, 22);
+            this.cmbExtractionMode.Location = new System.Drawing.Point(360, 21);
             this.cmbExtractionMode.Name = "cmbExtractionMode";
             this.cmbExtractionMode.Size = new System.Drawing.Size(102, 23);
             this.cmbExtractionMode.TabIndex = 8;
             // 
             // btnShowLog
             // 
-            this.btnShowLog.Location = new System.Drawing.Point(6, 18);
+            this.btnShowLog.Location = new System.Drawing.Point(6, 17);
             this.btnShowLog.Name = "btnShowLog";
             this.btnShowLog.Size = new System.Drawing.Size(60, 30);
             this.btnShowLog.TabIndex = 6;
@@ -247,7 +253,7 @@ namespace gMKVToolNix.Forms
             // 
             this.lblChapterType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblChapterType.AutoSize = true;
-            this.lblChapterType.Location = new System.Drawing.Point(250, 26);
+            this.lblChapterType.Location = new System.Drawing.Point(203, 25);
             this.lblChapterType.Name = "lblChapterType";
             this.lblChapterType.Size = new System.Drawing.Size(49, 15);
             this.lblChapterType.TabIndex = 3;
@@ -259,7 +265,7 @@ namespace gMKVToolNix.Forms
             this.cmbChapterType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbChapterType.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
             this.cmbChapterType.FormattingEnabled = true;
-            this.cmbChapterType.Location = new System.Drawing.Point(303, 22);
+            this.cmbChapterType.Location = new System.Drawing.Point(256, 21);
             this.cmbChapterType.Name = "cmbChapterType";
             this.cmbChapterType.Size = new System.Drawing.Size(52, 23);
             this.cmbChapterType.TabIndex = 2;
@@ -373,6 +379,7 @@ namespace gMKVToolNix.Forms
             this.trvInputFiles.CheckBoxes = true;
             this.trvInputFiles.ContextMenuStrip = this.contextMenuStrip;
             this.trvInputFiles.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trvInputFiles.HideSelection = false;
             this.trvInputFiles.Location = new System.Drawing.Point(3, 19);
             this.trvInputFiles.Name = "trvInputFiles";
             this.trvInputFiles.ShowNodeToolTips = true;
@@ -381,6 +388,185 @@ namespace gMKVToolNix.Forms
             this.trvInputFiles.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.trvInputFiles_AfterSelect);
             this.trvInputFiles.DragDrop += new System.Windows.Forms.DragEventHandler(this.trvInputFiles_DragDrop);
             this.trvInputFiles.DragEnter += new System.Windows.Forms.DragEventHandler(this.trvInputFiles_DragEnter);
+            // 
+            // contextMenuStrip
+            // 
+            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.checkAllTracksToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.checkAllVideoTracksToolStripMenuItem,
+            this.checkAllAudioTracksToolStripMenuItem,
+            this.checkAllSubtitleTracksToolStripMenuItem,
+            this.checkAllChapterTracksToolStripMenuItem,
+            this.checkAllAttachmentTracksToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.uncheckAllTracksToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.uncheckAllVideoTracksToolStripMenuItem,
+            this.uncheckAllAudioTracksToolStripMenuItem,
+            this.uncheckAllSubtitleTracksToolStripMenuItem,
+            this.uncheckAllChapterTracksToolStripMenuItem,
+            this.uncheckAllAttachmentTracksToolStripMenuItem,
+            this.toolStripSeparator4,
+            this.removeAllInputFilesToolStripMenuItem,
+            this.removeSelectedInputFileToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.addInputFileToolStripMenuItem,
+            this.toolStripSeparator5,
+            this.expandAllToolStripMenuItem,
+            this.collapseAllToolStripMenuItem});
+            this.contextMenuStrip.Name = "contextMenuStrip";
+            this.contextMenuStrip.Size = new System.Drawing.Size(240, 414);
+            this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
+            // 
+            // checkAllTracksToolStripMenuItem
+            // 
+            this.checkAllTracksToolStripMenuItem.Name = "checkAllTracksToolStripMenuItem";
+            this.checkAllTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.checkAllTracksToolStripMenuItem.Text = "Check All Tracks";
+            this.checkAllTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllTracksToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(236, 6);
+            // 
+            // checkAllVideoTracksToolStripMenuItem
+            // 
+            this.checkAllVideoTracksToolStripMenuItem.Name = "checkAllVideoTracksToolStripMenuItem";
+            this.checkAllVideoTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.checkAllVideoTracksToolStripMenuItem.Text = "Check All Video Tracks";
+            this.checkAllVideoTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllVideoTracksToolStripMenuItem_Click);
+            // 
+            // checkAllAudioTracksToolStripMenuItem
+            // 
+            this.checkAllAudioTracksToolStripMenuItem.Name = "checkAllAudioTracksToolStripMenuItem";
+            this.checkAllAudioTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.checkAllAudioTracksToolStripMenuItem.Text = "Check All Audio Tracks";
+            this.checkAllAudioTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllAudioTracksToolStripMenuItem_Click);
+            // 
+            // checkAllSubtitleTracksToolStripMenuItem
+            // 
+            this.checkAllSubtitleTracksToolStripMenuItem.Name = "checkAllSubtitleTracksToolStripMenuItem";
+            this.checkAllSubtitleTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.checkAllSubtitleTracksToolStripMenuItem.Text = "Check All Subtitle Tracks";
+            this.checkAllSubtitleTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllSubtitleTracksToolStripMenuItem_Click);
+            // 
+            // checkAllChapterTracksToolStripMenuItem
+            // 
+            this.checkAllChapterTracksToolStripMenuItem.Name = "checkAllChapterTracksToolStripMenuItem";
+            this.checkAllChapterTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.checkAllChapterTracksToolStripMenuItem.Text = "Check All Chapter Tracks";
+            this.checkAllChapterTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllChapterTracksToolStripMenuItem_Click);
+            // 
+            // checkAllAttachmentTracksToolStripMenuItem
+            // 
+            this.checkAllAttachmentTracksToolStripMenuItem.Name = "checkAllAttachmentTracksToolStripMenuItem";
+            this.checkAllAttachmentTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.checkAllAttachmentTracksToolStripMenuItem.Text = "Check All Attachment Tracks";
+            this.checkAllAttachmentTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllAttachmentTracksToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(236, 6);
+            // 
+            // uncheckAllTracksToolStripMenuItem
+            // 
+            this.uncheckAllTracksToolStripMenuItem.Name = "uncheckAllTracksToolStripMenuItem";
+            this.uncheckAllTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.uncheckAllTracksToolStripMenuItem.Text = "Uncheck All Tracks";
+            this.uncheckAllTracksToolStripMenuItem.Click += new System.EventHandler(this.uncheckAllTracksToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(236, 6);
+            // 
+            // uncheckAllVideoTracksToolStripMenuItem
+            // 
+            this.uncheckAllVideoTracksToolStripMenuItem.Name = "uncheckAllVideoTracksToolStripMenuItem";
+            this.uncheckAllVideoTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.uncheckAllVideoTracksToolStripMenuItem.Text = "Uncheck All Video Tracks";
+            this.uncheckAllVideoTracksToolStripMenuItem.Click += new System.EventHandler(this.uncheckAllVideoTracksToolStripMenuItem_Click);
+            // 
+            // uncheckAllAudioTracksToolStripMenuItem
+            // 
+            this.uncheckAllAudioTracksToolStripMenuItem.Name = "uncheckAllAudioTracksToolStripMenuItem";
+            this.uncheckAllAudioTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.uncheckAllAudioTracksToolStripMenuItem.Text = "Uncheck All Audio Tracks";
+            this.uncheckAllAudioTracksToolStripMenuItem.Click += new System.EventHandler(this.uncheckAllAudioTracksToolStripMenuItem_Click);
+            // 
+            // uncheckAllSubtitleTracksToolStripMenuItem
+            // 
+            this.uncheckAllSubtitleTracksToolStripMenuItem.Name = "uncheckAllSubtitleTracksToolStripMenuItem";
+            this.uncheckAllSubtitleTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.uncheckAllSubtitleTracksToolStripMenuItem.Text = "Uncheck All Subtitle Tracks";
+            this.uncheckAllSubtitleTracksToolStripMenuItem.Click += new System.EventHandler(this.uncheckAllSubtitleTracksToolStripMenuItem_Click);
+            // 
+            // uncheckAllChapterTracksToolStripMenuItem
+            // 
+            this.uncheckAllChapterTracksToolStripMenuItem.Name = "uncheckAllChapterTracksToolStripMenuItem";
+            this.uncheckAllChapterTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.uncheckAllChapterTracksToolStripMenuItem.Text = "Uncheck All Chapter Tracks";
+            this.uncheckAllChapterTracksToolStripMenuItem.Click += new System.EventHandler(this.uncheckAllChapterTracksToolStripMenuItem_Click);
+            // 
+            // uncheckAllAttachmentTracksToolStripMenuItem
+            // 
+            this.uncheckAllAttachmentTracksToolStripMenuItem.Name = "uncheckAllAttachmentTracksToolStripMenuItem";
+            this.uncheckAllAttachmentTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.uncheckAllAttachmentTracksToolStripMenuItem.Text = "Uncheck All Attachment Tracks";
+            this.uncheckAllAttachmentTracksToolStripMenuItem.Click += new System.EventHandler(this.uncheckAllAttachmentTracksToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(236, 6);
+            // 
+            // removeAllInputFilesToolStripMenuItem
+            // 
+            this.removeAllInputFilesToolStripMenuItem.Name = "removeAllInputFilesToolStripMenuItem";
+            this.removeAllInputFilesToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.removeAllInputFilesToolStripMenuItem.Text = "Remove All Input Files";
+            this.removeAllInputFilesToolStripMenuItem.Click += new System.EventHandler(this.removeAllInputFilesToolStripMenuItem_Click);
+            // 
+            // removeSelectedInputFileToolStripMenuItem
+            // 
+            this.removeSelectedInputFileToolStripMenuItem.Name = "removeSelectedInputFileToolStripMenuItem";
+            this.removeSelectedInputFileToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.removeSelectedInputFileToolStripMenuItem.Text = "Remove Selected Input File";
+            this.removeSelectedInputFileToolStripMenuItem.Click += new System.EventHandler(this.removeSelectedInputFileToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(236, 6);
+            // 
+            // addInputFileToolStripMenuItem
+            // 
+            this.addInputFileToolStripMenuItem.Name = "addInputFileToolStripMenuItem";
+            this.addInputFileToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.addInputFileToolStripMenuItem.Text = "Add Input File(s)...";
+            this.addInputFileToolStripMenuItem.Click += new System.EventHandler(this.addInputFileToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(236, 6);
+            // 
+            // expandAllToolStripMenuItem
+            // 
+            this.expandAllToolStripMenuItem.Name = "expandAllToolStripMenuItem";
+            this.expandAllToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.expandAllToolStripMenuItem.Text = "Expand All";
+            this.expandAllToolStripMenuItem.Click += new System.EventHandler(this.expandAllToolStripMenuItem_Click);
+            // 
+            // collapseAllToolStripMenuItem
+            // 
+            this.collapseAllToolStripMenuItem.Name = "collapseAllToolStripMenuItem";
+            this.collapseAllToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.collapseAllToolStripMenuItem.Text = "Collapse All";
+            this.collapseAllToolStripMenuItem.Click += new System.EventHandler(this.collapseAllToolStripMenuItem_Click);
             // 
             // grpSelectedFileInfo
             // 
@@ -431,174 +617,6 @@ namespace gMKVToolNix.Forms
             this.btnAbortAll.UseVisualStyleBackColor = true;
             this.btnAbortAll.Click += new System.EventHandler(this.btnAbortAll_Click);
             // 
-            // contextMenuStrip
-            // 
-            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.checkAllTracksToolStripMenuItem,
-            this.toolStripSeparator2,
-            this.checkAllVideoTracksToolStripMenuItem,
-            this.checkAllAudioTracksToolStripMenuItem,
-            this.checkAllSubtitleTracksToolStripMenuItem,
-            this.checkAllChapterTracksToolStripMenuItem,
-            this.checkAllAttachmentTracksToolStripMenuItem,
-            this.toolStripMenuItem1,
-            this.uncheckAllTracksToolStripMenuItem,
-            this.toolStripSeparator1,
-            this.uncheckAllVideoTracksToolStripMenuItem,
-            this.uncheckAllAudioTracksToolStripMenuItem,
-            this.uncheckAllSubtitleTracksToolStripMenuItem,
-            this.uncheckAllChapterTracksToolStripMenuItem,
-            this.uncheckAllAttachmentTracksToolStripMenuItem,
-            this.toolStripSeparator4,
-            this.removeAllInputFilesToolStripMenuItem,
-            this.removeSelectedInputFileToolStripMenuItem,
-            this.toolStripSeparator3,
-            this.addInputFileToolStripMenuItem});
-            this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(240, 364);
-            this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
-            // 
-            // checkAllTracksToolStripMenuItem
-            // 
-            this.checkAllTracksToolStripMenuItem.Name = "checkAllTracksToolStripMenuItem";
-            this.checkAllTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.checkAllTracksToolStripMenuItem.Text = "Check All Tracks";
-            this.checkAllTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllTracksToolStripMenuItem_Click);
-            // 
-            // checkAllVideoTracksToolStripMenuItem
-            // 
-            this.checkAllVideoTracksToolStripMenuItem.Name = "checkAllVideoTracksToolStripMenuItem";
-            this.checkAllVideoTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.checkAllVideoTracksToolStripMenuItem.Text = "Check All Video Tracks";
-            this.checkAllVideoTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllVideoTracksToolStripMenuItem_Click);
-            // 
-            // checkAllAudioTracksToolStripMenuItem
-            // 
-            this.checkAllAudioTracksToolStripMenuItem.Name = "checkAllAudioTracksToolStripMenuItem";
-            this.checkAllAudioTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.checkAllAudioTracksToolStripMenuItem.Text = "Check All Audio Tracks";
-            this.checkAllAudioTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllAudioTracksToolStripMenuItem_Click);
-            // 
-            // checkAllSubtitleTracksToolStripMenuItem
-            // 
-            this.checkAllSubtitleTracksToolStripMenuItem.Name = "checkAllSubtitleTracksToolStripMenuItem";
-            this.checkAllSubtitleTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.checkAllSubtitleTracksToolStripMenuItem.Text = "Check All Subtitle Tracks";
-            this.checkAllSubtitleTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllSubtitleTracksToolStripMenuItem_Click);
-            // 
-            // checkAllChapterTracksToolStripMenuItem
-            // 
-            this.checkAllChapterTracksToolStripMenuItem.Name = "checkAllChapterTracksToolStripMenuItem";
-            this.checkAllChapterTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.checkAllChapterTracksToolStripMenuItem.Text = "Check All Chapter Tracks";
-            this.checkAllChapterTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllChapterTracksToolStripMenuItem_Click);
-            // 
-            // checkAllAttachmentTracksToolStripMenuItem
-            // 
-            this.checkAllAttachmentTracksToolStripMenuItem.Name = "checkAllAttachmentTracksToolStripMenuItem";
-            this.checkAllAttachmentTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.checkAllAttachmentTracksToolStripMenuItem.Text = "Check All Attachment Tracks";
-            this.checkAllAttachmentTracksToolStripMenuItem.Click += new System.EventHandler(this.checkAllAttachmentTracksToolStripMenuItem_Click);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(236, 6);
-            // 
-            // uncheckAllTracksToolStripMenuItem
-            // 
-            this.uncheckAllTracksToolStripMenuItem.Name = "uncheckAllTracksToolStripMenuItem";
-            this.uncheckAllTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.uncheckAllTracksToolStripMenuItem.Text = "Uncheck All Tracks";
-            this.uncheckAllTracksToolStripMenuItem.Click += new System.EventHandler(this.uncheckAllTracksToolStripMenuItem_Click);
-            // 
-            // removeAllInputFilesToolStripMenuItem
-            // 
-            this.removeAllInputFilesToolStripMenuItem.Name = "removeAllInputFilesToolStripMenuItem";
-            this.removeAllInputFilesToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.removeAllInputFilesToolStripMenuItem.Text = "Remove All Input Files";
-            this.removeAllInputFilesToolStripMenuItem.Click += new System.EventHandler(this.removeAllInputFilesToolStripMenuItem_Click);
-            // 
-            // removeSelectedInputFileToolStripMenuItem
-            // 
-            this.removeSelectedInputFileToolStripMenuItem.Name = "removeSelectedInputFileToolStripMenuItem";
-            this.removeSelectedInputFileToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.removeSelectedInputFileToolStripMenuItem.Text = "Remove Selected Input File";
-            this.removeSelectedInputFileToolStripMenuItem.Click += new System.EventHandler(this.removeSelectedInputFileToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(236, 6);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(236, 6);
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(236, 6);
-            // 
-            // addInputFileToolStripMenuItem
-            // 
-            this.addInputFileToolStripMenuItem.Name = "addInputFileToolStripMenuItem";
-            this.addInputFileToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.addInputFileToolStripMenuItem.Text = "Add Input File(s)...";
-            this.addInputFileToolStripMenuItem.Click += new System.EventHandler(this.addInputFileToolStripMenuItem_Click);
-            // 
-            // uncheckAllVideoTracksToolStripMenuItem
-            // 
-            this.uncheckAllVideoTracksToolStripMenuItem.Name = "uncheckAllVideoTracksToolStripMenuItem";
-            this.uncheckAllVideoTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.uncheckAllVideoTracksToolStripMenuItem.Text = "Uncheck All Video Tracks";
-            this.uncheckAllVideoTracksToolStripMenuItem.Click += new System.EventHandler(this.uncheckAllVideoTracksToolStripMenuItem_Click);
-            // 
-            // uncheckAllAudioTracksToolStripMenuItem
-            // 
-            this.uncheckAllAudioTracksToolStripMenuItem.Name = "uncheckAllAudioTracksToolStripMenuItem";
-            this.uncheckAllAudioTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.uncheckAllAudioTracksToolStripMenuItem.Text = "Uncheck All Audio Tracks";
-            this.uncheckAllAudioTracksToolStripMenuItem.Click += new System.EventHandler(this.uncheckAllAudioTracksToolStripMenuItem_Click);
-            // 
-            // uncheckAllSubtitleTracksToolStripMenuItem
-            // 
-            this.uncheckAllSubtitleTracksToolStripMenuItem.Name = "uncheckAllSubtitleTracksToolStripMenuItem";
-            this.uncheckAllSubtitleTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.uncheckAllSubtitleTracksToolStripMenuItem.Text = "Uncheck All Subtitle Tracks";
-            this.uncheckAllSubtitleTracksToolStripMenuItem.Click += new System.EventHandler(this.uncheckAllSubtitleTracksToolStripMenuItem_Click);
-            // 
-            // uncheckAllChapterTracksToolStripMenuItem
-            // 
-            this.uncheckAllChapterTracksToolStripMenuItem.Name = "uncheckAllChapterTracksToolStripMenuItem";
-            this.uncheckAllChapterTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.uncheckAllChapterTracksToolStripMenuItem.Text = "Uncheck All Chapter Tracks";
-            this.uncheckAllChapterTracksToolStripMenuItem.Click += new System.EventHandler(this.uncheckAllChapterTracksToolStripMenuItem_Click);
-            // 
-            // uncheckAllAttachmentTracksToolStripMenuItem
-            // 
-            this.uncheckAllAttachmentTracksToolStripMenuItem.Name = "uncheckAllAttachmentTracksToolStripMenuItem";
-            this.uncheckAllAttachmentTracksToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.uncheckAllAttachmentTracksToolStripMenuItem.Text = "Uncheck All Attachment Tracks";
-            this.uncheckAllAttachmentTracksToolStripMenuItem.Click += new System.EventHandler(this.uncheckAllAttachmentTracksToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(236, 6);
-            // 
-            // prgBrTotalStatus
-            // 
-            this.prgBrTotalStatus.Name = "prgBrTotalStatus";
-            this.prgBrTotalStatus.Size = new System.Drawing.Size(100, 30);
-            // 
-            // lblTotalStatus
-            // 
-            this.lblTotalStatus.Name = "lblTotalStatus";
-            this.lblTotalStatus.Size = new System.Drawing.Size(38, 31);
-            this.lblTotalStatus.Text = "status";
-            // 
             // frmMain2
             // 
             this.ClientSize = new System.Drawing.Size(624, 561);
@@ -624,8 +642,8 @@ namespace gMKVToolNix.Forms
             this.grpConfig.ResumeLayout(false);
             this.grpConfig.PerformLayout();
             this.grpInputFiles.ResumeLayout(false);
-            this.grpSelectedFileInfo.ResumeLayout(false);
             this.contextMenuStrip.ResumeLayout(false);
+            this.grpSelectedFileInfo.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -658,9 +676,7 @@ namespace gMKVToolNix.Forms
         private gComboBox cmbChapterType;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         private System.Windows.Forms.Button btnShowJobs;
-        private System.Windows.Forms.ToolStripStatusLabel lblTrack;
         private System.Windows.Forms.ToolStripStatusLabel lblStatus;
-        private System.Windows.Forms.CheckBox chkJobs;
         private System.Windows.Forms.ToolStripMenuItem checkAllTracksToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem checkAllVideoTracksToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem checkAllAudioTracksToolStripMenuItem;
@@ -683,5 +699,9 @@ namespace gMKVToolNix.Forms
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripProgressBar prgBrTotalStatus;
         private System.Windows.Forms.ToolStripStatusLabel lblTotalStatus;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem expandAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem collapseAllToolStripMenuItem;
+        private System.Windows.Forms.Button btnAddJobs;
     }
 }

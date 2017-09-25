@@ -83,7 +83,6 @@ namespace gMKVToolNix.Forms
                 cmbChapterType.SelectedItem = Enum.GetName(typeof(MkvChapterTypes), _Settings.ChapterType);
                 txtOutputDirectory.Text = _Settings.OutputDirectory;
                 chkLockOutputDirectory.Checked = _Settings.LockedOutputDirectory;
-                chkJobs.Checked = _Settings.JobMode;
                 chkShowPopup.Checked = _Settings.ShowPopup;
                 gMKVLogger.Log("Finished setting chapter type, output directory and job mode from settings!");
 
@@ -565,7 +564,6 @@ namespace gMKVToolNix.Forms
         public void UpdateTrackLabel(Object filename, Object val)
         {
             txtSegmentInfo.Text = String.Format("Extracting {0} from {1}...", val, Path.GetFileName((string)filename));
-            lblTrack.Text = (String)val;
             Application.DoEvents();
         }
 
@@ -629,7 +627,7 @@ namespace gMKVToolNix.Forms
             }
         }
 
-        private void btnExtract_Click(object sender, EventArgs e)
+        private void btnExtract_btnAddJobs_Click(object sender, EventArgs e)
         {
             bool exceptionOccured = false;
             try
@@ -756,7 +754,7 @@ namespace gMKVToolNix.Forms
                     jobs.Add(new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList));
                 }
 
-                if (chkJobs.Checked)
+                if (sender == btnAddJobs)
                 {
                     if (_JobManagerForm == null)
                     {
@@ -835,12 +833,15 @@ namespace gMKVToolNix.Forms
                 }
                 else
                 {
-                    lblTrack.Text = "";
-                    if (!chkJobs.Checked)
+                    if (sender == btnExtract)
                     {
                         lblStatus.Text = "Extraction completed!";
                     }
                 }
+                trvInputFiles.SelectedNode = null;
+                txtSegmentInfo.Clear();
+                grpSelectedFileInfo.Text = "Selected File Information";
+
                 _ExtractRunning = false;
                 tlpMain.Enabled = true;
                 btnAbort.Enabled = false;
@@ -869,7 +870,6 @@ namespace gMKVToolNix.Forms
 
         private void ClearStatus()
         {
-            lblTrack.Text = "";
             lblStatus.Text = "";
             lblTotalStatus.Text = "";
             prgBrStatus.Value = 0;
@@ -1210,16 +1210,7 @@ namespace gMKVToolNix.Forms
             }
         }
 
-        private void chkJobs_CheckedChanged(object sender, EventArgs e)
-        {
-            btnExtract.Text = chkJobs.Checked ? "Add job" : "Extract";
-            if (!_FromConstructor)
-            {
-                _Settings.JobMode = chkJobs.Checked;
-                gMKVLogger.Log("Changing JobMode");
-                _Settings.Save();
-            }
-        }
+        #region "Context Menu"
 
         private void SetContextMenuText()
         {
@@ -1432,5 +1423,17 @@ namespace gMKVToolNix.Forms
                 ShowErrorMessage(ex.Message);
             }
         }
+
+        private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            trvInputFiles.ExpandAll();
+        }
+
+        private void collapseAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            trvInputFiles.CollapseAll();
+        }
+        
+        #endregion
     }
 }
