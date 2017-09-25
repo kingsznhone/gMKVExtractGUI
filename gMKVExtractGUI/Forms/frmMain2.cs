@@ -353,6 +353,17 @@ namespace gMKVToolNix.Forms
                 {
                     trvInputFiles.Nodes.Clear();
                 }
+                else
+                {
+                    // Remove files that already exist in the TreeView
+                    argFiles.RemoveAll(f => trvInputFiles.AllNodes.Any(n => n != null && n.Tag != null && n.Tag is gMKVSegmentInfo && ((gMKVSegmentInfo)n.Tag).Path.ToLower().Equals(f.ToLower())));
+
+                    // Check if there are any new files to add
+                    if (!argFiles.Any())
+                    {
+                        throw new Exception("No new files to add!");
+                    }
+                }
 
                 gTaskbarProgress.SetState(this, gTaskbarProgress.TaskbarStates.Indeterminate);
 
@@ -373,7 +384,10 @@ namespace gMKVToolNix.Forms
                     throw ta.Exception;
                 }
 
+                // Add the nodes to the TreeView
                 trvInputFiles.Nodes.AddRange(fileNodes.ToArray());
+                // Remove the check box from the nodes that contain the gMKVSegmentInfo
+                trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVSegmentInfo).ToList().ForEach(n => trvInputFiles.HideCheckBox(n));
 
                 prgBrStatus.Value = 0;
 
@@ -662,9 +676,7 @@ namespace gMKVToolNix.Forms
                 // Filter out the parent nodes
                 checkedNodes.RemoveAll(t => t.Tag != null && t.Tag is gMKVSegmentInfo);
                 
-                // Get all the files that correspond to the checked nodes
-                //List<string> fileList = checkedNodes.Where(t => t.Parent != null && t.Parent.Tag != null && t.Parent.Tag is gMKVSegmentInfo).Select(t => (t.Parent.Tag as gMKVSegmentInfo).Path).Distinct().ToList<string>();
-
+                // Get all the distinct parent nodes that correspond to the checked nodes
                 List<TreeNode> parentNodes = checkedNodes.Where(t => t.Parent != null && t.Parent.Tag != null && t.Parent.Tag is gMKVSegmentInfo).Select(t => t.Parent).Distinct().ToList<TreeNode>();
 
                 Thread myThread = null;
@@ -693,17 +705,14 @@ namespace gMKVToolNix.Forms
                             parameterList.Add(CuesExtractionMode.NoCues);
                             break;
                         case FormMkvExtractionMode.Cue_Sheet:
-                            parameterList = new List<object>();
                             parameterList.Add(infoSegment.Path);
                             parameterList.Add(outputDirectory);
                             break;
                         case FormMkvExtractionMode.Tags:
-                            parameterList = new List<object>();
                             parameterList.Add(infoSegment.Path);
                             parameterList.Add(outputDirectory);
                             break;
                         case FormMkvExtractionMode.Timecodes:
-                            parameterList = new List<object>();
                             parameterList.Add(infoSegment.Path);
                             parameterList.Add(segments);
                             parameterList.Add(outputDirectory);
@@ -712,7 +721,6 @@ namespace gMKVToolNix.Forms
                             parameterList.Add(CuesExtractionMode.NoCues);
                             break;
                         case FormMkvExtractionMode.Tracks_And_Timecodes:
-                            parameterList = new List<object>();
                             parameterList.Add(infoSegment.Path);
                             parameterList.Add(segments);
                             parameterList.Add(outputDirectory);
@@ -721,7 +729,6 @@ namespace gMKVToolNix.Forms
                             parameterList.Add(CuesExtractionMode.NoCues);
                             break;
                         case FormMkvExtractionMode.Cues:
-                            parameterList = new List<object>();
                             parameterList.Add(infoSegment.Path);
                             parameterList.Add(segments);
                             parameterList.Add(outputDirectory);
@@ -730,7 +737,6 @@ namespace gMKVToolNix.Forms
                             parameterList.Add(CuesExtractionMode.OnlyCues);
                             break;
                         case FormMkvExtractionMode.Tracks_And_Cues:
-                            parameterList = new List<object>();
                             parameterList.Add(infoSegment.Path);
                             parameterList.Add(segments);
                             parameterList.Add(outputDirectory);
@@ -739,7 +745,6 @@ namespace gMKVToolNix.Forms
                             parameterList.Add(CuesExtractionMode.WithCues);
                             break;
                         case FormMkvExtractionMode.Tracks_And_Cues_And_Timecodes:
-                            parameterList = new List<object>();
                             parameterList.Add(infoSegment.Path);
                             parameterList.Add(segments);
                             parameterList.Add(outputDirectory);
