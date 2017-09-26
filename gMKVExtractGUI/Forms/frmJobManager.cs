@@ -545,6 +545,16 @@ namespace gMKVToolNix
             grdJobs.Refresh();
         }
 
+        private void deselectAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            grdJobs.ClearSelection();
+        }
+
+        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            grdJobs.SelectAll();
+        }
+
         private void chkShowPopup_CheckedChanged(object sender, EventArgs e)
         {
             if (!_FromConstructor)

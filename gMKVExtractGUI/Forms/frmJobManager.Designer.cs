@@ -52,6 +52,9 @@
             this.btnAbort = new System.Windows.Forms.Button();
             this.btnRunAll = new System.Windows.Forms.Button();
             this.btnRemove = new System.Windows.Forms.Button();
+            this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deselectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tlpMain.SuspendLayout();
             this.grpProgress.SuspendLayout();
             this.tlpJobs.SuspendLayout();
@@ -221,9 +224,12 @@
             // contextMenuStrip
             // 
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.selectAllToolStripMenuItem,
+            this.deselectAllToolStripMenuItem,
+            this.toolStripSeparator1,
             this.changeToReadyStatusToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(200, 26);
+            this.contextMenuStrip.Size = new System.Drawing.Size(200, 98);
             this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
             // 
             // changeToReadyStatusToolStripMenuItem
@@ -325,6 +331,25 @@
             this.btnRemove.UseVisualStyleBackColor = true;
             this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
             // 
+            // selectAllToolStripMenuItem
+            // 
+            this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.selectAllToolStripMenuItem.Text = "Select All";
+            this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.selectAllToolStripMenuItem_Click);
+            // 
+            // deselectAllToolStripMenuItem
+            // 
+            this.deselectAllToolStripMenuItem.Name = "deselectAllToolStripMenuItem";
+            this.deselectAllToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.deselectAllToolStripMenuItem.Text = "Deselect All";
+            this.deselectAllToolStripMenuItem.Click += new System.EventHandler(this.deselectAllToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(196, 6);
+            // 
             // frmJobManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -374,5 +399,8 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem changeToReadyStatusToolStripMenuItem;
         private System.Windows.Forms.CheckBox chkShowPopup;
+        private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deselectAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }
