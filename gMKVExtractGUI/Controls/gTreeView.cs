@@ -150,6 +150,11 @@ namespace gMKVToolNix
                 throw new ArgumentNullException("node");
             if (node.TreeView == null)
                 throw new InvalidOperationException("The node does not belong to a tree.");
+
+            // If we are on Linux, we can't use P/Invoke to user32.dll
+            // So this function can't do anything
+            if (gMKVHelper.IsOnLinux) { return; }
+
             var tvi = new TVITEM
             {
                 hItem = node.Handle,
@@ -173,6 +178,11 @@ namespace gMKVToolNix
                 throw new ArgumentNullException("node");
             if (node.TreeView == null)
                 throw new InvalidOperationException("The node does not belong to a tree.");
+            
+            // If we are on Linux, we can't use P/Invoke to user32.dll
+            // So if the node's check box visibility has the same value as the node's TreeView CheckBoxes property 
+            if (gMKVHelper.IsOnLinux) { return node.TreeView.CheckBoxes; }
+
             var tvi = new TVITEM
             {
                 hItem = node.Handle,
