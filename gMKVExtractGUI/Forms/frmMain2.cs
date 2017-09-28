@@ -149,19 +149,36 @@ namespace gMKVToolNix.Forms
                         }
                     }
                 }
-
-                // check if user provided with a filename when executing the application
-                string[] cmdArgs = Environment.GetCommandLineArgs();
-                if (cmdArgs.Length > 1)
-                {
-                    gMKVLogger.Log(String.Format("Found command line arguments: {0}", cmdArgs[1]));
-                    AddFileNodes(txtMKVToolnixPath.Text, new List<string>() { cmdArgs[1] });
-                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
                 _FromConstructor = false;
+                ShowErrorMessage(ex.Message);
+            }
+        }
+
+        private void frmMain2_Shown(object sender, EventArgs e)
+        {
+            try
+            {
+                // check if user provided with a filename when executing the application
+                string[] cmdArgs = Environment.GetCommandLineArgs();
+                if (cmdArgs.Length > 1)
+                {
+                    // Copy the results to a list
+                    List<String> arguments = cmdArgs.ToList();
+                    // Remove the first argument (the executable)
+                    arguments.RemoveAt(0);
+
+                    gMKVLogger.Log(String.Format("Found command line arguments: {0}", string.Join(",", arguments)));
+                    
+                    AddFileNodes(txtMKVToolnixPath.Text, arguments);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -1951,5 +1968,6 @@ namespace gMKVToolNix.Forms
         }
 
         #endregion
+
     }
 }

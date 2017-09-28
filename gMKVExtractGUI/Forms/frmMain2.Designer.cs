@@ -57,6 +57,8 @@ namespace gMKVToolNix.Forms
             this.grpInputFiles = new gMKVToolNix.gGroupBox();
             this.trvInputFiles = new gMKVToolNix.gTreeView();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addInputFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.checkTracksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.checkVideoTracksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -85,18 +87,16 @@ namespace gMKVToolNix.Forms
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.removeAllInputFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeSelectedInputFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openSelectedFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openSelectedFileFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.addInputFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.expandAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collapseAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.grpSelectedFileInfo = new gMKVToolNix.gGroupBox();
             this.txtSegmentInfo = new gMKVToolNix.gRichTextBox();
             this.btnAbort = new System.Windows.Forms.Button();
             this.btnAbortAll = new System.Windows.Forms.Button();
-            this.openSelectedFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.openSelectedFileFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.tlpMain.SuspendLayout();
             this.grpActions.SuspendLayout();
@@ -433,8 +433,20 @@ namespace gMKVToolNix.Forms
             this.collapseAllToolStripMenuItem,
             this.toolStripSeparator6});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(232, 486);
+            this.contextMenuStrip.Size = new System.Drawing.Size(232, 464);
             this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
+            // 
+            // addInputFileToolStripMenuItem
+            // 
+            this.addInputFileToolStripMenuItem.Name = "addInputFileToolStripMenuItem";
+            this.addInputFileToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
+            this.addInputFileToolStripMenuItem.Text = "Add Input File(s)...";
+            this.addInputFileToolStripMenuItem.Click += new System.EventHandler(this.addInputFileToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(228, 6);
             // 
             // checkTracksToolStripMenuItem
             // 
@@ -634,22 +646,24 @@ namespace gMKVToolNix.Forms
             this.removeSelectedInputFileToolStripMenuItem.Text = "Remove Selected Input File";
             this.removeSelectedInputFileToolStripMenuItem.Click += new System.EventHandler(this.removeSelectedInputFileToolStripMenuItem_Click);
             // 
+            // openSelectedFileToolStripMenuItem
+            // 
+            this.openSelectedFileToolStripMenuItem.Name = "openSelectedFileToolStripMenuItem";
+            this.openSelectedFileToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
+            this.openSelectedFileToolStripMenuItem.Text = "Open Selected File...";
+            this.openSelectedFileToolStripMenuItem.Click += new System.EventHandler(this.openSelectedFileToolStripMenuItem_Click);
+            // 
+            // openSelectedFileFolderToolStripMenuItem
+            // 
+            this.openSelectedFileFolderToolStripMenuItem.Name = "openSelectedFileFolderToolStripMenuItem";
+            this.openSelectedFileFolderToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
+            this.openSelectedFileFolderToolStripMenuItem.Text = "Open Selected File Folder...";
+            this.openSelectedFileFolderToolStripMenuItem.Click += new System.EventHandler(this.openSelectedFileFolderToolStripMenuItem_Click);
+            // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(228, 6);
-            // 
-            // addInputFileToolStripMenuItem
-            // 
-            this.addInputFileToolStripMenuItem.Name = "addInputFileToolStripMenuItem";
-            this.addInputFileToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
-            this.addInputFileToolStripMenuItem.Text = "Add Input File(s)...";
-            this.addInputFileToolStripMenuItem.Click += new System.EventHandler(this.addInputFileToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(228, 6);
             // 
             // expandAllToolStripMenuItem
             // 
@@ -664,6 +678,11 @@ namespace gMKVToolNix.Forms
             this.collapseAllToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
             this.collapseAllToolStripMenuItem.Text = "Collapse All";
             this.collapseAllToolStripMenuItem.Click += new System.EventHandler(this.collapseAllToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(228, 6);
             // 
             // grpSelectedFileInfo
             // 
@@ -714,25 +733,6 @@ namespace gMKVToolNix.Forms
             this.btnAbortAll.UseVisualStyleBackColor = true;
             this.btnAbortAll.Click += new System.EventHandler(this.btnAbortAll_Click);
             // 
-            // openSelectedFileToolStripMenuItem
-            // 
-            this.openSelectedFileToolStripMenuItem.Name = "openSelectedFileToolStripMenuItem";
-            this.openSelectedFileToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
-            this.openSelectedFileToolStripMenuItem.Text = "Open Selected File...";
-            this.openSelectedFileToolStripMenuItem.Click += new System.EventHandler(this.openSelectedFileToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator6
-            // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(228, 6);
-            // 
-            // openSelectedFileFolderToolStripMenuItem
-            // 
-            this.openSelectedFileFolderToolStripMenuItem.Name = "openSelectedFileFolderToolStripMenuItem";
-            this.openSelectedFileFolderToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
-            this.openSelectedFileFolderToolStripMenuItem.Text = "Open Selected File Folder...";
-            this.openSelectedFileFolderToolStripMenuItem.Click += new System.EventHandler(this.openSelectedFileFolderToolStripMenuItem_Click);
-            // 
             // frmMain2
             // 
             this.ClientSize = new System.Drawing.Size(624, 561);
@@ -745,6 +745,7 @@ namespace gMKVToolNix.Forms
             this.Name = "frmMain2";
             this.Text = "gMKVExtractGUI";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
+            this.Shown += new System.EventHandler(this.frmMain2_Shown);
             this.ResizeEnd += new System.EventHandler(this.frmMain_ResizeEnd);
             this.ClientSizeChanged += new System.EventHandler(this.frmMain_ClientSizeChanged);
             this.Move += new System.EventHandler(this.frmMain_Move);
