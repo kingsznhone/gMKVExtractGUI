@@ -172,14 +172,35 @@ namespace gMKVToolNix.Forms
                     arguments.RemoveAt(0);
 
                     gMKVLogger.Log(String.Format("Found command line arguments: {0}", string.Join(",", arguments)));
-                    
-                    AddFileNodes(txtMKVToolnixPath.Text, arguments);
+
+
+                    tlpMain.Enabled = false;
+                    Cursor = Cursors.WaitCursor;
+                    txtSegmentInfo.Text = "Getting files...";
+
+                    // Get the file list
+                    List<string> fileList = GetFilesFromInputFileDrop(arguments.ToArray());
+
+                    // Check if any valid matroska files were provided
+                    if (!fileList.Any())
+                    {
+                        throw new Exception("No valid matroska files were provided!");
+                    }
+
+                    // Add files to the TreeView
+                    AddFileNodes(txtMKVToolnixPath.Text, fileList);
+
+                    Cursor = Cursors.Default;
+                    tlpMain.Enabled = true;
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
+                Cursor = Cursors.Default;
                 ShowErrorMessage(ex.Message);
+                tlpMain.Enabled = true;
             }
         }
 
@@ -263,6 +284,87 @@ namespace gMKVToolNix.Forms
             }
         }
 
+        private List<string> GetFilesFromInputFileDrop(string[] argFileDrop)
+        {
+            List<string> fileList = new List<string>();
+            // Check if directories were provided
+            if (argFileDrop.Any(f => Directory.Exists(f)))
+            {
+                // Check if they contain subdirectories
+                List<string> subDirList = new List<string>();
+
+                using (Task ta = Task.Factory.StartNew(() =>
+                {
+                    argFileDrop.Where(f => Directory.Exists(f)).ToList().ForEach(t => subDirList.AddRange(Directory.GetDirectories(t, "*", SearchOption.TopDirectoryOnly).ToList()));
+                }))
+                {
+                    while (!ta.IsCompleted) { Application.DoEvents(); }
+                    if (ta.Exception != null) { throw ta.Exception; }
+                }
+
+                if (subDirList.Any())
+                {
+                    Cursor = Cursors.Default;
+                    var result = ShowQuestion("Do you want to include files in sub directories?", "Sub directories found!");
+                    Cursor = Cursors.WaitCursor;
+                    if (result == DialogResult.Yes)
+                    {
+                        using (Task ta = Task.Factory.StartNew(() =>
+                        {
+                            // Add the subdirectory files
+                            argFileDrop.Where(f => Directory.Exists(f)).ToList().ForEach(t => fileList.AddRange(Directory.GetFiles(t, "*", SearchOption.AllDirectories).ToList()));
+                        }))
+                        {
+                            while (!ta.IsCompleted) { Application.DoEvents(); }
+                            if (ta.Exception != null) { throw ta.Exception; }
+                        }
+                    }
+                    else if (result == DialogResult.No)
+                    {
+                        using (Task ta = Task.Factory.StartNew(() =>
+                        {
+                            // Add the top level directory files
+                            argFileDrop.Where(f => Directory.Exists(f)).ToList().ForEach(t => fileList.AddRange(Directory.GetFiles(t, "*", SearchOption.TopDirectoryOnly).ToList()));
+                        }))
+                        {
+                            while (!ta.IsCompleted) { Application.DoEvents(); }
+                            if (ta.Exception != null) { throw ta.Exception; }
+                        }
+                    }
+                    else if (result == DialogResult.Cancel)
+                    {
+                        Cursor = Cursors.Default;
+                        return new List<string>();
+                    }
+                }
+                else
+                {
+                    using (Task ta = Task.Factory.StartNew(() =>
+                    {
+                        // Since there are no subdirectories, add the files from the directory
+                        argFileDrop.Where(f => Directory.Exists(f)).ToList().ForEach(t => fileList.AddRange(Directory.GetFiles(t, "*", SearchOption.TopDirectoryOnly).ToList()));
+                    }))
+                    {
+                        while (!ta.IsCompleted) { Application.DoEvents(); }
+                        if (ta.Exception != null) { throw ta.Exception; }
+                    }
+                }
+            }
+            // Add the files provided
+            argFileDrop.Where(f => File.Exists(f)).ToList().ForEach(t => fileList.Add(t));
+
+            // Remove all non valid matroska files
+            fileList.RemoveAll(f =>
+                Path.GetExtension(f).ToLower() != ".mkv"
+                && Path.GetExtension(f).ToLower() != ".mka"
+                && Path.GetExtension(f).ToLower() != ".mks"
+                && Path.GetExtension(f).ToLower() != ".mk3d"
+                && Path.GetExtension(f).ToLower() != ".webm"
+            );
+
+            return fileList;
+        }
+
         private void trvInputFiles_DragDrop(object sender, DragEventArgs e)
         {
             try
@@ -277,81 +379,8 @@ namespace gMKVToolNix.Forms
                         Cursor = Cursors.WaitCursor;
                         txtSegmentInfo.Text = "Getting files...";
 
-                        List<string> fileList = new List<string>();
-                        // Check if directories were provided
-                        if (s.Any(f => Directory.Exists(f)))
-                        {
-                            // Check if they contain subdirectories
-                            List<string> subDirList = new List<string>();
-
-                            using (Task ta = Task.Factory.StartNew(() =>
-                             {
-                                 s.Where(f => Directory.Exists(f)).ToList().ForEach(t => subDirList.AddRange(Directory.GetDirectories(t, "*", SearchOption.TopDirectoryOnly).ToList()));
-                             }))
-                            {
-                                while (!ta.IsCompleted) { Application.DoEvents(); }
-                                if (ta.Exception != null) { throw ta.Exception; }
-                            }
-
-                            if (subDirList.Any())
-                            {
-                                Cursor = Cursors.Default;
-                                var result = ShowQuestion("Do you want to include files in sub directories?", "Sub directories found!");
-                                Cursor = Cursors.WaitCursor;
-                                if (result == DialogResult.Yes)
-                                {
-                                    using (Task ta = Task.Factory.StartNew(() =>
-                                    {
-                                        // Add the subdirectory files
-                                        s.Where(f => Directory.Exists(f)).ToList().ForEach(t => fileList.AddRange(Directory.GetFiles(t, "*", SearchOption.AllDirectories).ToList()));
-                                    }))
-                                    {
-                                        while (!ta.IsCompleted) { Application.DoEvents(); }
-                                        if (ta.Exception != null) { throw ta.Exception; }
-                                    }
-                                }
-                                else if (result == DialogResult.No)
-                                {
-                                    using (Task ta = Task.Factory.StartNew(() =>
-                                    {
-                                        // Add the top level directory files
-                                        s.Where(f => Directory.Exists(f)).ToList().ForEach(t => fileList.AddRange(Directory.GetFiles(t, "*", SearchOption.TopDirectoryOnly).ToList()));
-                                    }))
-                                    {
-                                        while (!ta.IsCompleted) { Application.DoEvents(); }
-                                        if (ta.Exception != null) { throw ta.Exception; }
-                                    }
-                                }
-                                else if (result == DialogResult.Cancel)
-                                {
-                                    Cursor = Cursors.Default;
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                using (Task ta = Task.Factory.StartNew(() =>
-                                {
-                                    // Since there are no subdirectories, add the files from the directory
-                                    s.Where(f => Directory.Exists(f)).ToList().ForEach(t => fileList.AddRange(Directory.GetFiles(t, "*", SearchOption.TopDirectoryOnly).ToList()));
-                                }))
-                                {
-                                    while (!ta.IsCompleted) { Application.DoEvents(); }
-                                    if (ta.Exception != null) { throw ta.Exception; }
-                                }
-                            }
-                        }
-                        // Add the files provided
-                        s.Where(f => File.Exists(f)).ToList().ForEach(t => fileList.Add(t));
-
-                        // Remove all non valid matroska files
-                        fileList.RemoveAll(f =>
-                            Path.GetExtension(f).ToLower() != ".mkv"
-                            && Path.GetExtension(f).ToLower() != ".mka"
-                            && Path.GetExtension(f).ToLower() != ".mks"
-                            && Path.GetExtension(f).ToLower() != ".mk3d"
-                            && Path.GetExtension(f).ToLower() != ".webm"
-                        );
+                        // Get the file list
+                        List<string> fileList = GetFilesFromInputFileDrop(s);
 
                         // Check if any valid matroska files were provided
                         if (!fileList.Any())
