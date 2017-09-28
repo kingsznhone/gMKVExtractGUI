@@ -396,6 +396,7 @@ namespace gMKVToolNix.Forms
             this.trvInputFiles.HideSelection = false;
             this.trvInputFiles.Location = new System.Drawing.Point(3, 19);
             this.trvInputFiles.Name = "trvInputFiles";
+            this.trvInputFiles.SelectOnRightClick = true;
             this.trvInputFiles.ShowNodeToolTips = true;
             this.trvInputFiles.Size = new System.Drawing.Size(612, 217);
             this.trvInputFiles.TabIndex = 0;

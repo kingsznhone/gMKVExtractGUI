@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -41,15 +42,29 @@ namespace gMKVToolNix
         /// <summary>
         /// Gets or sets a value indicating whether the check box should be toggled when an item is selected.
         /// </summary>
+        [Description("Indicates whether the check box should be toggled when an item is selected.")]
         public bool CheckOnClick
         {
             get { return _CheckOnClick; }
             set { _CheckOnClick = value; }
         }
 
+        private bool _SelectOnRightClick = false;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether right clicking a node changes the selection.
+        /// </summary>
+        [Description("Indicates whether right clicking a node changes the selection..")]
+        public bool SelectOnRightClick
+        {
+            get { return _SelectOnRightClick; }
+            set { _SelectOnRightClick = value; }
+        }
+
         /// <summary>
         /// Returns a list with all the nodes of this TreeView
         /// </summary>
+        [Description("Gets a list with all the nodes of this TreeView")]
         public List<TreeNode> AllNodes
         {
             get
@@ -93,6 +108,7 @@ namespace gMKVToolNix
         /// <summary>
         /// Returns a list with all the checked nodes of this TreeView
         /// </summary>
+        [Description("Gets a list with all checked the nodes of this TreeView")]
         public List<TreeNode> CheckedNodes
         {
             get
@@ -208,6 +224,10 @@ namespace gMKVToolNix
                 {
                     e.Node.Checked = !e.Node.Checked;
                 }
+            }
+            if(_SelectOnRightClick && e.Button == MouseButtons.Right)
+            {
+                this.SelectedNode = e.Node;
             }
         }
     }
