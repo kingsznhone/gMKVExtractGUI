@@ -1080,7 +1080,7 @@ namespace gMKVToolNix
             }
             else if (argTrack.CodecID.ToUpper().Contains("V_THEORA"))
             {
-                outputFileExtension = "ogg";
+                outputFileExtension = "ogv";
             }
             else if (argTrack.CodecID.ToUpper().Contains("V_PRORES"))
             {
@@ -1089,6 +1089,10 @@ namespace gMKVToolNix
             else if (argTrack.CodecID.ToUpper().Contains("V_VP"))
             {
                 outputFileExtension = "ivf";
+            }
+            else if (argTrack.CodecID.ToUpper().Contains("V_DIRAC"))
+            {
+                outputFileExtension = "drc";
             }
             else
             {
@@ -1194,6 +1198,10 @@ namespace gMKVToolNix
             {
                 outputFileExtension = "srt";
             }
+            else if (argTrack.CodecID.ToUpper().Contains("S_TEXT/ASCII"))
+            {
+                outputFileExtension = "srt";
+            }
             else if (argTrack.CodecID.ToUpper().Contains("S_TEXT/SSA"))
             {
                 outputFileExtension = "ass";
@@ -1206,6 +1214,10 @@ namespace gMKVToolNix
             {
                 outputFileExtension = "usf";
             }
+            else if (argTrack.CodecID.ToUpper().Contains("S_TEXT/WEBVTT"))
+            {
+                outputFileExtension = "webvtt";
+            }
             else if (argTrack.CodecID.ToUpper().Contains("S_IMAGE/BMP"))
             {
                 outputFileExtension = "sub";
@@ -1214,10 +1226,18 @@ namespace gMKVToolNix
             {
                 outputFileExtension = "sub";
             }
+            else if (argTrack.CodecID.ToUpper().Contains("S_DVBSUB"))
+            {
+                outputFileExtension = "dvbsub";
+            }
             else if (argTrack.CodecID.ToUpper().Contains("S_HDMV/PGS"))
             {
                 outputFileExtension = "sup";
             }
+            else if (argTrack.CodecID.ToUpper().Contains("S_HDMV/TEXTST"))
+            {
+                outputFileExtension = "textst";
+            }            
             else if (argTrack.CodecID.ToUpper().Contains("S_KATE"))
             {
                 outputFileExtension = "ogg";
