@@ -698,6 +698,14 @@ namespace gMKVToolNix.Forms
             {
                 throw new Exception("The MKVToolnix path provided does not contain MKVToolnix files!");
             }
+            if(!chkUseSourceDirectory.Checked && string.IsNullOrWhiteSpace(txtOutputDirectory.Text))
+            {
+                throw new Exception("You haven't specified an output directory!");
+            }
+            if (!chkUseSourceDirectory.Checked && !Directory.Exists(txtOutputDirectory.Text.Trim()))
+            {
+                throw new Exception(String.Format("The output directory {0} does not exist!", txtOutputDirectory.Text.Trim()));
+            }
 
             // Get the checked nodes
             List<TreeNode> checkedNodes = trvInputFiles.CheckedNodes;

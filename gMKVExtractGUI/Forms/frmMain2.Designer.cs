@@ -92,7 +92,6 @@ namespace gMKVToolNix.Forms
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.expandAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collapseAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.grpSelectedFileInfo = new gMKVToolNix.gGroupBox();
             this.txtSegmentInfo = new gMKVToolNix.gRichTextBox();
             this.btnAbort = new System.Windows.Forms.Button();
@@ -431,10 +430,9 @@ namespace gMKVToolNix.Forms
             this.openSelectedFileFolderToolStripMenuItem,
             this.toolStripSeparator3,
             this.expandAllToolStripMenuItem,
-            this.collapseAllToolStripMenuItem,
-            this.toolStripSeparator6});
+            this.collapseAllToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(232, 464);
+            this.contextMenuStrip.Size = new System.Drawing.Size(232, 458);
             this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
             // 
             // addInputFileToolStripMenuItem
@@ -680,11 +678,6 @@ namespace gMKVToolNix.Forms
             this.collapseAllToolStripMenuItem.Text = "Collapse All";
             this.collapseAllToolStripMenuItem.Click += new System.EventHandler(this.collapseAllToolStripMenuItem_Click);
             // 
-            // toolStripSeparator6
-            // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(228, 6);
-            // 
             // grpSelectedFileInfo
             // 
             this.grpSelectedFileInfo.AllowDrop = true;
@@ -833,6 +826,5 @@ namespace gMKVToolNix.Forms
         private System.Windows.Forms.ToolStripMenuItem allAttachmentTracksToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem openSelectedFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openSelectedFileFolderToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
     }
 }
