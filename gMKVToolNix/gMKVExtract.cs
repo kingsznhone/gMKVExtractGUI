@@ -1124,6 +1124,10 @@ namespace gMKVToolNix
             {
                 outputFileExtension = "ac3";
             }
+            else if (argTrack.CodecID.ToUpper().Contains("A_EAC3"))
+            {
+                outputFileExtension = "eac3"; 
+            }
             else if (argTrack.CodecID.ToUpper().Contains("A_ALAC"))
             {
                 outputFileExtension = "caf";
@@ -1171,6 +1175,10 @@ namespace gMKVToolNix
             else if (argTrack.CodecID.ToUpper().Contains("A_OPUS"))
             {
                 outputFileExtension = "opus";
+            }
+            else if (argTrack.CodecID.ToUpper().Contains("A_MLP"))
+            {
+                outputFileExtension = "mlp";
             }
             else
             {
