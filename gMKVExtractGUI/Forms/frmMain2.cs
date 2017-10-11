@@ -82,7 +82,7 @@ namespace gMKVToolNix.Forms
                 gMKVLogger.Log("Begin setting chapter type, output directory and job mode from settings...");
                 cmbChapterType.SelectedItem = Enum.GetName(typeof(MkvChapterTypes), _Settings.ChapterType);
                 txtOutputDirectory.Text = _Settings.OutputDirectory;
-                chkLockOutputDirectory.Checked = _Settings.LockedOutputDirectory;
+                chkUseSourceDirectory.Checked = _Settings.LockedOutputDirectory;
                 chkShowPopup.Checked = _Settings.ShowPopup;
                 gMKVLogger.Log("Finished setting chapter type, output directory and job mode from settings!");
 
@@ -225,8 +225,8 @@ namespace gMKVToolNix.Forms
                     }
                     else if (((gTextBox)sender) == txtOutputDirectory)
                     {
-                        // check if output directory is locked
-                        if (chkLockOutputDirectory.Checked)
+                        // check if output directory is the same as the source
+                        if (chkUseSourceDirectory.Checked)
                         {
                             return;
                         }
@@ -254,8 +254,8 @@ namespace gMKVToolNix.Forms
                 {
                     if (((gTextBox)sender) == txtOutputDirectory)
                     {
-                        // check if output directory is locked
-                        if (chkLockOutputDirectory.Checked)
+                        // check if output directory is the same as the source
+                        if (chkUseSourceDirectory.Checked)
                         {
                             e.Effect = DragDropEffects.None;
                         }
@@ -637,8 +637,8 @@ namespace gMKVToolNix.Forms
                         seg.Duration,
                         seg.Date);
 
-                    // check if output directory is locked
-                    if (!chkLockOutputDirectory.Checked)
+                    // check if output directory is the same as the source
+                    if (chkUseSourceDirectory.Checked)
                     {
                         // set output directory to the source directory
                         txtOutputDirectory.Text = seg.Directory;
@@ -807,7 +807,8 @@ namespace gMKVToolNix.Forms
                     gMKVSegmentInfo infoSegment = parentNode.Tag as gMKVSegmentInfo;
                     segments = checkedNodes.Where(n => n.Parent == parentNode).Select(t => t.Tag as gMKVSegment).ToList();
                     string outputDirectory = txtOutputDirectory.Text;
-                    if (!chkLockOutputDirectory.Checked)
+                    // Check if the output dir is the same as the source
+                    if (chkUseSourceDirectory.Checked)
                     {
                         outputDirectory = infoSegment.Directory;
                     }
@@ -975,8 +976,8 @@ namespace gMKVToolNix.Forms
 
         private void ClearControls()
         {
-            // check if output directory is locked
-            if (!chkLockOutputDirectory.Checked)
+            // check if output directory is the same as the source
+            if (!chkUseSourceDirectory.Checked)
             {
                 txtOutputDirectory.Clear();
             }
@@ -1069,22 +1070,22 @@ namespace gMKVToolNix.Forms
             }
         }
 
-        private void chkLockOutputDirectory_CheckedChanged(object sender, EventArgs e)
+        private void chkUseSourceDirectory_CheckedChanged(object sender, EventArgs e)
         {
             try
             {
-                if (sender == chkLockOutputDirectory)
-                {
-                    if (String.IsNullOrWhiteSpace(txtOutputDirectory.Text))
-                    {
-                        chkLockOutputDirectory.Checked = false;
-                    }
-                }
-                txtOutputDirectory.ReadOnly = chkLockOutputDirectory.Checked;
-                btnBrowseOutputDirectory.Enabled = !chkLockOutputDirectory.Checked;
+                //if (sender == chkUseSourceDirectory)
+                //{
+                //    if (String.IsNullOrWhiteSpace(txtOutputDirectory.Text))
+                //    {
+                //        chkUseSourceDirectory.Checked = true;
+                //    }
+                //}
+                txtOutputDirectory.ReadOnly = chkUseSourceDirectory.Checked;
+                btnBrowseOutputDirectory.Enabled = !chkUseSourceDirectory.Checked;
                 if (!_FromConstructor)
                 {
-                    _Settings.LockedOutputDirectory = chkLockOutputDirectory.Checked;
+                    _Settings.LockedOutputDirectory = chkUseSourceDirectory.Checked;
                     gMKVLogger.Log("Changing LockedOutputDirectory");
                     _Settings.Save();
                 }
@@ -1101,8 +1102,8 @@ namespace gMKVToolNix.Forms
         {
             try
             {
-                // check if output directory is locked
-                if (!chkLockOutputDirectory.Checked)
+                // check if output directory is the same as the source
+                if (chkUseSourceDirectory.Checked)
                 {
                     SaveFileDialog sfd = new SaveFileDialog();
                     sfd.RestoreDirectory = true;

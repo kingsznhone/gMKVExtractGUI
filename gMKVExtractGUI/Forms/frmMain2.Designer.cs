@@ -48,7 +48,7 @@ namespace gMKVToolNix.Forms
             this.lblChapterType = new System.Windows.Forms.Label();
             this.cmbChapterType = new gMKVToolNix.Controls.gComboBox();
             this.grpOutputDirectory = new gMKVToolNix.gGroupBox();
-            this.chkLockOutputDirectory = new System.Windows.Forms.CheckBox();
+            this.chkUseSourceDirectory = new System.Windows.Forms.CheckBox();
             this.btnBrowseOutputDirectory = new System.Windows.Forms.Button();
             this.txtOutputDirectory = new gMKVToolNix.gTextBox();
             this.grpConfig = new gMKVToolNix.gGroupBox();
@@ -286,7 +286,7 @@ namespace gMKVToolNix.Forms
             // 
             // grpOutputDirectory
             // 
-            this.grpOutputDirectory.Controls.Add(this.chkLockOutputDirectory);
+            this.grpOutputDirectory.Controls.Add(this.chkUseSourceDirectory);
             this.grpOutputDirectory.Controls.Add(this.btnBrowseOutputDirectory);
             this.grpOutputDirectory.Controls.Add(this.txtOutputDirectory);
             this.grpOutputDirectory.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -297,18 +297,18 @@ namespace gMKVToolNix.Forms
             this.grpOutputDirectory.TabStop = false;
             this.grpOutputDirectory.Text = "Output Directory for Selected File (you can drag and drop the directory)";
             // 
-            // chkLockOutputDirectory
+            // chkUseSourceDirectory
             // 
-            this.chkLockOutputDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.chkLockOutputDirectory.AutoSize = true;
-            this.chkLockOutputDirectory.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkLockOutputDirectory.Location = new System.Drawing.Point(474, 24);
-            this.chkLockOutputDirectory.Name = "chkLockOutputDirectory";
-            this.chkLockOutputDirectory.Size = new System.Drawing.Size(51, 19);
-            this.chkLockOutputDirectory.TabIndex = 4;
-            this.chkLockOutputDirectory.Text = "Lock";
-            this.chkLockOutputDirectory.UseVisualStyleBackColor = true;
-            this.chkLockOutputDirectory.CheckedChanged += new System.EventHandler(this.chkLockOutputDirectory_CheckedChanged);
+            this.chkUseSourceDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkUseSourceDirectory.AutoSize = true;
+            this.chkUseSourceDirectory.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkUseSourceDirectory.Location = new System.Drawing.Point(441, 24);
+            this.chkUseSourceDirectory.Name = "chkUseSourceDirectory";
+            this.chkUseSourceDirectory.Size = new System.Drawing.Size(84, 19);
+            this.chkUseSourceDirectory.TabIndex = 4;
+            this.chkUseSourceDirectory.Text = "Use Source";
+            this.chkUseSourceDirectory.UseVisualStyleBackColor = true;
+            this.chkUseSourceDirectory.CheckedChanged += new System.EventHandler(this.chkUseSourceDirectory_CheckedChanged);
             // 
             // btnBrowseOutputDirectory
             // 
@@ -329,7 +329,7 @@ namespace gMKVToolNix.Forms
             this.txtOutputDirectory.Location = new System.Drawing.Point(6, 22);
             this.txtOutputDirectory.Name = "txtOutputDirectory";
             this.txtOutputDirectory.ShortcutsEnabled = false;
-            this.txtOutputDirectory.Size = new System.Drawing.Size(462, 23);
+            this.txtOutputDirectory.Size = new System.Drawing.Size(429, 23);
             this.txtOutputDirectory.TabIndex = 2;
             this.txtOutputDirectory.WordWrap = false;
             this.txtOutputDirectory.TextChanged += new System.EventHandler(this.txtOutputDirectory_TextChanged);
@@ -781,7 +781,7 @@ namespace gMKVToolNix.Forms
         private gGroupBox grpSelectedFileInfo;
         private gRichTextBox txtSegmentInfo;
         private gGroupBox grpOutputDirectory;
-        private System.Windows.Forms.CheckBox chkLockOutputDirectory;
+        private System.Windows.Forms.CheckBox chkUseSourceDirectory;
         private System.Windows.Forms.Button btnBrowseOutputDirectory;
         private gTextBox txtOutputDirectory;
         private gGroupBox grpActions;
