@@ -55,8 +55,22 @@
       <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/PM</dpiAware>
     </windowsSettings>
   </application>
-  
 
+  <!-- Specifies whether the current process is dots per inch (dpi) aware.
+       The minimum version of the operating system that supports the dpiAwareness element is Windows 10, version 1607.
+       For versions that support the dpiAwareness element, the dpiAwareness overrides the dpiAware element. You can
+       include both elements in a manifest if you want to specify a different behavior for Windows 10, version 1607
+       than for an earlier version of the operating system.
+       The dpiAwareness element can contain a single item or a list of comma-separated items. In the latter case, the 
+       first (leftmost) item in the list recognized by the operating system is used. In this way, you can specify 
+       different behaviors supported in future Windows operating system versions. -->
+  
+  <application xmlns="urn:schemas-microsoft-com:asm.v3">
+    <windowsSettings xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">
+      <dpiAwareness>PerMonitorV2, PerMonitor</dpiAwareness>
+    </windowsSettings>
+  </application>
+  
   <!-- Enable themes for Windows common controls and dialogs (Windows XP and later) -->
   <!--
   <dependency>

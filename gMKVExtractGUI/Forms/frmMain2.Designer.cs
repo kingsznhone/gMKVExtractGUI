@@ -729,6 +729,8 @@ namespace gMKVToolNix.Forms
             // 
             // frmMain2
             // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(624, 561);
             this.Controls.Add(this.btnAbort);
             this.Controls.Add(this.btnAbortAll);
