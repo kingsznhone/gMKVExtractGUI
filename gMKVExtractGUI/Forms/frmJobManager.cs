@@ -54,6 +54,9 @@ namespace gMKVToolNix
                 _FromConstructor = false;
 
                 SetAbortStatus(false);
+
+                // Initialize the DPI aware scaling
+                InitDPI();
             }
             catch (Exception ex)
             {

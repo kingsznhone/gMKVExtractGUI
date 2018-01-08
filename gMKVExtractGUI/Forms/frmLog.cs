@@ -18,6 +18,9 @@ namespace gMKVToolNix
         {
             InitializeComponent();
             InitForm();
+
+            // Initialize the DPI aware scaling
+            InitDPI();
         }
 
         private void InitForm()

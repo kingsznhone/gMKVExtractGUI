@@ -87,6 +87,9 @@ namespace gMKVToolNix
 
                 _FromConstructor = false;
 
+                // Initialize the DPI aware scaling
+                InitDPI();
+
                 // Find MKVToolnix path
                 try
                 {

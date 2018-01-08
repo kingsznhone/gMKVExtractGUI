@@ -88,6 +88,9 @@ namespace gMKVToolNix.Forms
 
                 _FromConstructor = false;
 
+                // Initialize the DPI aware scaling
+                InitDPI();
+
                 // Find MKVToolnix path
                 try
                 {
@@ -985,7 +988,7 @@ namespace gMKVToolNix.Forms
         private void ClearControls()
         {
             // check if output directory is the same as the source
-            if (!chkUseSourceDirectory.Checked)
+            if (chkUseSourceDirectory.Checked)
             {
                 txtOutputDirectory.Clear();
             }
@@ -1111,7 +1114,7 @@ namespace gMKVToolNix.Forms
             try
             {
                 // check if output directory is the same as the source
-                if (chkUseSourceDirectory.Checked)
+                if (!chkUseSourceDirectory.Checked)
                 {
                     SaveFileDialog sfd = new SaveFileDialog();
                     sfd.RestoreDirectory = true;
