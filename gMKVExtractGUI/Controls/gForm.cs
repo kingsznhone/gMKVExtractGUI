@@ -34,13 +34,12 @@ namespace gMKVToolNix
 
         protected void InitDPI()
         {
-            float dx, dy;
+            oldDpi = currentDpi;
+            float dx;
             using (Graphics g = this.CreateGraphics())
             {
                 dx = g.DpiX;
-                dy = g.DpiY;
             }
-            oldDpi = currentDpi;
             currentDpi = dx;
 
             HandleDpiChanged();
@@ -86,12 +85,12 @@ namespace gMKVToolNix
         {
             switch (m.Msg)
             {
-                //This message is sent when the form is dragged to a different monitor i.e. when
-                //the bigger part of its are is on the new monitor. Note that handling the message immediately
-                //might change the size of the form so that it no longer overlaps the new monitor in its bigger part
-                //which in turn will send again the WM_DPICHANGED message and this might cause misbehavior.
-                //Therefore we delay the scaling if the form is being moved and we use the CanPerformScaling method to 
-                //check if it is safe to perform the scaling.
+                // This message is sent when the form is dragged to a different monitor i.e. when
+                // the bigger part of its are is on the new monitor. Note that handling the message immediately
+                // might change the size of the form so that it no longer overlaps the new monitor in its bigger part
+                // which in turn will send again the WM_DPICHANGED message and this might cause misbehavior.
+                // Therefore we delay the scaling if the form is being moved and we use the CanPerformScaling method to 
+                // check if it is safe to perform the scaling.
                 case WM_DPICHANGED:
                     oldDpi = currentDpi;
                     currentDpi = LOWORD((int)m.WParam);
@@ -122,37 +121,35 @@ namespace gMKVToolNix
             {
                 float scaleFactor = currentDpi / oldDpi;
 
-                //the default scaling method of the framework
+                // The default scaling method of the framework
                 this.Scale(new SizeF(scaleFactor, scaleFactor));
 
-                //fonts are not scaled automatically so we need to handle this manually
+                // Fonts are not scaled automatically so we need to handle this manually
                 this.ScaleFonts(scaleFactor);
 
-                //perform any other scaling different than font or size (e.g. ItemHeight)
+                // Perform any other scaling different than font or size (e.g. ItemHeight)
                 this.PerformSpecialScaling(scaleFactor);
             }
             else
             {
-                //the special scaling also needs to be done initially
-                this.PerformSpecialScaling((float)currentDpi / DESIGN_TIME_DPI);
+                // The special scaling also needs to be done initially
+                this.PerformSpecialScaling(currentDpi / DESIGN_TIME_DPI);
             }
         }
 
         protected virtual void ScaleFonts(float scaleFactor)
         {
-            //Go through all controls in the control tree and set their Font property
-            //Note that this might not work with some RadElements which have the Font property
-            //set via theme or a local setting and they need to be handled separately (e.g. TreeNodeElement)
+            // Go through all controls in the control tree and set their Font property
             ScaleFontForControl(this, scaleFactor);
         }
 
-        protected static void ScaleFontForControl(Control control, float factor)
+        protected static void ScaleFontForControl(Control control, float scaleFactor)
         {
-            control.Font = new Font(control.Font.FontFamily, control.Font.Size * factor, control.Font.Style);
+            control.Font = new Font(control.Font.FontFamily, control.Font.Size * scaleFactor, control.Font.Style);
 
             foreach (Control child in control.Controls)
             {
-                ScaleFontForControl(child, factor);
+                ScaleFontForControl(child, scaleFactor);
             }
         }
 
