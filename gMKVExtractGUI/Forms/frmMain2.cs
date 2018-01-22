@@ -80,9 +80,13 @@ namespace gMKVToolNix.Forms
 
                 // Set chapter type, output directory and job mode from settings
                 gMKVLogger.Log("Begin setting chapter type, output directory and job mode from settings...");
-                cmbChapterType.SelectedItem = Enum.GetName(typeof(MkvChapterTypes), _Settings.ChapterType);
-                txtOutputDirectory.Text = _Settings.OutputDirectory;
+                cmbChapterType.SelectedItem = Enum.GetName(typeof(MkvChapterTypes), _Settings.ChapterType);                
                 chkUseSourceDirectory.Checked = _Settings.LockedOutputDirectory;
+                // Only set the output directory if we don't use the source directory
+                if (!chkUseSourceDirectory.Checked)
+                {
+                    txtOutputDirectory.Text = _Settings.OutputDirectory;
+                }
                 chkShowPopup.Checked = _Settings.ShowPopup;
                 gMKVLogger.Log("Finished setting chapter type, output directory and job mode from settings!");
 
@@ -1085,13 +1089,6 @@ namespace gMKVToolNix.Forms
         {
             try
             {
-                //if (sender == chkUseSourceDirectory)
-                //{
-                //    if (String.IsNullOrWhiteSpace(txtOutputDirectory.Text))
-                //    {
-                //        chkUseSourceDirectory.Checked = true;
-                //    }
-                //}
                 txtOutputDirectory.ReadOnly = chkUseSourceDirectory.Checked;
                 btnBrowseOutputDirectory.Enabled = !chkUseSourceDirectory.Checked;
                 if (!_FromConstructor)
@@ -2010,5 +2007,92 @@ namespace gMKVToolNix.Forms
 
         #endregion
 
+        private void contextMenuStripOutputDirectory_Opening(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                // First check if we have a valid directory in the text box
+                if ((!String.IsNullOrWhiteSpace(txtOutputDirectory.Text) && Directory.Exists(txtOutputDirectory.Text))
+                    && (!String.IsNullOrWhiteSpace(_Settings.DefaultOutputDirectory) && Directory.Exists(_Settings.DefaultOutputDirectory))
+                    && !txtOutputDirectory.Text.Trim().ToLower().Equals(_Settings.DefaultOutputDirectory.Trim().ToLower()))
+                {
+                    setAsDefaultDirectoryToolStripMenuItem.Enabled = true;
+                }
+                else
+                {
+                    setAsDefaultDirectoryToolStripMenuItem.Enabled = false;
+                }
+
+                // Check if we have a default directory in the settings
+                if(!String.IsNullOrWhiteSpace(_Settings.DefaultOutputDirectory) && Directory.Exists(_Settings.DefaultOutputDirectory))
+                {
+                    // Check if we can use the default directory
+                    useCurrentlySetDefaultDirectoryToolStripMenuItem.Enabled = !chkUseSourceDirectory.Checked;
+                    // Set the text
+                    useCurrentlySetDefaultDirectoryToolStripMenuItem.Text = String.Format("Use Currently Set Default Directory: ({0})", _Settings.DefaultOutputDirectory);
+                }
+                else
+                {
+                    useCurrentlySetDefaultDirectoryToolStripMenuItem.Enabled = false;
+                    useCurrentlySetDefaultDirectoryToolStripMenuItem.Text = "Use Currently Set Default Directory: (Not Set!)";
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
+                ShowErrorMessage(ex.Message);
+            }
+        }
+
+        private void setAsDefaultDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Sanity check!
+                if (!String.IsNullOrWhiteSpace(txtOutputDirectory.Text) && Directory.Exists(txtOutputDirectory.Text))
+                {
+                    // Check if we already have a default output directory
+                    if (!String.IsNullOrWhiteSpace(_Settings.DefaultOutputDirectory) && Directory.Exists(_Settings.DefaultOutputDirectory))
+                    {
+                        if(ShowQuestion(String.Format("Are you sure you want to change the currently set ({0}) default output directory?",
+                            _Settings.DefaultOutputDirectory), "Are you sure?", false) == DialogResult.No)
+                        {
+                            return;
+                        }
+                    }
+                    _Settings.DefaultOutputDirectory = txtOutputDirectory.Text.Trim();
+                    gMKVLogger.Log("Changing Default Output Directory...");
+                    _Settings.Save();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
+                ShowErrorMessage(ex.Message);
+            }
+        }
+
+        private void useCurrentlySetDefaultDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Sanity check!
+                if (!chkUseSourceDirectory.Checked)
+                {
+                    if (!String.IsNullOrWhiteSpace(_Settings.DefaultOutputDirectory) && Directory.Exists(_Settings.DefaultOutputDirectory))
+                    {
+                        txtOutputDirectory.Text = _Settings.DefaultOutputDirectory;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
+                ShowErrorMessage(ex.Message);
+            }
+        }
     }
 }

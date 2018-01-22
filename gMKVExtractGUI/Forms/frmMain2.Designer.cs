@@ -51,6 +51,9 @@ namespace gMKVToolNix.Forms
             this.chkUseSourceDirectory = new System.Windows.Forms.CheckBox();
             this.btnBrowseOutputDirectory = new System.Windows.Forms.Button();
             this.txtOutputDirectory = new gMKVToolNix.gTextBox();
+            this.contextMenuStripOutputDirectory = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.setAsDefaultDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.useCurrentlySetDefaultDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.grpConfig = new gMKVToolNix.gGroupBox();
             this.txtMKVToolnixPath = new gMKVToolNix.gTextBox();
             this.btnBrowseMKVToolnixPath = new System.Windows.Forms.Button();
@@ -100,6 +103,7 @@ namespace gMKVToolNix.Forms
             this.tlpMain.SuspendLayout();
             this.grpActions.SuspendLayout();
             this.grpOutputDirectory.SuspendLayout();
+            this.contextMenuStripOutputDirectory.SuspendLayout();
             this.grpConfig.SuspendLayout();
             this.grpInputFiles.SuspendLayout();
             this.contextMenuStrip.SuspendLayout();
@@ -325,6 +329,7 @@ namespace gMKVToolNix.Forms
             this.txtOutputDirectory.AllowDrop = true;
             this.txtOutputDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtOutputDirectory.ContextMenuStrip = this.contextMenuStripOutputDirectory;
             this.txtOutputDirectory.Location = new System.Drawing.Point(6, 22);
             this.txtOutputDirectory.Name = "txtOutputDirectory";
             this.txtOutputDirectory.ShortcutsEnabled = false;
@@ -334,6 +339,30 @@ namespace gMKVToolNix.Forms
             this.txtOutputDirectory.TextChanged += new System.EventHandler(this.txtOutputDirectory_TextChanged);
             this.txtOutputDirectory.DragDrop += new System.Windows.Forms.DragEventHandler(this.txt_DragDrop);
             this.txtOutputDirectory.DragEnter += new System.Windows.Forms.DragEventHandler(this.txt_DragEnter);
+            // 
+            // contextMenuStripOutputDirectory
+            // 
+            this.contextMenuStripOutputDirectory.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.setAsDefaultDirectoryToolStripMenuItem,
+            this.useCurrentlySetDefaultDirectoryToolStripMenuItem});
+            this.contextMenuStripOutputDirectory.Name = "contextMenuStripOutputDirectory";
+            this.contextMenuStripOutputDirectory.Size = new System.Drawing.Size(260, 48);
+            this.contextMenuStripOutputDirectory.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStripOutputDirectory_Opening);
+            // 
+            // setAsDefaultDirectoryToolStripMenuItem
+            // 
+            this.setAsDefaultDirectoryToolStripMenuItem.Name = "setAsDefaultDirectoryToolStripMenuItem";
+            this.setAsDefaultDirectoryToolStripMenuItem.Size = new System.Drawing.Size(259, 22);
+            this.setAsDefaultDirectoryToolStripMenuItem.Text = "Set As Default Directory";
+            this.setAsDefaultDirectoryToolStripMenuItem.Click += new System.EventHandler(this.setAsDefaultDirectoryToolStripMenuItem_Click);
+            // 
+            // useCurrentlySetDefaultDirectoryToolStripMenuItem
+            // 
+            this.useCurrentlySetDefaultDirectoryToolStripMenuItem.Enabled = false;
+            this.useCurrentlySetDefaultDirectoryToolStripMenuItem.Name = "useCurrentlySetDefaultDirectoryToolStripMenuItem";
+            this.useCurrentlySetDefaultDirectoryToolStripMenuItem.Size = new System.Drawing.Size(259, 22);
+            this.useCurrentlySetDefaultDirectoryToolStripMenuItem.Text = "Use Currently Set Default Directory:";
+            this.useCurrentlySetDefaultDirectoryToolStripMenuItem.Click += new System.EventHandler(this.useCurrentlySetDefaultDirectoryToolStripMenuItem_Click);
             // 
             // grpConfig
             // 
@@ -752,6 +781,7 @@ namespace gMKVToolNix.Forms
             this.grpActions.PerformLayout();
             this.grpOutputDirectory.ResumeLayout(false);
             this.grpOutputDirectory.PerformLayout();
+            this.contextMenuStripOutputDirectory.ResumeLayout(false);
             this.grpConfig.ResumeLayout(false);
             this.grpConfig.PerformLayout();
             this.grpInputFiles.ResumeLayout(false);
@@ -828,5 +858,8 @@ namespace gMKVToolNix.Forms
         private System.Windows.Forms.ToolStripMenuItem allAttachmentTracksToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem openSelectedFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openSelectedFileFolderToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStripOutputDirectory;
+        private System.Windows.Forms.ToolStripMenuItem setAsDefaultDirectoryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem useCurrentlySetDefaultDirectoryToolStripMenuItem;
     }
 }

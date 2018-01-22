@@ -37,6 +37,13 @@ namespace gMKVToolNix
             set { _OutputDirectory = value; }
         }
 
+        private String _DefaultOutputDirectory;
+        public String DefaultOutputDirectory
+        {
+            get { return _DefaultOutputDirectory; }
+            set { _DefaultOutputDirectory = value; }
+        }
+
         private Int32 _WindowPosX;
         public Int32 WindowPosX
         {
@@ -184,6 +191,19 @@ namespace gMKVToolNix
                                 _OutputDirectory = "";
                             }
                         }
+                        else if (line.StartsWith("Default Output Directory:"))
+                        {
+                            try
+                            {
+                                _DefaultOutputDirectory = line.Substring(line.IndexOf(":") + 1);
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading Default Output Directory! {0}", ex.Message));
+                                _DefaultOutputDirectory = "";
+                            }
+                        }
                         else if (line.StartsWith("Lock Output Directory:"))
                         {
                             try
@@ -315,6 +335,7 @@ namespace gMKVToolNix
                 sw.WriteLine(String.Format("MKVToolnix Path:{0}", _MkvToolnixPath));
                 sw.WriteLine(String.Format("Chapter Type:{0}", _ChapterType));
                 sw.WriteLine(String.Format("Output Directory:{0}", _OutputDirectory));
+                sw.WriteLine(String.Format("Default Output Directory:{0}", _DefaultOutputDirectory));
                 sw.WriteLine(String.Format("Lock Output Directory:{0}", _LockedOutputDirectory));
                 sw.WriteLine(String.Format("Initial Window Position X:{0}", _WindowPosX));
                 sw.WriteLine(String.Format("Initial Window Position Y:{0}", _WindowPosY));
