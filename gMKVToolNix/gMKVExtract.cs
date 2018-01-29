@@ -18,7 +18,8 @@ namespace gMKVToolNix
         chapters,
         cuesheet,
         timecodes_v2,
-        cues
+        cues,
+        timestamps_v2
     }
 
     public enum MkvExtractGlobalOptions
@@ -177,7 +178,8 @@ namespace gMKVToolNix
                 if (argTimecodesExtractionMode != TimecodesExtractionMode.NoTimecodes)
                 {
                     trackParameterList.Add(new TrackParameter(
-                        MkvExtractModes.timecodes_v2,
+                        // Since MKVToolNix v17.0 the timecode word has been replaced with timestamp
+                        GetMKVExtractVersion().FileMajorPart >= 17 ? MkvExtractModes.timestamps_v2 : MkvExtractModes.timecodes_v2,
                         "",
                         String.Format("{0}:\"{1}\"",
                             ((gMKVTrack)argSeg).TrackID,
