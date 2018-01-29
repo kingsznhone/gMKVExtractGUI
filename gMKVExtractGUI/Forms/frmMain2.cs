@@ -44,6 +44,8 @@ namespace gMKVToolNix.Forms
         private Int32 _CurrentJob = 0;
         private Int32 _TotalJobs = 0;
 
+        private List<string> _CmdArguments = new List<string>();
+
         public frmMain2()
         {
             try
@@ -51,6 +53,9 @@ namespace gMKVToolNix.Forms
                 _FromConstructor = true;
 
                 InitializeComponent();
+
+                // Get the command line arguments
+                GetCommandLineArguments();
 
                 // Set form icon from the executing assembly
                 Icon = Icon.ExtractAssociatedIcon(this.GetExecutingAssemblyLocation());
@@ -80,7 +85,7 @@ namespace gMKVToolNix.Forms
 
                 // Set chapter type, output directory and job mode from settings
                 gMKVLogger.Log("Begin setting chapter type, output directory and job mode from settings...");
-                cmbChapterType.SelectedItem = Enum.GetName(typeof(MkvChapterTypes), _Settings.ChapterType);                
+                cmbChapterType.SelectedItem = Enum.GetName(typeof(MkvChapterTypes), _Settings.ChapterType);
                 chkUseSourceDirectory.Checked = _Settings.LockedOutputDirectory;
                 // Only set the output directory if we don't use the source directory
                 if (!chkUseSourceDirectory.Checked)
@@ -95,64 +100,119 @@ namespace gMKVToolNix.Forms
                 // Initialize the DPI aware scaling
                 InitDPI();
 
-                // Find MKVToolnix path
-                try
+                // Check if user manually provided MKVToolNix path
+                bool manualMkvToolNixPath = false;
+                bool manualPathOK = true;
+
+                if (_CmdArguments.Any()
+                    && _CmdArguments.Where(c => c.StartsWith("--")).Any()
+                    && _CmdArguments.Where(c => c.ToLower().StartsWith("--mkvtoolnix=")).Any()
+                )
                 {
-                    if (!gMKVHelper.IsOnLinux)
+                    // User provided a manual MKVToolNix path
+                    manualMkvToolNixPath = true;
+                    // Get the commend line argument
+                    string arg = _CmdArguments.Where(c => c.ToLower().StartsWith("--mkvtoolnix=")).FirstOrDefault();
+                    // Get the path
+                    string manualPath = arg.Substring(13);
+                    // Log the path
+                    gMKVLogger.Log(String.Format("User provided a manual path for MKVToolNix: {0}", manualPath));
+
+                    if (String.IsNullOrWhiteSpace(manualPath))
                     {
-                        // When on Windows, check the registry first
-                        gMKVLogger.Log("Checking registry for mkvmerge...");
-                        txtMKVToolnixPath.Text = gMKVHelper.GetMKVToolnixPathViaRegistry();
+                        manualPathOK = false;
+                        gMKVLogger.Log(String.Format("The manual path for MKVToolNix was empty!"));
                     }
                     else
                     {
-                        // When on Linux, check the usr/bin first
-                        if (File.Exists(Path.Combine("/usr", "bin", gMKVHelper.MKV_MERGE_GUI_FILENAME))
-                            || File.Exists(Path.Combine("/usr", "bin", gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
+                        if (!Directory.Exists(manualPath))
                         {
-                            txtMKVToolnixPath.Text = Path.Combine("/usr", "bin");
+                            manualPathOK = false;
+                            gMKVLogger.Log(String.Format("The manual path for MKVToolNix does not exist!"));
                         }
                         else
                         {
-                            throw new Exception(String.Format("mkvmerge was not found in path {0}!", Path.Combine("usr", "bin")));
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex);
-                    gMKVLogger.Log(ex.Message);
-                    // MKVToolnix could not be found in registry
-                    // check in the current directory
-                    if (File.Exists(Path.Combine(GetCurrentDirectory(), gMKVHelper.MKV_MERGE_GUI_FILENAME))
-                        || File.Exists(Path.Combine(GetCurrentDirectory(), gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
-                    {
-                        txtMKVToolnixPath.Text = GetCurrentDirectory();
-                    }
-                    else
-                    {
-                        // check for ini file
-                        if (File.Exists(Path.Combine(_Settings.MkvToolnixPath, gMKVHelper.MKV_MERGE_GUI_FILENAME))
-                            || File.Exists(Path.Combine(_Settings.MkvToolnixPath, gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
-                        {
-                            _FromConstructor = true;
-                            txtMKVToolnixPath.Text = _Settings.MkvToolnixPath;
-                            _FromConstructor = false;
-                        }
-                        else
-                        {
-                            // Select exception message according to running OS
-                            String exceptionMessage = "";
-                            if (gMKVHelper.IsOnLinux)
+                            if (!File.Exists(Path.Combine(manualPath, gMKVHelper.MKV_MERGE_GUI_FILENAME))
+                                && !File.Exists(Path.Combine(manualPath, gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME))
+                            )
                             {
-                                exceptionMessage = "Could not find MKVToolNix in /usr/bin, or in the current directory, or in the ini file!";
+                                manualPathOK = false;
+                                gMKVLogger.Log(String.Format("mkvmerge was not found in manual path!"));
                             }
                             else
                             {
-                                exceptionMessage = "Could not find MKVToolNix in registry, or in the current directory, or in the ini file!";
+                                txtMKVToolnixPath.Text = manualPath;
                             }
-                            gMKVLogger.Log(exceptionMessage);
-                            throw new Exception(exceptionMessage + Environment.NewLine + "Please download and reinstall or provide a manual path!");
+                        }
+                    }
+                }
+
+                if (manualMkvToolNixPath && !manualPathOK)
+                {
+                    gMKVLogger.Log(String.Format("Failed to set manual path! Trying to auto-detect..."));
+                }
+
+                if (!manualMkvToolNixPath || (manualMkvToolNixPath && !manualPathOK))
+                {
+                    // Find MKVToolnix path
+                    try
+                    {
+                        if (!gMKVHelper.IsOnLinux)
+                        {
+                            // When on Windows, check the registry first
+                            gMKVLogger.Log("Checking registry for mkvmerge...");
+                            txtMKVToolnixPath.Text = gMKVHelper.GetMKVToolnixPathViaRegistry();
+                        }
+                        else
+                        {
+                            // When on Linux, check the usr/bin first
+                            if (File.Exists(Path.Combine("/usr", "bin", gMKVHelper.MKV_MERGE_GUI_FILENAME))
+                                || File.Exists(Path.Combine("/usr", "bin", gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
+                            {
+                                txtMKVToolnixPath.Text = Path.Combine("/usr", "bin");
+                            }
+                            else
+                            {
+                                throw new Exception(String.Format("mkvmerge was not found in path {0}!", Path.Combine("usr", "bin")));
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex);
+                        gMKVLogger.Log(ex.Message);
+                        // MKVToolnix could not be found in registry
+                        // check in the current directory
+                        if (File.Exists(Path.Combine(GetCurrentDirectory(), gMKVHelper.MKV_MERGE_GUI_FILENAME))
+                            || File.Exists(Path.Combine(GetCurrentDirectory(), gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
+                        {
+                            txtMKVToolnixPath.Text = GetCurrentDirectory();
+                        }
+                        else
+                        {
+                            // check for ini file
+                            if (File.Exists(Path.Combine(_Settings.MkvToolnixPath, gMKVHelper.MKV_MERGE_GUI_FILENAME))
+                                || File.Exists(Path.Combine(_Settings.MkvToolnixPath, gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
+                            {
+                                _FromConstructor = true;
+                                txtMKVToolnixPath.Text = _Settings.MkvToolnixPath;
+                                _FromConstructor = false;
+                            }
+                            else
+                            {
+                                // Select exception message according to running OS
+                                String exceptionMessage = "";
+                                if (gMKVHelper.IsOnLinux)
+                                {
+                                    exceptionMessage = "Could not find MKVToolNix in /usr/bin, or in the current directory, or in the ini file!";
+                                }
+                                else
+                                {
+                                    exceptionMessage = "Could not find MKVToolNix in registry, or in the current directory, or in the ini file!";
+                                }
+                                gMKVLogger.Log(exceptionMessage);
+                                throw new Exception(exceptionMessage + Environment.NewLine + "Please download and reinstall or provide a manual path!");
+                            }
                         }
                     }
                 }
@@ -170,23 +230,15 @@ namespace gMKVToolNix.Forms
             try
             {
                 // check if user provided with a filename when executing the application
-                string[] cmdArgs = Environment.GetCommandLineArgs();
-                if (cmdArgs.Length > 1)
+                if (_CmdArguments.Any()
+                    && _CmdArguments.Where(c => !c.StartsWith("--")).Any())
                 {
-                    // Copy the results to a list
-                    List<String> arguments = cmdArgs.ToList();
-                    // Remove the first argument (the executable)
-                    arguments.RemoveAt(0);
-
-                    gMKVLogger.Log(String.Format("Found command line arguments: {0}", string.Join(",", arguments)));
-
-
                     tlpMain.Enabled = false;
                     Cursor = Cursors.WaitCursor;
                     txtSegmentInfo.Text = "Getting files...";
 
                     // Get the file list
-                    List<string> fileList = GetFilesFromInputFileDrop(arguments.ToArray());
+                    List<string> fileList = GetFilesFromInputFileDrop(_CmdArguments.Where(c => !c.StartsWith("--")).ToArray());
 
                     // Check if any valid matroska files were provided
                     if (!fileList.Any())
@@ -208,6 +260,22 @@ namespace gMKVToolNix.Forms
                 Cursor = Cursors.Default;
                 ShowErrorMessage(ex.Message);
                 tlpMain.Enabled = true;
+            }
+        }
+
+        private void GetCommandLineArguments()
+        {
+            // check if user provided with command line arguments when executing the application
+            string[] cmdArgs = Environment.GetCommandLineArgs();
+            if (cmdArgs.Length > 1)
+            {
+                // Copy the results to a list
+                _CmdArguments = cmdArgs.ToList();
+                // Remove the first argument (the executable)
+                _CmdArguments.RemoveAt(0);
+
+                // Log the commandline arguments
+                gMKVLogger.Log(String.Format("Found command line arguments: {0}", string.Join(",", _CmdArguments)));
             }
         }
 
