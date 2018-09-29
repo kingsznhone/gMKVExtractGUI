@@ -330,16 +330,18 @@ namespace gMKVToolNix
                     }
 
                     // add the parameter for extracting the chapters
-                    trackParameterList.Add(new TrackParameter(
-                        MkvExtractModes.chapters,
-                        options,
-                        "",
-                        true,
-                        Path.Combine(
+                    // Since MKVToolNix v17.0, items that were written to the standard output (chapters, tags and cue sheets) are now always written to files instead.
+                    String chapterFile = Path.Combine(
                             argOutputDirectory,
                             String.Format("{0}_chapters.{1}",
                                 Path.GetFileNameWithoutExtension(argMKVFile),
-                                outputFileExtension))
+                                outputFileExtension));
+                    trackParameterList.Add(new TrackParameter(
+                        MkvExtractModes.chapters,
+                        options,
+                        GetMKVExtractVersion().FileMajorPart >= 17 ? chapterFile : "",
+                        (GetMKVExtractVersion().FileMajorPart < 17),
+                        GetMKVExtractVersion().FileMajorPart >= 17 ? "" : chapterFile
                     ));
                 }
             }
@@ -413,13 +415,16 @@ namespace gMKVToolNix
                     }
 
                     OnMkvExtractTrackUpdated(argMKVFile, Enum.GetName(finalPar.ExtractMode.GetType(), finalPar.ExtractMode));
-                    ExtractMkvSegment(argMKVFile, 
-                        String.Format("{0} {1} \"{2}\" {3}", 
-                            Enum.GetName(finalPar.ExtractMode.GetType(),finalPar.ExtractMode),
-                            finalPar.Options,
-                            argMKVFile,
-                            finalPar.TrackOutput), 
-                        finalPar.WriteOutputToFile);
+                    //ExtractMkvSegment(argMKVFile, 
+                    //    String.Format("{0} {1} \"{2}\" {3}", 
+                    //        Enum.GetName(finalPar.ExtractMode.GetType(),finalPar.ExtractMode),
+                    //        finalPar.Options,
+                    //        argMKVFile,
+                    //        finalPar.TrackOutput), 
+                    //    finalPar.WriteOutputToFile);
+
+                    ExtractMkvSegment(argMKVFile, finalPar);
+
                 }
                 catch (Exception ex)
                 {
@@ -428,106 +433,109 @@ namespace gMKVToolNix
                 }
                 finally
                 {
-                    if (finalPar.WriteOutputToFile)
+                    if (_OutputFileWriter != null)
                     {
                         _OutputFileWriter.Close();
                         _OutputFileWriter = null;
+                    }
 
-                        try
+                    try
+                    {
+                        // If we have chapters with CUE format, then we read the XML chapters and convert it to CUE
+                        if (finalPar.ExtractMode == MkvExtractModes.chapters)
                         {
-                            // If we have chapters with CUE format, then we read the XML chapters and convert it to CUE
-                            if (finalPar.ExtractMode == MkvExtractModes.chapters)
+                            // Since MKVToolNix v17.0, items that were written to the standard output (chapters, tags and cue sheets) are now always written to files instead.
+                            String outputFile = GetMKVExtractVersion().FileMajorPart >= 17 ? finalPar.TrackOutput : finalPar.OutputFilename;
+
+                            if (outputFile.ToLower().EndsWith("cue"))
                             {
-                                if (finalPar.OutputFilename.EndsWith("cue"))
+                                Chapters c = null;
+                                using (StreamReader sr = new StreamReader(outputFile))
                                 {
-                                    Chapters c = null;
-                                    using (StreamReader sr = new StreamReader(finalPar.OutputFilename))
-                                    {
-                                        XmlSerializer serializer = new XmlSerializer(typeof(Chapters));
-                                        c = (Chapters)serializer.Deserialize(sr);
-                                    }
-                                    Cue cue = new Cue();
-                                    cue.File = Path.GetFileName(argMKVFile);
-                                    cue.FileType = "WAVE";
-                                    cue.Title = Path.GetFileName(argMKVFile);
-                                    cue.Tracks = new List<CueTrack>();
+                                    XmlSerializer serializer = new XmlSerializer(typeof(Chapters));
+                                    c = (Chapters)serializer.Deserialize(sr);
+                                }
+                                Cue cue = new Cue();
+                                cue.File = Path.GetFileName(argMKVFile);
+                                cue.FileType = "WAVE";
+                                cue.Title = Path.GetFileName(argMKVFile);
+                                cue.Tracks = new List<CueTrack>();
 
-                                    if (c.EditionEntry != null 
-                                        && c.EditionEntry.Length > 0
-                                        && c.EditionEntry[0].ChapterAtom != null
-                                        && c.EditionEntry[0].ChapterAtom.Length > 0)
+                                if (c.EditionEntry != null
+                                    && c.EditionEntry.Length > 0
+                                    && c.EditionEntry[0].ChapterAtom != null
+                                    && c.EditionEntry[0].ChapterAtom.Length > 0)
+                                {
+                                    Int32 currentChapterTrackNumber = 1;
+                                    foreach (ChapterAtom atom in c.EditionEntry[0].ChapterAtom)
                                     {
-                                        Int32 currentChapterTrackNumber = 1;
-                                        foreach (ChapterAtom atom in c.EditionEntry[0].ChapterAtom)
+                                        CueTrack tr = new CueTrack();
+                                        tr.Number = currentChapterTrackNumber;
+                                        if (atom.ChapterDisplay != null
+                                            && atom.ChapterDisplay.Length > 0)
                                         {
-                                            CueTrack tr = new CueTrack();
-                                            tr.Number = currentChapterTrackNumber;
-                                            if (atom.ChapterDisplay != null
-                                                && atom.ChapterDisplay.Length > 0)
-                                            {
-                                                tr.Title = atom.ChapterDisplay[0].ChapterString;
-                                            }
-                                            if (!String.IsNullOrEmpty(atom.ChapterTimeStart)
-                                                && atom.ChapterTimeStart.Contains(":"))
-                                            {
-                                                String[] timeElements = atom.ChapterTimeStart.Split(new String[] { ":" }, StringSplitOptions.None);
-                                                if (timeElements.Length == 3)
-                                                {
-                                                    // Find cue minutes from hours and minutes
-                                                    Int32 hours = Int32.Parse(timeElements[0]);
-                                                    Int32 minutes = Int32.Parse(timeElements[1]) + 60 * hours;
-                                                    // Convert nanoseconds to frames (each second is 75 frames)
-                                                    Int64 nanoSeconds = 0;
-                                                    Int32 frames = 0;
-                                                    Int32 secondsLength = timeElements[2].Length;
-                                                    if (timeElements[2].Contains("."))
-                                                    {
-                                                        secondsLength = timeElements[2].IndexOf(".");
-                                                        nanoSeconds = Int64.Parse(timeElements[2].Substring(timeElements[2].IndexOf(".") + 1));
-                                                        // I take the integer part of the result action in order to get the first frame
-                                                        frames = Convert.ToInt32(Math.Floor(Convert.ToDouble(nanoSeconds) / 1000000000.0 * 75.0));
-                                                    }
-                                                    tr.Index = String.Format("{0}:{1}:{2}",
-                                                        minutes.ToString("#00")
-                                                        , timeElements[2].Substring(0, secondsLength)
-                                                        , frames.ToString("00")
-                                                        );
-                                                }
-                                            }
-
-                                            cue.Tracks.Add(tr);
-                                            currentChapterTrackNumber++;
+                                            tr.Title = atom.ChapterDisplay[0].ChapterString;
                                         }
+                                        if (!String.IsNullOrEmpty(atom.ChapterTimeStart)
+                                            && atom.ChapterTimeStart.Contains(":"))
+                                        {
+                                            String[] timeElements = atom.ChapterTimeStart.Split(new String[] { ":" }, StringSplitOptions.None);
+                                            if (timeElements.Length == 3)
+                                            {
+                                                // Find cue minutes from hours and minutes
+                                                Int32 hours = Int32.Parse(timeElements[0]);
+                                                Int32 minutes = Int32.Parse(timeElements[1]) + 60 * hours;
+                                                // Convert nanoseconds to frames (each second is 75 frames)
+                                                Int64 nanoSeconds = 0;
+                                                Int32 frames = 0;
+                                                Int32 secondsLength = timeElements[2].Length;
+                                                if (timeElements[2].Contains("."))
+                                                {
+                                                    secondsLength = timeElements[2].IndexOf(".");
+                                                    nanoSeconds = Int64.Parse(timeElements[2].Substring(timeElements[2].IndexOf(".") + 1));
+                                                    // I take the integer part of the result action in order to get the first frame
+                                                    frames = Convert.ToInt32(Math.Floor(Convert.ToDouble(nanoSeconds) / 1000000000.0 * 75.0));
+                                                }
+                                                tr.Index = String.Format("{0}:{1}:{2}",
+                                                    minutes.ToString("#00")
+                                                    , timeElements[2].Substring(0, secondsLength)
+                                                    , frames.ToString("00")
+                                                    );
+                                            }
+                                        }
+
+                                        cue.Tracks.Add(tr);
+                                        currentChapterTrackNumber++;
                                     }
+                                }
 
-                                    StringBuilder cueBuilder = new StringBuilder();
+                                StringBuilder cueBuilder = new StringBuilder();
 
-                                    cueBuilder.AppendFormat("REM GENRE \"\"\r\n");
-                                    cueBuilder.AppendFormat("REM DATE \"\"\r\n");
-                                    cueBuilder.AppendFormat("PERFORMER \"\"\r\n");
-                                    cueBuilder.AppendFormat("TITLE \"{0}\"\r\n", cue.Title);
-                                    cueBuilder.AppendFormat("FILE \"{0}\" {1}\r\n", cue.File, cue.FileType);
+                                cueBuilder.AppendFormat("REM GENRE \"\"\r\n");
+                                cueBuilder.AppendFormat("REM DATE \"\"\r\n");
+                                cueBuilder.AppendFormat("PERFORMER \"\"\r\n");
+                                cueBuilder.AppendFormat("TITLE \"{0}\"\r\n", cue.Title);
+                                cueBuilder.AppendFormat("FILE \"{0}\" {1}\r\n", cue.File, cue.FileType);
 
-                                    foreach (CueTrack tr in cue.Tracks)
-                                    {
-                                        cueBuilder.AppendFormat("\tTRACK {0} AUDIO\r\n", tr.Number.ToString("00"));
-                                        cueBuilder.AppendFormat("\t\tTITLE \"{0}\"\r\n", tr.Title);
-                                        cueBuilder.AppendFormat("\t\tPERFORMER \"\"\r\n");
-                                        cueBuilder.AppendFormat("\t\tINDEX 01 {0}\r\n", tr.Index);
-                                    }
+                                foreach (CueTrack tr in cue.Tracks)
+                                {
+                                    cueBuilder.AppendFormat("\tTRACK {0} AUDIO\r\n", tr.Number.ToString("00"));
+                                    cueBuilder.AppendFormat("\t\tTITLE \"{0}\"\r\n", tr.Title);
+                                    cueBuilder.AppendFormat("\t\tPERFORMER \"\"\r\n");
+                                    cueBuilder.AppendFormat("\t\tINDEX 01 {0}\r\n", tr.Index);
+                                }
 
-                                    using (StreamWriter sw = new StreamWriter(finalPar.OutputFilename, false, Encoding.UTF8))
-                                    {
-                                        sw.Write(cueBuilder.ToString());
-                                    }
+                                using (StreamWriter sw = new StreamWriter(outputFile, false, Encoding.UTF8))
+                                {
+                                    sw.Write(cueBuilder.ToString());
                                 }
                             }
                         }
-                        catch (Exception exc)
-                        {
-                            Debug.WriteLine(exc);
-                            _ErrorBuilder.AppendLine(String.Format("Track output: {0}" + Environment.NewLine + "Exception: {1}" + Environment.NewLine, finalPar.TrackOutput, exc.Message));
-                        }
+                    }
+                    catch (Exception exc)
+                    {
+                        Debug.WriteLine(exc);
+                        _ErrorBuilder.AppendLine(String.Format("Track output: {0}" + Environment.NewLine + "Exception: {1}" + Environment.NewLine, finalPar.TrackOutput, exc.Message));
                     }
                 }
             }
@@ -604,8 +612,21 @@ namespace gMKVToolNix
             try
             {
                 OnMkvExtractTrackUpdated(argMKVFile, "Cue Sheet");
-                _OutputFileWriter = new StreamWriter(cueFile, false, new UTF8Encoding(false, true));
-                ExtractMkvSegment(argMKVFile, par, true);
+                // Since MKVToolNix v17.0, items that were written to the standard output (chapters, tags and cue sheets) are now always written to files instead.
+                if (GetMKVExtractVersion().FileMajorPart < 17)
+                {
+                    _OutputFileWriter = new StreamWriter(cueFile, false, new UTF8Encoding(false, true));
+                }
+                ExtractMkvSegment(
+                    argMKVFile
+                     , new TrackParameter(
+                        MkvExtractModes.cuesheet
+                        , ""
+                        , GetMKVExtractVersion().FileMajorPart >= 17 ? cueFile : ""
+                        , (GetMKVExtractVersion().FileMajorPart < 17)
+                        , GetMKVExtractVersion().FileMajorPart >= 17 ? "" : cueFile
+                    )
+               );
             }
             catch (Exception ex)
             {                
@@ -613,8 +634,11 @@ namespace gMKVToolNix
             }
             finally
             {
-                _OutputFileWriter.Close();
-                _OutputFileWriter = null;
+                if (_OutputFileWriter != null)
+                {
+                    _OutputFileWriter.Close();
+                    _OutputFileWriter = null;
+                }
             }
             // check for errors
             if (_ErrorBuilder.Length > 0)
@@ -649,8 +673,21 @@ namespace gMKVToolNix
             try
             {
                 OnMkvExtractTrackUpdated(argMKVFile, "Tags");
-                _OutputFileWriter = new StreamWriter(tagsFile, false, new UTF8Encoding(false, true));
-                ExtractMkvSegment(argMKVFile, par, true);
+                // Since MKVToolNix v17.0, items that were written to the standard output (chapters, tags and cue sheets) are now always written to files instead.
+                if (GetMKVExtractVersion().FileMajorPart < 17)
+                {
+                    _OutputFileWriter = new StreamWriter(tagsFile, false, new UTF8Encoding(false, true));
+                }
+                ExtractMkvSegment(
+                    argMKVFile
+                    , new TrackParameter(
+                        MkvExtractModes.tags
+                        , ""
+                        , GetMKVExtractVersion().FileMajorPart >= 17 ? tagsFile : ""
+                        , (GetMKVExtractVersion().FileMajorPart < 17)
+                        , GetMKVExtractVersion().FileMajorPart >= 17 ? "" : tagsFile
+                    )
+                );
             }
             catch (Exception ex)
             {
@@ -658,8 +695,11 @@ namespace gMKVToolNix
             }
             finally
             {
-                _OutputFileWriter.Close();
-                _OutputFileWriter = null;
+                if (_OutputFileWriter != null)
+                {
+                    _OutputFileWriter.Close();
+                    _OutputFileWriter = null;
+                }
             }
             // check for errors
             if (_ErrorBuilder.Length > 0)
@@ -680,13 +720,21 @@ namespace gMKVToolNix
                 MkvExtractTrackUpdated(filename, trackName);
         }
 
-        private void ExtractMkvSegment(String argMKVFile, String argParameters, Boolean argUseOutputFileWriter)
+        private void ExtractMkvSegment(String argMKVFile, TrackParameter argParameter)
         {
             OnMkvExtractProgressUpdated(0);
             // check for existence of MKVExtract
             if (!File.Exists(_MKVExtractFilename)) { throw new Exception(String.Format("Could not find {0}!" + Environment.NewLine + "{1}", MKV_EXTRACT_FILENAME, _MKVExtractFilename)); }
             DataReceivedEventHandler handler = null;
-            if (argUseOutputFileWriter)
+
+            // Check the file version of the mkvextract
+            if (_Version == null)
+            {
+                _Version = GetMKVExtractVersion();
+            }
+
+            // Since MKVToolNix v17.0, items that were written to the standard output (chapters, tags and cue sheets) are now always written to files instead.
+            if (argParameter.WriteOutputToFile && _Version.FileMajorPart < 17)
             {
                 handler = myProcess_OutputDataReceived_WriteToFile;
             }
@@ -695,10 +743,10 @@ namespace gMKVToolNix
                 handler = myProcess_OutputDataReceived;
             }
 
-            ExecuteMkvExtract(argParameters, handler);
+            ExecuteMkvExtract(argMKVFile, argParameter, handler);
         }
 
-        private void ExecuteMkvExtract(String argParameters, DataReceivedEventHandler argHandler)
+        private void ExecuteMkvExtract(String argMKVFile, TrackParameter argParameter, DataReceivedEventHandler argHandler)
         {
             using (Process myProcess = new Process())
             {
@@ -745,14 +793,40 @@ namespace gMKVToolNix
 
                 // if on Linux, the language output must be defined from the environment variables LC_ALL, LANG, and LC_MESSAGES
                 // After talking with Mosu, the language output is defined from ui-language, with different language codes for Windows and Linux
+                String options = "";
                 if (gMKVHelper.IsOnLinux)
                 {
-                    myProcessInfo.Arguments = String.Format("{0} --ui-language en_US {1}", parameters, argParameters);
+                    options = String.Format("{0} --ui-language en_US {1}", parameters, argParameter.Options);
                 }
                 else
                 {
-                    myProcessInfo.Arguments = String.Format("{0} --ui-language en {1}", parameters, argParameters);
-                }                    
+                    options = String.Format("{0} --ui-language en {1}", parameters, argParameter.Options);
+                }
+
+                // Since MKVToolNix v17.0, the syntax has changed
+                if (_Version.FileMajorPart >= 17)
+                {
+                    // new Syntax
+                    // mkvextract {source-filename} {mode1} [options] [extraction-spec1] [mode2] [options] [extraction-spec2] […] 
+                    myProcessInfo.Arguments = String.Format(" \"{0}\" {1} {2} {3} ",
+                        argMKVFile,
+                        Enum.GetName(argParameter.ExtractMode.GetType(), argParameter.ExtractMode),
+                        options,
+                        argParameter.TrackOutput
+                    );
+                }
+                else
+                {
+                    // old Syntax
+                    // mkvextract {mode} {source-filename} [options] [extraction-spec]
+                    myProcessInfo.Arguments = String.Format(" {0} \"{1}\" {2} {3}",
+                           Enum.GetName(argParameter.ExtractMode.GetType(), argParameter.ExtractMode),
+                        argMKVFile,
+                        options,
+                        argParameter.TrackOutput
+                    );
+                }                
+
                 myProcessInfo.UseShellExecute = false;
                 myProcessInfo.RedirectStandardOutput = true;
                 myProcessInfo.StandardOutputEncoding = Encoding.UTF8;
