@@ -185,7 +185,7 @@ namespace gMKVToolNix
                             ((gMKVTrack)argSeg).TrackID,
                             Path.Combine(
                                 argOutputDirectory,
-                                String.Format("{0}_track{1}_{2}.tc.txt",
+                                String.Format("{0}_track{1}_[{2}].tc.txt",
                                     Path.GetFileNameWithoutExtension(argMKVFile),
                                     ((gMKVTrack)argSeg).TrackNumber,
                                     ((gMKVTrack)argSeg).Language))),
@@ -204,7 +204,7 @@ namespace gMKVToolNix
                             ((gMKVTrack)argSeg).TrackID,
                             Path.Combine(
                                 argOutputDirectory,
-                                String.Format("{0}_track{1}_{2}.cue",
+                                String.Format("{0}_track{1}_[{2}].cue",
                                     Path.GetFileNameWithoutExtension(argMKVFile),
                                     ((gMKVTrack)argSeg).TrackNumber,
                                     ((gMKVTrack)argSeg).Language))),
@@ -257,7 +257,7 @@ namespace gMKVToolNix
                             ((gMKVTrack)argSeg).TrackID,
                             Path.Combine(
                                 argOutputDirectory,
-                                String.Format("{0}_track{1}_{2}{3}.{4}",
+                                String.Format("{0}_track{1}_[{2}]{3}.{4}",
                                     Path.GetFileNameWithoutExtension(argMKVFile),
                                     ((gMKVTrack)argSeg).TrackNumber,
                                     ((gMKVTrack)argSeg).Language,
