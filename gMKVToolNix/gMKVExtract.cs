@@ -415,14 +415,6 @@ namespace gMKVToolNix
                     }
 
                     OnMkvExtractTrackUpdated(argMKVFile, Enum.GetName(finalPar.ExtractMode.GetType(), finalPar.ExtractMode));
-                    //ExtractMkvSegment(argMKVFile, 
-                    //    String.Format("{0} {1} \"{2}\" {3}", 
-                    //        Enum.GetName(finalPar.ExtractMode.GetType(),finalPar.ExtractMode),
-                    //        finalPar.Options,
-                    //        argMKVFile,
-                    //        finalPar.TrackOutput), 
-                    //    finalPar.WriteOutputToFile);
-
                     ExtractMkvSegment(argMKVFile, finalPar);
 
                 }
