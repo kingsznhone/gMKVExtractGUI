@@ -804,7 +804,7 @@ namespace gMKVToolNix
                         argMKVFile,
                         Enum.GetName(argParameter.ExtractMode.GetType(), argParameter.ExtractMode),
                         options,
-                        argParameter.TrackOutput
+                        string.IsNullOrWhiteSpace(argParameter.TrackOutput) ? argParameter.TrackOutput : string.Format("\"{0}\"", argParameter.TrackOutput)
                     );
                 }
                 else
