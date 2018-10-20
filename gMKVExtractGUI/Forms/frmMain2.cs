@@ -787,13 +787,20 @@ namespace gMKVToolNix.Forms
 
             if (checkSelectedTracks)
             {
-                // Check if the checked nodes contain tracks
-                if(!checkedNodes.Any(t => t.Tag != null && !(t.Tag is gMKVSegmentInfo)))
-                {
-                    throw new Exception("You must select a track to extract!");
-                }
-
                 FormMkvExtractionMode selectedExtractionMode = (FormMkvExtractionMode)Enum.Parse(typeof(FormMkvExtractionMode), (String)cmbExtractionMode.SelectedItem);
+
+                // Check if the checked nodes contain tracks
+                if (!checkedNodes.Any(t => t.Tag != null && !(t.Tag is gMKVSegmentInfo)))
+                {
+                    if (selectedExtractionMode == FormMkvExtractionMode.Cue_Sheet || selectedExtractionMode == FormMkvExtractionMode.Tags)
+                    {
+                        throw new Exception(string.Format("You must select a file's track in order to extract {0}!", (String)cmbExtractionMode.SelectedItem));
+                    }
+                    else
+                    {
+                        throw new Exception("You must select a track to extract!");
+                    }
+                }
 
                 if (selectedExtractionMode == FormMkvExtractionMode.Timecodes ||
                     selectedExtractionMode == FormMkvExtractionMode.Tracks_And_Timecodes ||
@@ -850,10 +857,10 @@ namespace gMKVToolNix.Forms
                         CheckNeccessaryInputFields(true, true);
                         break;
                     case FormMkvExtractionMode.Cue_Sheet:
-                        CheckNeccessaryInputFields(false, false);
+                        CheckNeccessaryInputFields(true, false);
                         break;
                     case FormMkvExtractionMode.Tags:
-                        CheckNeccessaryInputFields(false, false);
+                        CheckNeccessaryInputFields(true, false);
                         break;
                     case FormMkvExtractionMode.Timecodes:
                         CheckNeccessaryInputFields(true, false);
