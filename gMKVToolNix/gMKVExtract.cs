@@ -755,7 +755,8 @@ namespace gMKVToolNix
                         || argParameter.ExtractMode == MkvExtractModes.tracks 
                         || argParameter.ExtractMode == MkvExtractModes.timecodes_v2 
                         || argParameter.ExtractMode == MkvExtractModes.timestamps_v2
-                        || argParameter.ExtractMode == MkvExtractModes.cues ? argParameter.TrackOutput : string.Format("\"{0}\"", argParameter.TrackOutput)
+                        || argParameter.ExtractMode == MkvExtractModes.cues
+                        || argParameter.ExtractMode == MkvExtractModes.attachments ? argParameter.TrackOutput : string.Format("\"{0}\"", argParameter.TrackOutput)
                     );
                 }
                 else
