@@ -129,10 +129,26 @@ namespace gMKVToolNix
             if (!File.Exists(_MKVInfoFilename)) { throw new Exception(String.Format("Could not find {0}!" + Environment.NewLine + "{1}", MKV_INFO_FILENAME, _MKVInfoFilename)); }
             // check for list of track numbers
             if (argSegmentsList == null || argSegmentsList.Count == 0) { throw new Exception("No mkv segments were provided!"); }
+
+            // Check if there are any video tracks
+            if (!argSegmentsList.Any(x => x is gMKVTrack && (x as gMKVTrack).TrackType == MkvTrackType.video))
+            {
+                // No video track found, so set all the delays to 0
+                foreach (gMKVTrack tr in argSegmentsList.Where(x => x is gMKVTrack && (x as gMKVTrack).TrackType == MkvTrackType.audio))
+                {
+                    tr.Delay = 0;
+                    tr.EffectiveDelay = 0;
+                }
+
+                // Everything is fine, return true
+                return;
+            }
+
             // clear the track list 
             _TrackList.Clear();
             // reset the found delays counter
             _TrackDelaysFound = 0;
+
             // get only video and audio track in a trackList
             foreach (gMKVSegment seg in argSegmentsList)
             {

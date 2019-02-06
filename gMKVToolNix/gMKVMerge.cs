@@ -151,9 +151,23 @@ namespace gMKVToolNix
         public bool FindDelays(List<gMKVSegment> argSegmentList)
         {
             // Check to see if the list contains segments
-            if(argSegmentList == null || argSegmentList.Count == 0)
+            if (argSegmentList == null || argSegmentList.Count == 0)
             {
                 return false;
+            }
+
+            // Check if there are any video tracks
+            if (!argSegmentList.Any(x => x is gMKVTrack && (x as gMKVTrack).TrackType == MkvTrackType.video))
+            {
+                // No video track found, so set all the delays to 0
+                foreach (gMKVTrack tr in argSegmentList.Where(x => x is gMKVTrack && (x as gMKVTrack).TrackType == MkvTrackType.audio))
+                {
+                    tr.Delay = 0;
+                    tr.EffectiveDelay = 0;
+                }
+
+                // Everything is fine, return true
+                return true;
             }
             
             Int32 videoDelay = Int32.MinValue;
