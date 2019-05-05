@@ -24,7 +24,7 @@ namespace gMKVToolNix
         private Int32 _TotalJobs = 0;
         private gMKVExtract _gMkvExtract = null;
         private Boolean _ExtractRunning = false;
-        private gSettings _Settings = new gSettings(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+        private gSettings _Settings = null; 
         private Boolean _FromConstructor = false;
 
         private BindingList<gMKVJobInfo> _JobList = new BindingList<gMKVJobInfo>();
@@ -39,12 +39,13 @@ namespace gMKVToolNix
 
                 _MainForm = argMainForm;
 
-                Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
-                Text = String.Format("gMKVExtractGUI v{0} -- Job Manager", Assembly.GetExecutingAssembly().GetName().Version);
+                Icon = Icon.ExtractAssociatedIcon(GetExecutingAssemblyLocation());
+                Text = String.Format("gMKVExtractGUI v{0} -- Job Manager", GetCurrentVersion());
 
                 _FromConstructor = true;
 
                 // Load settings
+                _Settings = new gSettings(this.GetCurrentDirectory());
                 _Settings.Reload();
 
                 chkShowPopup.Checked = _Settings.ShowPopupInJobManager;
@@ -61,6 +62,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 _FromConstructor = false;
                 ShowErrorMessage(ex.Message);
             }
@@ -77,6 +79,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);                
             }
         }
@@ -195,6 +198,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -305,6 +309,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -349,6 +354,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
             finally
@@ -389,6 +395,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -407,6 +414,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -475,6 +483,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -504,6 +513,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -576,6 +586,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }

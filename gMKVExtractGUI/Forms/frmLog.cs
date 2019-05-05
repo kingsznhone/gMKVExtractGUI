@@ -25,8 +25,8 @@ namespace gMKVToolNix
 
         private void InitForm()
         {
-            Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
-            Text = String.Format("gMKVExtractGUI v{0} -- Log", Assembly.GetExecutingAssembly().GetName().Version);
+            Icon = Icon.ExtractAssociatedIcon(GetExecutingAssemblyLocation());
+            Text = String.Format("gMKVExtractGUI v{0} -- Log", GetCurrentVersion());
         }
 
         private void frmLog_Activated(object sender, EventArgs e)
@@ -50,6 +50,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -58,11 +59,15 @@ namespace gMKVToolNix
         {
             try
             {
-                Clipboard.SetData(DataFormats.UnicodeText, txtLog.SelectedText);
+                if (!string.IsNullOrWhiteSpace(txtLog.SelectedText))
+                {
+                    Clipboard.SetData(DataFormats.UnicodeText, txtLog.SelectedText);
+                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -76,6 +81,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -99,6 +105,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -128,6 +135,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
