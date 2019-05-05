@@ -26,6 +26,22 @@ namespace gMKVToolNix
         protected bool isMoving = false;
         protected bool shouldScale = false;
 
+        /// <summary>
+        /// Gets the form's border width in pixels
+        /// </summary>
+        public Int32 BorderWidth
+        {
+            get { return Convert.ToInt32(Convert.ToDouble((this.Width - this.ClientSize.Width)) / 2.0); }
+        }
+
+        /// <summary>
+        /// Gets the form's Title Bar Height in pixels
+        /// </summary>
+        public Int32 TitlebarHeight
+        {
+            get { return this.Height - this.ClientSize.Height - 2 * BorderWidth; }
+        }
+
         public gForm() :base()
         {
             this.DoubleBuffered = true;
