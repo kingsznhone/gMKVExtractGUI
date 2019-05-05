@@ -1,4 +1,5 @@
-﻿using System;
+﻿using gMKVToolNix.Controls;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -11,14 +12,14 @@ namespace gMKVToolNix
         public gTextBox()
             : base()
         {
-            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.DoubleBuffered = true;
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
+
             try
             {
                 if (e.Control && e.KeyCode == Keys.A)
@@ -27,14 +28,17 @@ namespace gMKVToolNix
                 }
                 else if (e.Control && e.KeyCode == Keys.C)
                 {
-                    Clipboard.SetText(this.SelectedText, TextDataFormat.UnicodeText);
+                    if (!String.IsNullOrWhiteSpace(this.SelectedText))
+                    {
+                        Clipboard.SetText(this.SelectedText, TextDataFormat.UnicodeText);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                ex.ShowException();
             }
         }
-
     }
 }
