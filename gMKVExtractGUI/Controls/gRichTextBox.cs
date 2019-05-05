@@ -1,4 +1,5 @@
-﻿using System;
+﻿using gMKVToolNix.Controls;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -11,11 +12,12 @@ namespace gMKVToolNix
         public gRichTextBox()
             : base()
         {
-            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            this.ShortcutsEnabled = false;
-            this.DetectUrls = false;
             this.DoubleBuffered = true;
+            //SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+
+            this.ShortcutsEnabled = false;
+            this.DetectUrls = false;            
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -29,13 +31,16 @@ namespace gMKVToolNix
                 }
                 else if (e.Control && e.KeyCode == Keys.C)
                 {
-                    Clipboard.SetText(this.SelectedText, TextDataFormat.UnicodeText);
+                    if (!String.IsNullOrWhiteSpace(this.SelectedText))
+                    {
+                        Clipboard.SetText(this.SelectedText, TextDataFormat.UnicodeText);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                throw;
+                ex.ShowException();
             }
         }
     }
