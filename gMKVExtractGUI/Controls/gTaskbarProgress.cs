@@ -59,24 +59,27 @@ namespace gMKVToolNix
             return _TaskbarInstance;
         }
 
-        private static bool IsTaskbarSupported() 
-        { 
-            return !Program.IsOnLinux && Environment.OSVersion.Version >= new Version(6, 1); 
+        private static bool IsTaskbarSupported 
+        {
+            get
+            {
+                return !Program.IsOnLinux && Environment.OSVersion.Version >= new Version(6, 1);
+            }
         }
 
         public static void SetState(Form frm, TaskbarStates taskbarState)
         {
-            if (IsTaskbarSupported()) { Instance().SetProgressState(frm.Handle, taskbarState); }
+            if (IsTaskbarSupported) { Instance().SetProgressState(frm.Handle, taskbarState); }
         }
 
         public static void SetValue(Form frm, UInt64 progressValue, UInt64 progressMax)
         {
-            if (IsTaskbarSupported()) { Instance().SetProgressValue(frm.Handle, (UInt64)progressValue, (UInt64)progressMax); }
+            if (IsTaskbarSupported) { Instance().SetProgressValue(frm.Handle, (UInt64)progressValue, (UInt64)progressMax); }
         }
 
         public static void SetOverlayIcon(Form frm, System.Drawing.Icon icn, String description)
         {
-            if (IsTaskbarSupported()) 
+            if (IsTaskbarSupported) 
             {
                 Debug.WriteLine(String.Format("{1}: HRESULT:0x{0:X8}", Instance().SetOverlayIcon(frm.Handle, icn == null ? IntPtr.Zero : icn.Handle, description ?? ""), description ?? ""));
             }
