@@ -292,7 +292,7 @@ namespace gMKVToolNix.Forms
                         // check if MKVToolnix Path is already set
                         if (!String.IsNullOrWhiteSpace(txtMKVToolnixPath.Text))
                         {
-                            if (ShowQuestion("Do you really want to change MKVToolnix path?", "Are you sure?") != DialogResult.Yes)
+                            if (ShowQuestion("Do you really want to change MKVToolnix path?", "Are you sure?", false) != DialogResult.Yes)
                             {
                                 return;
                             }
@@ -779,7 +779,16 @@ namespace gMKVToolNix.Forms
             }
             if (!chkUseSourceDirectory.Checked && !Directory.Exists(txtOutputDirectory.Text.Trim()))
             {
-                throw new Exception(String.Format("The output directory {0} does not exist!", txtOutputDirectory.Text.Trim()));
+                // Ask the user to create the non existing output directory
+                if (ShowQuestion(String.Format("The output directory \"{0}\" does not exist!{1}{1}Do you want to create it?", txtOutputDirectory.Text.Trim(), Environment.NewLine), "Output directory does not exist!", false) != DialogResult.Yes)
+                {
+                    throw new Exception(String.Format("The output directory \"{0}\" does not exist!{1}{1}Extraction was cancelled!", txtOutputDirectory.Text.Trim(), Environment.NewLine));
+                }
+                else
+                {
+                    // Create the non existing output directory
+                    Directory.CreateDirectory(txtOutputDirectory.Text.Trim());
+                }
             }
 
             // Get the checked nodes
