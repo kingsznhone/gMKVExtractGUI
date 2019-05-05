@@ -150,9 +150,9 @@ namespace gMKVToolNix
 
         public gTreeView() : base()
         {
-            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.DoubleBuffered = true;
+            //SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
         }
 
         /// <summary>

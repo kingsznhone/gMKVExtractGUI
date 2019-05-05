@@ -11,11 +11,10 @@ namespace gMKVToolNix.Controls
         public gListBox()
             : base()
         {
-            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            SetStyle(ControlStyles.Opaque, true);
             this.DoubleBuffered = true;
+            //SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            //SetStyle(ControlStyles.Opaque, true);            
         }
-
     }
 }
