@@ -110,6 +110,12 @@ namespace gMKVToolNix
             set { _MinimumTimestamp = value; }
         }
 
+        public Int32 VideoPixelWidth { get; set; }
+        public Int32 VideoPixelHeight { get; set; }
+
+        public Int32 AudioSamplingFrequency { get; set; }
+        public Int32 AudioChannels { get; set; }
+
         public override string ToString()
         {
             String str = String.Format("Track {0} [TID {1}][{2}][{3}][{4}][{5}][{6}]", 

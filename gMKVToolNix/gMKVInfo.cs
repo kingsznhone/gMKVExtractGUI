@@ -603,18 +603,42 @@ namespace gMKVToolNix
                         }
                         else if (outputLine.Contains("Pixel width:"))
                         {
-                            ((gMKVTrack)tmpSegment).ExtraInfo = outputLine.Substring(outputLine.IndexOf(":") + 1).Trim();
+                            string tmp = outputLine.Substring(outputLine.IndexOf(":") + 1).Trim();
+                            Int32 tmpInt;
+                            if(Int32.TryParse(tmp, out tmpInt))
+                            {
+                                ((gMKVTrack)tmpSegment).VideoPixelWidth = tmpInt;
+                            }                                
+                            ((gMKVTrack)tmpSegment).ExtraInfo = tmp;
                         }
                         else if (outputLine.Contains("Pixel height:"))
                         {
+                            string tmp = outputLine.Substring(outputLine.IndexOf(":") + 1).Trim();
+                            Int32 tmpInt;
+                            if (Int32.TryParse(tmp, out tmpInt))
+                            {
+                                ((gMKVTrack)tmpSegment).VideoPixelHeight = tmpInt;
+                            }
                             ((gMKVTrack)tmpSegment).ExtraInfo += "x" + outputLine.Substring(outputLine.IndexOf(":") + 1).Trim();
                         }
                         else if (outputLine.Contains("Sampling frequency:"))
                         {
+                            string tmp = outputLine.Substring(outputLine.IndexOf(":") + 1).Trim();
+                            Int32 tmpInt;
+                            if (Int32.TryParse(tmp, out tmpInt))
+                            {
+                                ((gMKVTrack)tmpSegment).AudioSamplingFrequency = tmpInt;
+                            }
                             ((gMKVTrack)tmpSegment).ExtraInfo = outputLine.Substring(outputLine.IndexOf(":") + 1).Trim();
                         }
                         else if (outputLine.Contains("Channels:"))
                         {
+                            string tmp = outputLine.Substring(outputLine.IndexOf(":") + 1).Trim();
+                            Int32 tmpInt;
+                            if (Int32.TryParse(tmp, out tmpInt))
+                            {
+                                ((gMKVTrack)tmpSegment).AudioChannels = tmpInt;
+                            }
                             ((gMKVTrack)tmpSegment).ExtraInfo += ", Ch:" + outputLine.Substring(outputLine.IndexOf(":") + 1).Trim();
                         }
                         else if (outputLine.Contains("CodecPrivate,"))

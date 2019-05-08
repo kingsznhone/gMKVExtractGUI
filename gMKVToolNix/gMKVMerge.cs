@@ -253,8 +253,8 @@ namespace gMKVToolNix
                     gMKVTrack track = (gMKVTrack)seg;
                     // Check if the track has CodecPrivateData
                     // and it doesn't have a text representation of CodecPrivate
-                    if (!String.IsNullOrEmpty(track.CodecPrivateData)
-                        && String.IsNullOrEmpty(track.CodecPrivate))
+                    if (!String.IsNullOrWhiteSpace(track.CodecPrivateData)
+                        && String.IsNullOrWhiteSpace(track.CodecPrivate))
                     {
                         byte[] codecPrivateBytes = HexStringToByteArray(track.CodecPrivateData);
                         if (track.TrackType == MkvTrackType.video)
@@ -915,13 +915,45 @@ namespace gMKVToolNix
                                             //{
                                             //}
                                         }
-                                        if (!String.IsNullOrEmpty(videoDimensions))
+                                        if (!String.IsNullOrWhiteSpace(videoDimensions))
                                         {
                                             tmp.ExtraInfo = videoDimensions;
+                                            if (videoDimensions.ToLower().Contains("x"))
+                                            {
+                                                string w = videoDimensions.Substring(0, videoDimensions.IndexOf("x"));
+                                                string h = videoDimensions.Substring(videoDimensions.IndexOf("x") + 1);
+                                                Int32 tmpW, tmpH;
+                                                if(Int32.TryParse(w, out tmpW) && Int32.TryParse(h, out tmpH))
+                                                {
+                                                    tmp.VideoPixelWidth = tmpW;
+                                                    tmp.VideoPixelHeight = tmpH;
+                                                }
+                                            }
                                         }
-                                        else if (!String.IsNullOrEmpty(audioChannels) && !String.IsNullOrEmpty(audioFrequency))
+                                        else if (!String.IsNullOrWhiteSpace(audioChannels) || !String.IsNullOrWhiteSpace(audioFrequency))
                                         {
-                                            tmp.ExtraInfo = String.Format("{0}Hz, Ch: {1}", audioFrequency, audioChannels);
+                                            if (!String.IsNullOrWhiteSpace(audioChannels) && !String.IsNullOrWhiteSpace(audioFrequency))
+                                            {
+                                                tmp.ExtraInfo = String.Format("{0}Hz, Ch: {1}", audioFrequency, audioChannels);
+                                            }
+
+                                            if (!String.IsNullOrWhiteSpace(audioChannels))
+                                            {
+                                                Int32 tmpInt;
+                                                if (Int32.TryParse(audioChannels, out tmpInt))
+                                                {
+                                                    ((gMKVTrack)tmp).AudioChannels = tmpInt;
+                                                }
+                                            }
+
+                                            if (!String.IsNullOrWhiteSpace(audioFrequency))
+                                            {
+                                                Int32 tmpInt;
+                                                if (Int32.TryParse(audioFrequency, out tmpInt))
+                                                {
+                                                    ((gMKVTrack)tmp).AudioSamplingFrequency = tmpInt;
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -981,9 +1013,9 @@ namespace gMKVToolNix
                             tmpTime.Seconds.ToString("00"),
                             tmpTime.Milliseconds.ToString("000"));
                     }
-                    if (!String.IsNullOrEmpty(tmp.MuxingApplication)
-                        && !String.IsNullOrEmpty(tmp.WritingApplication)
-                        && !String.IsNullOrEmpty(tmp.Duration))
+                    if (!String.IsNullOrWhiteSpace(tmp.MuxingApplication)
+                        && !String.IsNullOrWhiteSpace(tmp.WritingApplication)
+                        && !String.IsNullOrWhiteSpace(tmp.Duration))
                     {
                         _SegmentList.Add(tmp);
                     }
@@ -1049,7 +1081,20 @@ namespace gMKVToolNix
                         case MkvTrackType.video:
                             if (outputLine.Contains("pixel_dimensions:"))
                             {
-                                tmp.ExtraInfo = ExtractProperty(outputLine, "pixel_dimensions"); 
+                                string videoDimensions = ExtractProperty(outputLine, "pixel_dimensions");
+                                tmp.ExtraInfo = videoDimensions;
+                                if (videoDimensions.ToLower().Contains("x"))
+                                {
+                                    string w = videoDimensions.Substring(0, videoDimensions.IndexOf("x"));
+                                    string h = videoDimensions.Substring(videoDimensions.IndexOf("x") + 1);
+                                    Int32 tmpW, tmpH;
+                                    if (Int32.TryParse(w, out tmpW) && Int32.TryParse(h, out tmpH))
+                                    {
+                                        tmp.VideoPixelWidth = tmpW;
+                                        tmp.VideoPixelHeight = tmpH;
+                                    }
+                                }
+
                             }
                             // in versions after v9.0.1, Mosu was kind enough to provide us with the minimum_timestamp property
                             // in order to determine the current track's delay
@@ -1065,11 +1110,24 @@ namespace gMKVToolNix
                         case MkvTrackType.audio:
                             if (outputLine.Contains("audio_sampling_frequency:"))
                             {
-                                tmp.ExtraInfo = ExtractProperty(outputLine, "audio_sampling_frequency"); 
+                                string audioFrequency = ExtractProperty(outputLine, "audio_sampling_frequency");
+                                Int32 tmpInt;
+                                if (Int32.TryParse(audioFrequency, out tmpInt))
+                                {
+                                    ((gMKVTrack)tmp).AudioSamplingFrequency = tmpInt;
+                                }
+                                tmp.ExtraInfo = audioFrequency;
                             }
                             if (outputLine.Contains("audio_channels:"))
                             {
-                                tmp.ExtraInfo += ", Ch:" + ExtractProperty(outputLine, "audio_channels");
+                                string audioChannels = ExtractProperty(outputLine, "audio_channels");
+                                Int32 tmpInt;
+                                if (Int32.TryParse(audioChannels, out tmpInt))
+                                {
+                                    ((gMKVTrack)tmp).AudioChannels = tmpInt;
+                                }
+
+                                tmp.ExtraInfo += ", Ch:" + audioChannels;
                             }
                             // in versions after v9.0.1, Mosu was kind enough to provide us with the minimum_timestamp property
                             // in order to determine the current track's delay

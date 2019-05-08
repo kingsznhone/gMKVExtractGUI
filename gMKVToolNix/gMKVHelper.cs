@@ -267,17 +267,47 @@ namespace gMKVToolNix
                     else if (seg is gMKVTrack && !codecPrivateDataWasFound)
                     {
                         // Update CodecPrivate info from mkvinfo to mkvextract segments
-                        if (!String.IsNullOrEmpty(((gMKVTrack)seg).CodecPrivate))
+                        foreach (gMKVSegment seg2 in segmentList)
                         {
-                            foreach (gMKVSegment seg2 in segmentList)
+                            if (seg2 is gMKVTrack)
                             {
-                                if (seg2 is gMKVTrack)
+                                if (((gMKVTrack)seg2).TrackID == ((gMKVTrack)seg).TrackID)
                                 {
-                                    if (((gMKVTrack)seg2).TrackID == ((gMKVTrack)seg).TrackID)
+                                    if (!String.IsNullOrEmpty(((gMKVTrack)seg).CodecPrivate))
                                     {
                                         ((gMKVTrack)seg2).CodecPrivate = ((gMKVTrack)seg).CodecPrivate;
-                                        break;
                                     }
+                                    if (((gMKVTrack)seg2).TrackType == MkvTrackType.video)
+                                    {
+                                        if (((gMKVTrack)seg2).VideoPixelWidth < ((gMKVTrack)seg).VideoPixelWidth)
+                                        {
+                                            ((gMKVTrack)seg2).VideoPixelWidth = ((gMKVTrack)seg).VideoPixelWidth;
+                                        }
+                                        if (((gMKVTrack)seg2).VideoPixelHeight < ((gMKVTrack)seg).VideoPixelHeight)
+                                        {
+                                            ((gMKVTrack)seg2).VideoPixelHeight = ((gMKVTrack)seg).VideoPixelHeight;
+                                        }
+                                        if (!string.IsNullOrWhiteSpace(((gMKVTrack)seg).ExtraInfo))
+                                        {
+                                            ((gMKVTrack)seg2).ExtraInfo = ((gMKVTrack)seg).ExtraInfo;
+                                        }
+                                    }
+                                    else if (((gMKVTrack)seg2).TrackType == MkvTrackType.audio)
+                                    {
+                                        if (((gMKVTrack)seg2).AudioChannels < ((gMKVTrack)seg).AudioChannels)
+                                        {
+                                            ((gMKVTrack)seg2).AudioChannels = ((gMKVTrack)seg).AudioChannels;
+                                        }
+                                        if (((gMKVTrack)seg2).AudioSamplingFrequency < ((gMKVTrack)seg).AudioSamplingFrequency)
+                                        {
+                                            ((gMKVTrack)seg2).AudioSamplingFrequency = ((gMKVTrack)seg).AudioSamplingFrequency;
+                                        }
+                                        if (!string.IsNullOrWhiteSpace(((gMKVTrack)seg).ExtraInfo))
+                                        {
+                                            ((gMKVTrack)seg2).ExtraInfo = ((gMKVTrack)seg).ExtraInfo;
+                                        }
+                                    }
+                                    break;
                                 }
                             }
                         }
