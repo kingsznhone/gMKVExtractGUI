@@ -130,5 +130,55 @@ namespace gMKVToolNix
             }
             return str;
         }
+
+        public override bool Equals(object oth)
+        {
+            gMKVTrack other = oth as gMKVTrack;
+            if (oth == null)
+            {
+                return false;
+            }
+            return
+                this.AudioChannels == other.AudioChannels
+                && this.AudioSamplingFrequency == other.AudioSamplingFrequency
+                && this.CodecID == other.CodecID
+                && this.CodecPrivate == other.CodecPrivate
+                && this.CodecPrivateData == other.CodecPrivateData
+                && this.Delay == other.Delay
+                && this.EffectiveDelay == other.EffectiveDelay
+                && this.ExtraInfo == other.ExtraInfo
+                && this.Language == other.Language
+                && this.MinimumTimestamp == other.MinimumTimestamp
+                && this.TrackID == other.TrackID
+                && this.TrackName == other.TrackName
+                && this.TrackNumber == other.TrackNumber
+                && this.TrackType == other.TrackType
+                && this.VideoPixelHeight == other.VideoPixelHeight
+                && this.VideoPixelWidth == other.VideoPixelWidth
+                ;
+        }
+
+        public override int GetHashCode()
+        {
+            return
+                string.Concat(
+                    this.AudioChannels.GetHashCode()
+                    ,this.AudioSamplingFrequency.GetHashCode()
+                    , this.CodecID.GetHashCode()
+                    , this.CodecPrivate.GetHashCode()
+                    , this.CodecPrivateData.GetHashCode()
+                    , this.Delay.GetHashCode()
+                    , this.EffectiveDelay.GetHashCode()
+                    , this.ExtraInfo.GetHashCode()
+                    , this.Language.GetHashCode()
+                    , this.MinimumTimestamp.GetHashCode()
+                    , this.TrackID.GetHashCode()
+                    , this.TrackName.GetHashCode()
+                    , this.TrackNumber.GetHashCode()
+                    , this.TrackType.GetHashCode()
+                    , this.VideoPixelHeight.GetHashCode()
+                    , this.VideoPixelWidth.GetHashCode()
+                ).GetHashCode();
+        }
     }
 }

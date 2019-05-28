@@ -26,5 +26,20 @@ namespace gMKVToolNix
         {
             return String.Format("Chapters {0} entries", _ChapterCount);
         }
+
+        public override bool Equals(object oth)
+        {
+            gMKVChapter other = oth as gMKVChapter;
+            if (oth == null)
+            {
+                return false;
+            }
+            return this.ChapterCount == other.ChapterCount;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ChapterCount.GetHashCode();
+        }
     }
 }

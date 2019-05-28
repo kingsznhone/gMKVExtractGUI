@@ -32,6 +32,7 @@ namespace gMKVToolNix.Forms
     {
         private frmLog _LogForm = null;
         private frmJobManager _JobManagerForm = null;
+        private frmOptions _OptionsForm = null;
 
         private gMKVExtract _gMkvExtract = null;
 
@@ -65,6 +66,7 @@ namespace gMKVToolNix.Forms
 
                 btnAbort.Enabled = false;
                 btnAbortAll.Enabled = false;
+                btnOptions.Enabled = true;
 
                 cmbChapterType.DataSource = Enum.GetNames(typeof(MkvChapterTypes));
                 cmbExtractionMode.DataSource = Enum.GetNames(typeof(FormMkvExtractionMode));
@@ -220,6 +222,7 @@ namespace gMKVToolNix.Forms
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 _FromConstructor = false;
                 ShowErrorMessage(ex.Message);
             }
@@ -846,6 +849,32 @@ namespace gMKVToolNix.Forms
             }
         }
 
+        private gMKVExtractFilenamePatterns GetFilenamePatterns()
+        {
+            return new gMKVExtractFilenamePatterns()
+            {
+                AttachmentFilenamePattern =
+                    string.IsNullOrWhiteSpace(_Settings.AttachmentFilenamePattern) ?
+                        _Settings.GetPropertyDefaultValue<string>(nameof(_Settings.AttachmentFilenamePattern)) : _Settings.AttachmentFilenamePattern
+                ,
+                AudioTrackFilenamePattern =
+                    string.IsNullOrWhiteSpace(_Settings.AudioTrackFilenamePattern) ?
+                        _Settings.GetPropertyDefaultValue<string>(nameof(_Settings.AudioTrackFilenamePattern)) : _Settings.AudioTrackFilenamePattern
+                ,
+                ChapterFilenamePattern =
+                    string.IsNullOrWhiteSpace(_Settings.ChapterFilenamePattern) ?
+                        _Settings.GetPropertyDefaultValue<string>(nameof(_Settings.ChapterFilenamePattern)) : _Settings.ChapterFilenamePattern
+                ,
+                SubtitleTrackFilenamePattern =
+                    string.IsNullOrWhiteSpace(_Settings.SubtitleTrackFilenamePattern) ?
+                        _Settings.GetPropertyDefaultValue<string>(nameof(_Settings.SubtitleTrackFilenamePattern)) : _Settings.SubtitleTrackFilenamePattern
+                ,
+                VideoTrackFilenamePattern =
+                    string.IsNullOrWhiteSpace(_Settings.VideoTrackFilenamePattern) ?
+                        _Settings.GetPropertyDefaultValue<string>(nameof(_Settings.VideoTrackFilenamePattern)) : _Settings.VideoTrackFilenamePattern
+            };
+        }
+
         private void btnExtract_btnAddJobs_Click(object sender, EventArgs e)
         {
             bool exceptionOccured = false;
@@ -911,64 +940,72 @@ namespace gMKVToolNix.Forms
                     {
                         outputDirectory = infoSegment.Directory;
                     }
-                    List<Object> parameterList = new List<object>();
+                    gMKVExtractSegmentsParameters parameterList = new gMKVExtractSegmentsParameters();
                     switch (extractionMode)
                     {
                         case FormMkvExtractionMode.Tracks:
-                            parameterList.Add(infoSegment.Path);
-                            parameterList.Add(segments);
-                            parameterList.Add(outputDirectory);
-                            parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
-                            parameterList.Add(TimecodesExtractionMode.NoTimecodes);
-                            parameterList.Add(CuesExtractionMode.NoCues);
+                            parameterList.MKVFile = infoSegment.Path;
+                            parameterList.MKVSegmentsToExtract = segments;
+                            parameterList.OutputDirectory = outputDirectory;
+                            parameterList.ChapterType = (MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem);
+                            parameterList.TimecodesExtractionMode = TimecodesExtractionMode.NoTimecodes;
+                            parameterList.CueExtractionMode = CuesExtractionMode.NoCues;
+                            parameterList.FilenamePatterns = GetFilenamePatterns();
                             break;
                         case FormMkvExtractionMode.Cue_Sheet:
-                            parameterList.Add(infoSegment.Path);
-                            parameterList.Add(outputDirectory);
+                            parameterList.MKVFile = infoSegment.Path;
+                            parameterList.OutputDirectory = outputDirectory;
+                            parameterList.FilenamePatterns = GetFilenamePatterns();
                             break;
                         case FormMkvExtractionMode.Tags:
-                            parameterList.Add(infoSegment.Path);
-                            parameterList.Add(outputDirectory);
+                            parameterList.MKVFile = infoSegment.Path;
+                            parameterList.OutputDirectory = outputDirectory;
+                            parameterList.FilenamePatterns = GetFilenamePatterns();
                             break;
                         case FormMkvExtractionMode.Timecodes:
-                            parameterList.Add(infoSegment.Path);
-                            parameterList.Add(segments);
-                            parameterList.Add(outputDirectory);
-                            parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
-                            parameterList.Add(TimecodesExtractionMode.OnlyTimecodes);
-                            parameterList.Add(CuesExtractionMode.NoCues);
+                            parameterList.MKVFile = infoSegment.Path;
+                            parameterList.MKVSegmentsToExtract = segments;
+                            parameterList.OutputDirectory = outputDirectory;
+                            parameterList.ChapterType = (MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem);
+                            parameterList.TimecodesExtractionMode = TimecodesExtractionMode.OnlyTimecodes;
+                            parameterList.CueExtractionMode = CuesExtractionMode.NoCues;
+                            parameterList.FilenamePatterns = GetFilenamePatterns();
                             break;
                         case FormMkvExtractionMode.Tracks_And_Timecodes:
-                            parameterList.Add(infoSegment.Path);
-                            parameterList.Add(segments);
-                            parameterList.Add(outputDirectory);
-                            parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
-                            parameterList.Add(TimecodesExtractionMode.WithTimecodes);
-                            parameterList.Add(CuesExtractionMode.NoCues);
+                            parameterList.MKVFile = infoSegment.Path;
+                            parameterList.MKVSegmentsToExtract = segments;
+                            parameterList.OutputDirectory = outputDirectory;
+                            parameterList.ChapterType = (MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem);
+                            parameterList.TimecodesExtractionMode = TimecodesExtractionMode.WithTimecodes;
+                            parameterList.CueExtractionMode = CuesExtractionMode.NoCues;
+                            parameterList.FilenamePatterns = GetFilenamePatterns();
                             break;
                         case FormMkvExtractionMode.Cues:
-                            parameterList.Add(infoSegment.Path);
-                            parameterList.Add(segments);
-                            parameterList.Add(outputDirectory);
-                            parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
-                            parameterList.Add(TimecodesExtractionMode.NoTimecodes);
-                            parameterList.Add(CuesExtractionMode.OnlyCues);
+                            parameterList.MKVFile = infoSegment.Path;
+                            parameterList.MKVSegmentsToExtract = segments;
+                            parameterList.OutputDirectory = outputDirectory;
+                            parameterList.ChapterType = (MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem);
+                            parameterList.TimecodesExtractionMode = TimecodesExtractionMode.NoTimecodes;
+                            parameterList.CueExtractionMode = CuesExtractionMode.OnlyCues;
+                            parameterList.FilenamePatterns = GetFilenamePatterns();
                             break;
                         case FormMkvExtractionMode.Tracks_And_Cues:
-                            parameterList.Add(infoSegment.Path);
-                            parameterList.Add(segments);
-                            parameterList.Add(outputDirectory);
-                            parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
-                            parameterList.Add(TimecodesExtractionMode.NoTimecodes);
-                            parameterList.Add(CuesExtractionMode.WithCues);
+                            parameterList.MKVFile = infoSegment.Path;
+                            parameterList.MKVSegmentsToExtract = segments;
+                            parameterList.OutputDirectory = outputDirectory;
+                            parameterList.ChapterType = (MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem);
+                            parameterList.TimecodesExtractionMode = TimecodesExtractionMode.NoTimecodes;
+                            parameterList.CueExtractionMode = CuesExtractionMode.WithCues;
+                            parameterList.FilenamePatterns = GetFilenamePatterns();
                             break;
                         case FormMkvExtractionMode.Tracks_And_Cues_And_Timecodes:
-                            parameterList.Add(infoSegment.Path);
-                            parameterList.Add(segments);
-                            parameterList.Add(outputDirectory);
-                            parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
-                            parameterList.Add(TimecodesExtractionMode.WithTimecodes);
-                            parameterList.Add(CuesExtractionMode.WithCues);
+                            parameterList.MKVFile = infoSegment.Path;
+                            parameterList.MKVSegmentsToExtract = segments;
+                            parameterList.OutputDirectory = outputDirectory;
+                            parameterList.ChapterType = (MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem);
+                            parameterList.TimecodesExtractionMode = TimecodesExtractionMode.WithTimecodes;
+                            parameterList.CueExtractionMode = CuesExtractionMode.WithCues;
+                            parameterList.FilenamePatterns = GetFilenamePatterns();
                             break;
                     }
                     jobs.Add(new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList));
@@ -1006,6 +1043,7 @@ namespace gMKVToolNix.Forms
 
                         btnAbort.Enabled = true;
                         btnAbortAll.Enabled = true;
+                        btnOptions.Enabled = false;
                         gTaskbarProgress.SetState(this, gTaskbarProgress.TaskbarStates.Normal);
                         gTaskbarProgress.SetOverlayIcon(this, SystemIcons.Shield, "Extracting...");
                         Application.DoEvents();
@@ -1066,6 +1104,7 @@ namespace gMKVToolNix.Forms
                 tlpMain.Enabled = true;
                 btnAbort.Enabled = false;
                 btnAbortAll.Enabled = false;
+                btnOptions.Enabled = true;
                 gTaskbarProgress.SetState(this, gTaskbarProgress.TaskbarStates.NoProgress);
                 gTaskbarProgress.SetOverlayIcon(this, null, null);
                 this.Refresh();
@@ -2169,6 +2208,27 @@ namespace gMKVToolNix.Forms
                     {
                         txtOutputDirectory.Text = _Settings.DefaultOutputDirectory;
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
+                ShowErrorMessage(ex.Message);
+            }
+        }
+
+        private void btnOptions_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_OptionsForm == null)
+                {
+                    _OptionsForm = new frmOptions();
+                }
+                if (_OptionsForm.ShowDialog() == DialogResult.OK)
+                {
+                    _Settings.Reload();
                 }
             }
             catch (Exception ex)

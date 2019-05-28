@@ -99,6 +99,7 @@ namespace gMKVToolNix.Forms
             this.txtSegmentInfo = new gMKVToolNix.gRichTextBox();
             this.btnAbort = new System.Windows.Forms.Button();
             this.btnAbortAll = new System.Windows.Forms.Button();
+            this.btnOptions = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.tlpMain.SuspendLayout();
             this.grpActions.SuspendLayout();
@@ -213,13 +214,11 @@ namespace gMKVToolNix.Forms
             // chkShowPopup
             // 
             this.chkShowPopup.AutoSize = true;
-            this.chkShowPopup.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
             this.chkShowPopup.Location = new System.Drawing.Point(134, 23);
             this.chkShowPopup.Name = "chkShowPopup";
             this.chkShowPopup.Size = new System.Drawing.Size(61, 19);
             this.chkShowPopup.TabIndex = 12;
             this.chkShowPopup.Text = "Popup";
-            this.chkShowPopup.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             this.chkShowPopup.UseVisualStyleBackColor = true;
             this.chkShowPopup.CheckedChanged += new System.EventHandler(this.chkShowPopup_CheckedChanged);
             // 
@@ -737,9 +736,9 @@ namespace gMKVToolNix.Forms
             // btnAbort
             // 
             this.btnAbort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAbort.Location = new System.Drawing.Point(512, 528);
+            this.btnAbort.Location = new System.Drawing.Point(526, 528);
             this.btnAbort.Name = "btnAbort";
-            this.btnAbort.Size = new System.Drawing.Size(92, 30);
+            this.btnAbort.Size = new System.Drawing.Size(80, 30);
             this.btnAbort.TabIndex = 12;
             this.btnAbort.Text = "Abort";
             this.btnAbort.UseVisualStyleBackColor = true;
@@ -748,13 +747,24 @@ namespace gMKVToolNix.Forms
             // btnAbortAll
             // 
             this.btnAbortAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAbortAll.Location = new System.Drawing.Point(414, 528);
+            this.btnAbortAll.Location = new System.Drawing.Point(440, 528);
             this.btnAbortAll.Name = "btnAbortAll";
-            this.btnAbortAll.Size = new System.Drawing.Size(92, 30);
+            this.btnAbortAll.Size = new System.Drawing.Size(80, 30);
             this.btnAbortAll.TabIndex = 13;
             this.btnAbortAll.Text = "Abort All";
             this.btnAbortAll.UseVisualStyleBackColor = true;
             this.btnAbortAll.Click += new System.EventHandler(this.btnAbortAll_Click);
+            // 
+            // btnOptions
+            // 
+            this.btnOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOptions.Location = new System.Drawing.Point(354, 528);
+            this.btnOptions.Name = "btnOptions";
+            this.btnOptions.Size = new System.Drawing.Size(80, 30);
+            this.btnOptions.TabIndex = 14;
+            this.btnOptions.Text = "Options...";
+            this.btnOptions.UseVisualStyleBackColor = true;
+            this.btnOptions.Click += new System.EventHandler(this.btnOptions_Click);
             // 
             // frmMain2
             // 
@@ -763,6 +773,7 @@ namespace gMKVToolNix.Forms
             this.ClientSize = new System.Drawing.Size(624, 561);
             this.Controls.Add(this.btnAbort);
             this.Controls.Add(this.btnAbortAll);
+            this.Controls.Add(this.btnOptions);
             this.Controls.Add(this.tlpMain);
             this.Controls.Add(this.statusStrip);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
@@ -803,6 +814,7 @@ namespace gMKVToolNix.Forms
         private System.Windows.Forms.ToolStripProgressBar prgBrStatus;
         private System.Windows.Forms.Button btnAbort;
         private System.Windows.Forms.Button btnAbortAll;
+        private System.Windows.Forms.Button btnOptions;
         private gGroupBox grpSelectedFileInfo;
         private gRichTextBox txtSegmentInfo;
         private gGroupBox grpOutputDirectory;

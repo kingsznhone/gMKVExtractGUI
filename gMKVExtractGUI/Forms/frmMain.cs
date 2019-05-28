@@ -639,7 +639,23 @@ namespace gMKVToolNix
                 ShowErrorMessage(ex.Message);
             }
         }
-     
+
+        private gMKVExtractFilenamePatterns GetFilenamePatterns()
+        {
+            return new gMKVExtractFilenamePatterns()
+            {
+                AttachmentFilenamePattern = _Settings.AttachmentFilenamePattern
+                ,
+                AudioTrackFilenamePattern = _Settings.AudioTrackFilenamePattern
+                ,
+                ChapterFilenamePattern = _Settings.ChapterFilenamePattern
+                ,
+                SubtitleTrackFilenamePattern = _Settings.SubtitleTrackFilenamePattern
+                ,
+                VideoTrackFilenamePattern = _Settings.VideoTrackFilenamePattern
+            };
+        }
+
         private void btnExtract_Click(object sender, EventArgs e)
         {
             bool exceptionOccured = false;
@@ -652,7 +668,7 @@ namespace gMKVToolNix
                 _gMkvExtract.MkvExtractTrackUpdated += g_MkvExtractTrackUpdated;
 
                 Thread myThread = null;
-                List<Object> parameterList = new List<object>();
+                gMKVExtractSegmentsParameters parameterList = new gMKVExtractSegmentsParameters();
                 List<gMKVSegment> segmentList = new List<gMKVSegment>();
                 gMKVJob job = null;
                 FormMkvExtractionMode extractionMode = (FormMkvExtractionMode)Enum.Parse(typeof(FormMkvExtractionMode), (String)cmbExtractionMode.SelectedItem);
@@ -666,30 +682,31 @@ namespace gMKVToolNix
                             segmentList.Add(seg);
                         }
 
-                        parameterList.Add(txtInputFile.Text);
-                        parameterList.Add(segmentList);
-                        parameterList.Add(txtOutputDirectory.Text);
-                        parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
-                        parameterList.Add(TimecodesExtractionMode.NoTimecodes);
-                        parameterList.Add(CuesExtractionMode.NoCues);
+                        parameterList.MKVFile = txtInputFile.Text;
+                        parameterList.MKVSegmentsToExtract = segmentList;
+                        parameterList.OutputDirectory = txtOutputDirectory.Text;
+                        parameterList.ChapterType = (MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem);
+                        parameterList.TimecodesExtractionMode = TimecodesExtractionMode.NoTimecodes;
+                        parameterList.CueExtractionMode = CuesExtractionMode.NoCues;
+                        parameterList.FilenamePatterns = GetFilenamePatterns();
 
                         job = new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList);
                         break;
                     case FormMkvExtractionMode.Cue_Sheet:
                         CheckNeccessaryInputFields(false, false);
                   
-                        parameterList = new List<object>();
-                        parameterList.Add(txtInputFile.Text);
-                        parameterList.Add(txtOutputDirectory.Text);
+                        parameterList.MKVFile = txtInputFile.Text;
+                        parameterList.OutputDirectory = txtOutputDirectory.Text;
+                        parameterList.FilenamePatterns = GetFilenamePatterns();
 
                         job = new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList);
                         break;
                     case FormMkvExtractionMode.Tags:
                         CheckNeccessaryInputFields(false, false);
                    
-                        parameterList = new List<object>();
-                        parameterList.Add(txtInputFile.Text);
-                        parameterList.Add(txtOutputDirectory.Text);
+                        parameterList.MKVFile = txtInputFile.Text;
+                        parameterList.OutputDirectory = txtOutputDirectory.Text;
+                        parameterList.FilenamePatterns = GetFilenamePatterns();
 
                         job = new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList);
                         break;
@@ -701,13 +718,13 @@ namespace gMKVToolNix
                             segmentList.Add(seg);
                         }
                     
-                        parameterList = new List<object>();
-                        parameterList.Add(txtInputFile.Text);
-                        parameterList.Add(segmentList);
-                        parameterList.Add(txtOutputDirectory.Text);
-                        parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
-                        parameterList.Add(TimecodesExtractionMode.OnlyTimecodes);
-                        parameterList.Add(CuesExtractionMode.NoCues);
+                        parameterList.MKVFile = txtInputFile.Text;
+                        parameterList.MKVSegmentsToExtract = segmentList;
+                        parameterList.OutputDirectory = txtOutputDirectory.Text;
+                        parameterList.ChapterType = (MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem);
+                        parameterList.TimecodesExtractionMode = TimecodesExtractionMode.OnlyTimecodes;
+                        parameterList.CueExtractionMode = CuesExtractionMode.NoCues;
+                        parameterList.FilenamePatterns = GetFilenamePatterns();
 
                         job = new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList);
                         break;
@@ -719,13 +736,13 @@ namespace gMKVToolNix
                             segmentList.Add(seg);
                         }
                     
-                        parameterList = new List<object>();
-                        parameterList.Add(txtInputFile.Text);
-                        parameterList.Add(segmentList);
-                        parameterList.Add(txtOutputDirectory.Text);
-                        parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
-                        parameterList.Add(TimecodesExtractionMode.WithTimecodes);
-                        parameterList.Add(CuesExtractionMode.NoCues);
+                        parameterList.MKVFile = txtInputFile.Text;
+                        parameterList.MKVSegmentsToExtract = segmentList;
+                        parameterList.OutputDirectory = txtOutputDirectory.Text;
+                        parameterList.ChapterType = (MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem);
+                        parameterList.TimecodesExtractionMode = TimecodesExtractionMode.WithTimecodes;
+                        parameterList.CueExtractionMode = CuesExtractionMode.NoCues;
+                        parameterList.FilenamePatterns = GetFilenamePatterns();
 
                         job = new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList);
 
@@ -738,13 +755,13 @@ namespace gMKVToolNix
                             segmentList.Add(seg);
                         }
 
-                        parameterList = new List<object>();
-                        parameterList.Add(txtInputFile.Text);
-                        parameterList.Add(segmentList);
-                        parameterList.Add(txtOutputDirectory.Text);
-                        parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
-                        parameterList.Add(TimecodesExtractionMode.NoTimecodes);
-                        parameterList.Add(CuesExtractionMode.OnlyCues);
+                        parameterList.MKVFile = txtInputFile.Text;
+                        parameterList.MKVSegmentsToExtract = segmentList;
+                        parameterList.OutputDirectory = txtOutputDirectory.Text;
+                        parameterList.ChapterType = (MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem);
+                        parameterList.TimecodesExtractionMode = TimecodesExtractionMode.NoTimecodes;
+                        parameterList.CueExtractionMode = CuesExtractionMode.OnlyCues;
+                        parameterList.FilenamePatterns = GetFilenamePatterns();
 
                         job = new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList);
                         break;
@@ -756,13 +773,13 @@ namespace gMKVToolNix
                             segmentList.Add(seg);
                         }
 
-                        parameterList = new List<object>();
-                        parameterList.Add(txtInputFile.Text);
-                        parameterList.Add(segmentList);
-                        parameterList.Add(txtOutputDirectory.Text);
-                        parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
-                        parameterList.Add(TimecodesExtractionMode.NoTimecodes);
-                        parameterList.Add(CuesExtractionMode.WithCues);
+                        parameterList.MKVFile = txtInputFile.Text;
+                        parameterList.MKVSegmentsToExtract = segmentList;
+                        parameterList.OutputDirectory = txtOutputDirectory.Text;
+                        parameterList.ChapterType = (MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem);
+                        parameterList.TimecodesExtractionMode = TimecodesExtractionMode.NoTimecodes;
+                        parameterList.CueExtractionMode = CuesExtractionMode.WithCues;
+                        parameterList.FilenamePatterns = GetFilenamePatterns();
 
                         job = new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList);
                         break;
@@ -774,13 +791,13 @@ namespace gMKVToolNix
                             segmentList.Add(seg);
                         }
 
-                        parameterList = new List<object>();
-                        parameterList.Add(txtInputFile.Text);
-                        parameterList.Add(segmentList);
-                        parameterList.Add(txtOutputDirectory.Text);
-                        parameterList.Add((MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem));
-                        parameterList.Add(TimecodesExtractionMode.WithTimecodes);
-                        parameterList.Add(CuesExtractionMode.WithCues);
+                        parameterList.MKVFile = txtInputFile.Text;
+                        parameterList.MKVSegmentsToExtract = segmentList;
+                        parameterList.OutputDirectory = txtOutputDirectory.Text;
+                        parameterList.ChapterType = (MkvChapterTypes)Enum.Parse(typeof(MkvChapterTypes), (String)cmbChapterType.SelectedItem);
+                        parameterList.TimecodesExtractionMode = TimecodesExtractionMode.WithTimecodes;
+                        parameterList.CueExtractionMode = CuesExtractionMode.WithCues;
+                        parameterList.FilenamePatterns = GetFilenamePatterns();
 
                         job = new gMKVJob(extractionMode, txtMKVToolnixPath.Text, parameterList);
                         break;

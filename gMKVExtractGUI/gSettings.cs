@@ -4,6 +4,8 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Linq;
+using System.ComponentModel;
 
 namespace gMKVToolNix
 {
@@ -100,9 +102,62 @@ namespace gMKVToolNix
             set { _ShowPopupInJobManager = value; }
         }
 
+        private String _VideoTrackFilenamePattern = "{FilenameNoExt}_track{TrackNumber}_[{Language}]";
+        [DefaultValue("{FilenameNoExt}_track{TrackNumber}_[{Language}]")]
+        public String VideoTrackFilenamePattern
+        {
+            get { return _VideoTrackFilenamePattern; }
+            set { _VideoTrackFilenamePattern = value; }
+        }
 
-        private static String _SETTINGS_FILE = "gMKVExtractGUI.ini";
-        private String _SettingsPath = "";
+        private String _AudioTrackFilenamePattern = "{FilenameNoExt}_track{TrackNumber}_[{Language}]_DELAY {EffectiveDelay}ms";
+        [DefaultValue("{FilenameNoExt}_track{TrackNumber}_[{Language}]_DELAY {EffectiveDelay}ms")]
+        public String AudioTrackFilenamePattern
+        {
+            get { return _AudioTrackFilenamePattern; }
+            set { _AudioTrackFilenamePattern = value; }
+        }
+
+        private String _SubtitleTrackFilenamePattern = "{FilenameNoExt}_track{TrackNumber}_[{Language}]";
+        [DefaultValue("{FilenameNoExt}_track{TrackNumber}_[{Language}]")]
+        public String SubtitleTrackFilenamePattern
+        {
+            get { return _SubtitleTrackFilenamePattern; }
+            set { _SubtitleTrackFilenamePattern = value; }
+        }
+
+        private String _ChapterFilenamePattern = "{FilenameNoExt}_chapters";
+        [DefaultValue("{FilenameNoExt}_chapters")]
+        public String ChapterFilenamePattern
+        {
+            get { return _ChapterFilenamePattern; }
+            set { _ChapterFilenamePattern = value; }
+        }
+
+        private String _AttachmentFilenamePattern = "{AttachmentFilename}";
+        [DefaultValue("{AttachmentFilename}")]
+        public String AttachmentFilenamePattern
+        {
+            get { return _AttachmentFilenamePattern; }
+            set { _AttachmentFilenamePattern = value; }
+        }
+
+        /// <summary>
+        /// Gets the Default Value Attribute value for a specific property
+        /// </summary>
+        /// <typeparam name="T">The type of the value</typeparam>
+        /// <param name="argPropertyName">The property name</param>
+        /// <returns></returns>
+        public T GetPropertyDefaultValue<T>(string argPropertyName)
+        {
+            var v = (this.GetType().GetProperty(argPropertyName)?.GetCustomAttributes(false)?.
+            FirstOrDefault(a => ((a as Attribute).TypeId as Type).UnderlyingSystemType == typeof(DefaultValueAttribute)) as DefaultValueAttribute)?.Value;
+
+            return (T)v;
+        }
+
+        private static readonly String _SETTINGS_FILE = "gMKVExtractGUI.ini";
+        private readonly string _SettingsPath = "";
 
         public gSettings(String appPath)
         {
@@ -321,6 +376,91 @@ namespace gMKVToolNix
                                 _ShowPopupInJobManager = true;
                             }
                         }
+                        else if (line.StartsWith("VideoTrackFilenamePattern:"))
+                        {
+                            try
+                            {
+                                string tmp = line.Substring(line.IndexOf(":") + 1);
+                                if (!string.IsNullOrWhiteSpace(tmp))
+                                {
+                                    _VideoTrackFilenamePattern = tmp;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading VideoTrackFilenamePattern! {0}", ex.Message));
+                                _VideoTrackFilenamePattern = "";
+                            }
+                        }
+                        else if (line.StartsWith("AudioTrackFilenamePattern:"))
+                        {
+                            try
+                            {
+                                string tmp = line.Substring(line.IndexOf(":") + 1);
+                                if (!string.IsNullOrWhiteSpace(tmp))
+                                {
+                                    _AudioTrackFilenamePattern = tmp;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading AudioTrackFilenamePattern! {0}", ex.Message));
+                                _AudioTrackFilenamePattern = "";
+                            }
+                        }
+                        else if (line.StartsWith("SubtitleTrackFilenamePattern:"))
+                        {
+                            try
+                            {
+                                string tmp = line.Substring(line.IndexOf(":") + 1);
+                                if (!string.IsNullOrWhiteSpace(tmp))
+                                {
+                                    _SubtitleTrackFilenamePattern = tmp;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading SubtitleTrackFilenamePattern! {0}", ex.Message));
+                                _SubtitleTrackFilenamePattern = "";
+                            }
+                        }
+                        else if (line.StartsWith("ChapterFilenamePattern:"))
+                        {
+                            try
+                            {
+                                string tmp = line.Substring(line.IndexOf(":") + 1);
+                                if (!string.IsNullOrWhiteSpace(tmp))
+                                {
+                                    _ChapterFilenamePattern = tmp;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading ChapterFilenamePattern! {0}", ex.Message));
+                                _ChapterFilenamePattern = "";
+                            }
+                        }
+                        else if (line.StartsWith("AttachmentFilenamePattern:"))
+                        {
+                            try
+                            {
+                                string tmp = line.Substring(line.IndexOf(":") + 1);
+                                if (!string.IsNullOrWhiteSpace(tmp))
+                                {
+                                    _AttachmentFilenamePattern = tmp;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading AttachmentFilenamePattern! {0}", ex.Message));
+                                _AttachmentFilenamePattern = "";
+                            }
+                        }
                     }
                 }
                 gMKVLogger.Log("Finished loading settings!");
@@ -345,6 +485,12 @@ namespace gMKVToolNix
                 sw.WriteLine(String.Format("Window State:{0}", _WindowState.ToString()));
                 sw.WriteLine(String.Format("Show Popup:{0}", _ShowPopup));
                 sw.WriteLine(String.Format("Show Popup In Job Manager:{0}", _ShowPopupInJobManager));
+
+                sw.WriteLine(String.Format("VideoTrackFilenamePattern:{0}", _VideoTrackFilenamePattern));
+                sw.WriteLine(String.Format("AudioTrackFilenamePattern:{0}", _AudioTrackFilenamePattern));
+                sw.WriteLine(String.Format("SubtitleTrackFilenamePattern:{0}", _SubtitleTrackFilenamePattern));
+                sw.WriteLine(String.Format("ChapterFilenamePattern:{0}", _ChapterFilenamePattern));
+                sw.WriteLine(String.Format("AttachmentFilenamePattern:{0}", _AttachmentFilenamePattern));
             }
         }
     }

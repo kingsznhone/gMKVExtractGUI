@@ -79,5 +79,39 @@ namespace gMKVToolNix
                 return System.IO.Path.Combine(Directory ?? "", Filename ?? "");
             }
         }
+
+        public override bool Equals(object oth)
+        {
+            gMKVSegmentInfo other = oth as gMKVSegmentInfo;
+            if (oth == null)
+            {
+                return false;
+            }
+            return
+                  this.Date == other.Date
+                && this.Directory == other.Directory
+                && this.Duration == other.Duration
+                && this.Filename == other.Filename
+                && this.MuxingApplication == other.MuxingApplication
+                && this.Path == other.Path
+                && this.TimecodeScale == other.TimecodeScale
+                && this.WritingApplication == other.WritingApplication
+                ;
+        }
+
+        public override int GetHashCode()
+        {
+            return
+                string.Concat(
+                    this.Date.GetHashCode()
+                    , this.Directory.GetHashCode()
+                    , this.Duration.GetHashCode()
+                    , this.Filename.GetHashCode()
+                    , this.MuxingApplication.GetHashCode()
+                    , this.Path.GetHashCode()
+                    , this.TimecodeScale.GetHashCode()
+                    , this.WritingApplication.GetHashCode()
+                ).GetHashCode();
+        }
     }
 }
