@@ -60,7 +60,13 @@ namespace gMKVToolNix
 
         // Common Track placeholders
         public static readonly string TrackNumber = "{TrackNumber}";
+        public static readonly string TrackNumber_0 = "{TrackNumber:0}";
+        public static readonly string TrackNumber_00 = "{TrackNumber:00}";
+        public static readonly string TrackNumber_000 = "{TrackNumber:000}";
         public static readonly string TrackID = "{TrackID}";
+        public static readonly string TrackID_0 = "{TrackID:0}";
+        public static readonly string TrackID_00 = "{TrackID:00}";
+        public static readonly string TrackID_000 = "{TrackID:000}";
         public static readonly string TrackName = "{TrackName}";
         public static readonly string TrackLanguage = "{Language}";
         public static readonly string TrackCodecID = "{CodecID}";
@@ -78,6 +84,9 @@ namespace gMKVToolNix
 
         // Attachment placeholders
         public static readonly string AttachmentID = "{AttachmentID}";
+        public static readonly string AttachmentID_0 = "{AttachmentID:0}";
+        public static readonly string AttachmentID_00 = "{AttachmentID:00}";
+        public static readonly string AttachmentID_000 = "{AttachmentID:000}";
         public static readonly string AttachmentFilename = "{AttachmentFilename}";
         public static readonly string AttachmentMimeType = "{MimeType}";
         public static readonly string AttachmentFileSize = "{AttachmentFileSize}";
@@ -1213,7 +1222,15 @@ namespace gMKVToolNix
 
                 // Common Track placeholders
                 argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackNumber, track.TrackNumber.ToString());
+                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackNumber_0, track.TrackNumber.ToString("0"));
+                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackNumber_00, track.TrackNumber.ToString("00"));
+                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackNumber_000, track.TrackNumber.ToString("000"));
+                
                 argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackID, track.TrackID.ToString());
+                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackID_0, track.TrackID.ToString("0"));
+                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackID_00, track.TrackID.ToString("00"));
+                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackID_000, track.TrackID.ToString("000"));
+
                 argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackName , track.TrackName);
                 argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackLanguage , track.Language);
                 argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackCodecID, track.CodecID);
@@ -1242,6 +1259,10 @@ namespace gMKVToolNix
                 gMKVAttachment attachment = argSeg as gMKVAttachment;
                 
                 argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.AttachmentID, attachment.ID.ToString());
+                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.AttachmentID_0, attachment.ID.ToString("0"));
+                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.AttachmentID_00, attachment.ID.ToString("00"));
+                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.AttachmentID_000, attachment.ID.ToString("000"));
+
                 argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.AttachmentFilename, attachment.Filename);
                 argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.AttachmentMimeType, attachment.MimeType);
                 argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.AttachmentFileSize, attachment.FileSize);

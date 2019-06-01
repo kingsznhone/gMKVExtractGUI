@@ -34,6 +34,7 @@
             this.btnAddChapterPlaceholder = new System.Windows.Forms.Button();
             this.txtChaptersFilename = new gMKVToolNix.gTextBox();
             this.grpActions = new gMKVToolNix.gGroupBox();
+            this.btnDefaults = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.grpVideoTracks = new gMKVToolNix.gGroupBox();
@@ -54,7 +55,6 @@
             this.txtAttachmentsFilename = new gMKVToolNix.gTextBox();
             this.grpInfo = new gMKVToolNix.gGroupBox();
             this.txtInfo = new gMKVToolNix.gRichTextBox();
-            this.btnDefaults = new System.Windows.Forms.Button();
             this.tlpMain.SuspendLayout();
             this.grpChapters.SuspendLayout();
             this.grpActions.SuspendLayout();
@@ -129,6 +129,7 @@
             // 
             this.txtChaptersFilename.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtChaptersFilename.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
             this.txtChaptersFilename.Location = new System.Drawing.Point(9, 20);
             this.txtChaptersFilename.Name = "txtChaptersFilename";
             this.txtChaptersFilename.Size = new System.Drawing.Size(433, 23);
@@ -145,6 +146,16 @@
             this.grpActions.Size = new System.Drawing.Size(619, 54);
             this.grpActions.TabIndex = 0;
             this.grpActions.TabStop = false;
+            // 
+            // btnDefaults
+            // 
+            this.btnDefaults.Location = new System.Drawing.Point(9, 17);
+            this.btnDefaults.Name = "btnDefaults";
+            this.btnDefaults.Size = new System.Drawing.Size(83, 30);
+            this.btnDefaults.TabIndex = 6;
+            this.btnDefaults.Text = "Defaults";
+            this.btnDefaults.UseVisualStyleBackColor = true;
+            this.btnDefaults.Click += new System.EventHandler(this.btnDefaults_Click);
             // 
             // btnOK
             // 
@@ -208,6 +219,7 @@
             // 
             this.txtVideoTracksFilename.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtVideoTracksFilename.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
             this.txtVideoTracksFilename.Location = new System.Drawing.Point(9, 22);
             this.txtVideoTracksFilename.Name = "txtVideoTracksFilename";
             this.txtVideoTracksFilename.Size = new System.Drawing.Size(433, 23);
@@ -252,6 +264,7 @@
             // 
             this.txtAudioTracksFilename.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtAudioTracksFilename.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
             this.txtAudioTracksFilename.Location = new System.Drawing.Point(9, 22);
             this.txtAudioTracksFilename.Name = "txtAudioTracksFilename";
             this.txtAudioTracksFilename.Size = new System.Drawing.Size(433, 23);
@@ -296,6 +309,7 @@
             // 
             this.txtSubtitleTracksFilename.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSubtitleTracksFilename.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
             this.txtSubtitleTracksFilename.Location = new System.Drawing.Point(9, 22);
             this.txtSubtitleTracksFilename.Name = "txtSubtitleTracksFilename";
             this.txtSubtitleTracksFilename.Size = new System.Drawing.Size(433, 23);
@@ -340,6 +354,7 @@
             // 
             this.txtAttachmentsFilename.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtAttachmentsFilename.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
             this.txtAttachmentsFilename.Location = new System.Drawing.Point(9, 23);
             this.txtAttachmentsFilename.Name = "txtAttachmentsFilename";
             this.txtAttachmentsFilename.Size = new System.Drawing.Size(433, 23);
@@ -367,16 +382,6 @@
             this.txtInfo.Size = new System.Drawing.Size(613, 123);
             this.txtInfo.TabIndex = 0;
             this.txtInfo.Text = "";
-            // 
-            // btnDefaults
-            // 
-            this.btnDefaults.Location = new System.Drawing.Point(9, 17);
-            this.btnDefaults.Name = "btnDefaults";
-            this.btnDefaults.Size = new System.Drawing.Size(83, 30);
-            this.btnDefaults.TabIndex = 6;
-            this.btnDefaults.Text = "Defaults";
-            this.btnDefaults.UseVisualStyleBackColor = true;
-            this.btnDefaults.Click += new System.EventHandler(this.btnDefaults_Click);
             // 
             // frmOptions
             // 

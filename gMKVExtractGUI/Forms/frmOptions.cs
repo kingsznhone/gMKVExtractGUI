@@ -51,6 +51,10 @@ namespace gMKVToolNix.Forms
 
             // Fill from settings
             FillFromSettings();
+
+            // Select the information text box
+            txtInfo.Select();
+            txtInfo.Focus();
         }
 
         private void FillFromSettings()
@@ -111,8 +115,24 @@ namespace gMKVToolNix.Forms
 
             // Common Track placeholders
             // ============================================================================================================================
-            _VideoTrackContextMenu.Items.Add(GetToolstripMenuItem("Track Number", gMKVExtractFilenamePatterns.TrackNumber, txtVideoTracksFilename));
-            _VideoTrackContextMenu.Items.Add(GetToolstripMenuItem("Track ID", gMKVExtractFilenamePatterns.TrackID, txtVideoTracksFilename));
+            var vidTrackNumber = new ToolStripMenuItem("Track Number...", null);            
+            vidTrackNumber.DropDownItems.Add(GetToolstripMenuItem("Track Number (No format)", gMKVExtractFilenamePatterns.TrackNumber, txtVideoTracksFilename));
+            vidTrackNumber.DropDownItems.Add(GetToolstripMenuItem("Track Number (1 digit)", gMKVExtractFilenamePatterns.TrackNumber_0, txtVideoTracksFilename));
+            vidTrackNumber.DropDownItems.Add(GetToolstripMenuItem("Track Number (2 digits)", gMKVExtractFilenamePatterns.TrackNumber_00, txtVideoTracksFilename));
+            vidTrackNumber.DropDownItems.Add(GetToolstripMenuItem("Track Number (3 digits)", gMKVExtractFilenamePatterns.TrackNumber_000, txtVideoTracksFilename));
+
+            _VideoTrackContextMenu.Items.Add(vidTrackNumber);
+            //_VideoTrackContextMenu.Items.Add(GetToolstripMenuItem("Track Number", gMKVExtractFilenamePatterns.TrackNumber, txtVideoTracksFilename));
+
+            var vidTrackID = new ToolStripMenuItem("Track ID...", null);            
+            vidTrackID.DropDownItems.Add(GetToolstripMenuItem("Track ID (No format)", gMKVExtractFilenamePatterns.TrackID, txtVideoTracksFilename));
+            vidTrackID.DropDownItems.Add(GetToolstripMenuItem("Track ID (1 digit)", gMKVExtractFilenamePatterns.TrackID_0, txtVideoTracksFilename));
+            vidTrackID.DropDownItems.Add(GetToolstripMenuItem("Track ID (2 digits)", gMKVExtractFilenamePatterns.TrackID_00, txtVideoTracksFilename));
+            vidTrackID.DropDownItems.Add(GetToolstripMenuItem("Track ID (3 digits)", gMKVExtractFilenamePatterns.TrackID_000, txtVideoTracksFilename));
+
+            _VideoTrackContextMenu.Items.Add(vidTrackID);
+            //_VideoTrackContextMenu.Items.Add(GetToolstripMenuItem("Track ID", gMKVExtractFilenamePatterns.TrackID, txtVideoTracksFilename));
+
             _VideoTrackContextMenu.Items.Add(GetToolstripMenuItem("Track Name", gMKVExtractFilenamePatterns.TrackName, txtVideoTracksFilename));
             _VideoTrackContextMenu.Items.Add(GetToolstripMenuItem("Track Language", gMKVExtractFilenamePatterns.TrackLanguage, txtVideoTracksFilename));
             _VideoTrackContextMenu.Items.Add(GetToolstripMenuItem("Track Codec ID", gMKVExtractFilenamePatterns.TrackCodecID, txtVideoTracksFilename));
@@ -121,8 +141,24 @@ namespace gMKVToolNix.Forms
             _VideoTrackContextMenu.Items.Add(GetToolstripMenuItem("Track Effective Delay", gMKVExtractFilenamePatterns.TrackEffectiveDelay, txtVideoTracksFilename));
             _VideoTrackContextMenu.Items.Add("-");
 
-            _AudioTrackContextMenu.Items.Add(GetToolstripMenuItem("Track Number", gMKVExtractFilenamePatterns.TrackNumber, txtAudioTracksFilename));
-            _AudioTrackContextMenu.Items.Add(GetToolstripMenuItem("Track ID", gMKVExtractFilenamePatterns.TrackID, txtAudioTracksFilename));
+            var audTrackNumber = new ToolStripMenuItem("Track Number...", null);
+            audTrackNumber.DropDownItems.Add(GetToolstripMenuItem("Track Number (No format)", gMKVExtractFilenamePatterns.TrackNumber, txtAudioTracksFilename));
+            audTrackNumber.DropDownItems.Add(GetToolstripMenuItem("Track Number (1 digit)", gMKVExtractFilenamePatterns.TrackNumber_0, txtAudioTracksFilename));
+            audTrackNumber.DropDownItems.Add(GetToolstripMenuItem("Track Number (2 digits)", gMKVExtractFilenamePatterns.TrackNumber_00, txtAudioTracksFilename));
+            audTrackNumber.DropDownItems.Add(GetToolstripMenuItem("Track Number (3 digits)", gMKVExtractFilenamePatterns.TrackNumber_000, txtAudioTracksFilename));
+
+            _AudioTrackContextMenu.Items.Add(audTrackNumber);
+            //_AudioTrackContextMenu.Items.Add(GetToolstripMenuItem("Track Number", gMKVExtractFilenamePatterns.TrackNumber, txtAudioTracksFilename));
+
+            var audTrackID = new ToolStripMenuItem("Track ID...", null);
+            audTrackID.DropDownItems.Add(GetToolstripMenuItem("Track ID (No format)", gMKVExtractFilenamePatterns.TrackID, txtAudioTracksFilename));
+            audTrackID.DropDownItems.Add(GetToolstripMenuItem("Track ID (1 digit)", gMKVExtractFilenamePatterns.TrackID_0, txtAudioTracksFilename));
+            audTrackID.DropDownItems.Add(GetToolstripMenuItem("Track ID (2 digits)", gMKVExtractFilenamePatterns.TrackID_00, txtAudioTracksFilename));
+            audTrackID.DropDownItems.Add(GetToolstripMenuItem("Track ID (3 digits)", gMKVExtractFilenamePatterns.TrackID_000, txtAudioTracksFilename));
+
+            _AudioTrackContextMenu.Items.Add(audTrackID);
+            //_AudioTrackContextMenu.Items.Add(GetToolstripMenuItem("Track ID", gMKVExtractFilenamePatterns.TrackID, txtAudioTracksFilename));
+
             _AudioTrackContextMenu.Items.Add(GetToolstripMenuItem("Track Name", gMKVExtractFilenamePatterns.TrackName, txtAudioTracksFilename));
             _AudioTrackContextMenu.Items.Add(GetToolstripMenuItem("Track Language", gMKVExtractFilenamePatterns.TrackLanguage, txtAudioTracksFilename));
             _AudioTrackContextMenu.Items.Add(GetToolstripMenuItem("Track Codec ID", gMKVExtractFilenamePatterns.TrackCodecID, txtAudioTracksFilename));
@@ -131,8 +167,24 @@ namespace gMKVToolNix.Forms
             _AudioTrackContextMenu.Items.Add(GetToolstripMenuItem("Track Effective Delay", gMKVExtractFilenamePatterns.TrackEffectiveDelay, txtAudioTracksFilename));
             _AudioTrackContextMenu.Items.Add("-");
 
-            _SubtitleTrackContextMenu.Items.Add(GetToolstripMenuItem("Track Number", gMKVExtractFilenamePatterns.TrackNumber, txtSubtitleTracksFilename));
-            _SubtitleTrackContextMenu.Items.Add(GetToolstripMenuItem("Track ID", gMKVExtractFilenamePatterns.TrackID, txtSubtitleTracksFilename));
+            var subTrackNumber = new ToolStripMenuItem("Track Number...", null);
+            subTrackNumber.DropDownItems.Add(GetToolstripMenuItem("Track Number (No format)", gMKVExtractFilenamePatterns.TrackNumber, txtSubtitleTracksFilename));
+            subTrackNumber.DropDownItems.Add(GetToolstripMenuItem("Track Number (1 digit)", gMKVExtractFilenamePatterns.TrackNumber_0, txtSubtitleTracksFilename));
+            subTrackNumber.DropDownItems.Add(GetToolstripMenuItem("Track Number (2 digits)", gMKVExtractFilenamePatterns.TrackNumber_00, txtSubtitleTracksFilename));
+            subTrackNumber.DropDownItems.Add(GetToolstripMenuItem("Track Number (3 digits)", gMKVExtractFilenamePatterns.TrackNumber_000, txtSubtitleTracksFilename));
+
+            _SubtitleTrackContextMenu.Items.Add(subTrackNumber);
+            //_SubtitleTrackContextMenu.Items.Add(GetToolstripMenuItem("Track Number", gMKVExtractFilenamePatterns.TrackNumber, txtSubtitleTracksFilename));
+
+            var subTrackID = new ToolStripMenuItem("Track ID...", null);
+            subTrackID.DropDownItems.Add(GetToolstripMenuItem("Track ID (No format)", gMKVExtractFilenamePatterns.TrackID, txtSubtitleTracksFilename));
+            subTrackID.DropDownItems.Add(GetToolstripMenuItem("Track ID (1 digit)", gMKVExtractFilenamePatterns.TrackID_0, txtSubtitleTracksFilename));
+            subTrackID.DropDownItems.Add(GetToolstripMenuItem("Track ID (2 digits)", gMKVExtractFilenamePatterns.TrackID_00, txtSubtitleTracksFilename));
+            subTrackID.DropDownItems.Add(GetToolstripMenuItem("Track ID (3 digits)", gMKVExtractFilenamePatterns.TrackID_000, txtSubtitleTracksFilename));
+
+            _SubtitleTrackContextMenu.Items.Add(subTrackID);
+            //_SubtitleTrackContextMenu.Items.Add(GetToolstripMenuItem("Track ID", gMKVExtractFilenamePatterns.TrackID, txtSubtitleTracksFilename));
+
             _SubtitleTrackContextMenu.Items.Add(GetToolstripMenuItem("Track Name", gMKVExtractFilenamePatterns.TrackName, txtSubtitleTracksFilename));
             _SubtitleTrackContextMenu.Items.Add(GetToolstripMenuItem("Track Language", gMKVExtractFilenamePatterns.TrackLanguage, txtSubtitleTracksFilename));
             _SubtitleTrackContextMenu.Items.Add(GetToolstripMenuItem("Track Codec ID", gMKVExtractFilenamePatterns.TrackCodecID, txtSubtitleTracksFilename));
@@ -155,7 +207,15 @@ namespace gMKVToolNix.Forms
 
             // Attachment placeholders
             // ============================================================================================================================
-            _AttachmentContextMenu.Items.Add(GetToolstripMenuItem("Attachment ID", gMKVExtractFilenamePatterns.AttachmentID, txtAttachmentsFilename));
+            var attachmentID = new ToolStripMenuItem("Attachment ID...", null);
+            attachmentID.DropDownItems.Add(GetToolstripMenuItem("Attachment ID (No format)", gMKVExtractFilenamePatterns.AttachmentID, txtAttachmentsFilename));
+            attachmentID.DropDownItems.Add(GetToolstripMenuItem("Attachment ID (1 digit)", gMKVExtractFilenamePatterns.AttachmentID_0, txtAttachmentsFilename));
+            attachmentID.DropDownItems.Add(GetToolstripMenuItem("Attachment ID (2 digits)", gMKVExtractFilenamePatterns.AttachmentID_00, txtAttachmentsFilename));
+            attachmentID.DropDownItems.Add(GetToolstripMenuItem("Attachment ID (3 digits)", gMKVExtractFilenamePatterns.AttachmentID_000, txtAttachmentsFilename));
+
+            _AttachmentContextMenu.Items.Add(attachmentID);
+            //_AttachmentContextMenu.Items.Add(GetToolstripMenuItem("Attachment ID", gMKVExtractFilenamePatterns.AttachmentID, txtAttachmentsFilename));
+
             _AttachmentContextMenu.Items.Add(GetToolstripMenuItem("Attachment Filename", gMKVExtractFilenamePatterns.AttachmentFilename, txtAttachmentsFilename));
             _AttachmentContextMenu.Items.Add(GetToolstripMenuItem("Attachment MIME Type", gMKVExtractFilenamePatterns.AttachmentMimeType, txtAttachmentsFilename));
             _AttachmentContextMenu.Items.Add(GetToolstripMenuItem("Attachment File Size (bytes)", gMKVExtractFilenamePatterns.AttachmentFileSize, txtAttachmentsFilename));
