@@ -87,7 +87,7 @@
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
-            this.tlpMain.Size = new System.Drawing.Size(625, 511);
+            this.tlpMain.Size = new System.Drawing.Size(654, 481);
             this.tlpMain.TabIndex = 0;
             // 
             // grpChapters
@@ -386,7 +386,7 @@
             // frmOptions
             // 
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(625, 511);
+            this.ClientSize = new System.Drawing.Size(654, 481);
             this.Controls.Add(this.tlpMain);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
             this.Name = "frmOptions";

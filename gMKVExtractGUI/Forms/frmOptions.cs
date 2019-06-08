@@ -20,6 +20,10 @@ namespace gMKVToolNix.Forms
         private ContextMenuStrip _ChapterContextMenu = null;
         private ContextMenuStrip _AttachmentContextMenu = null;
 
+        private readonly static string INFO_TEXT = "Here you can specify the output filename format for each kind of track." + Environment.NewLine +
+            "Pressing the \"Add...\" button you will see the list with the available placeholders and select them." + Environment.NewLine +
+            "Pressing the \"Default\" button you will reset the output filename format to its default value.";
+
         public frmOptions()
         {
             try
@@ -28,6 +32,9 @@ namespace gMKVToolNix.Forms
 
                 Icon = Icon.ExtractAssociatedIcon(GetExecutingAssemblyLocation());
                 Text = String.Format("gMKVExtractGUI v{0} -- Options", GetCurrentVersion());
+
+                // Set the info text
+                txtInfo.Text = INFO_TEXT;
 
                 // Initialize the DPI aware scaling
                 InitDPI();
