@@ -1406,7 +1406,7 @@ namespace gMKVToolNix
 
                 string outputFilenameCounterString = "";
                 int outputFilenameCounter = 0;
-                // Check if the filename conatins a dot
+                // Check if the filename contains a dot
                 if (lastDotIndex > -1)
                 {
                     // Get the last part of filename after the last dot
@@ -1414,7 +1414,7 @@ namespace gMKVToolNix
                     // Check if it's an integer (counter)
                     if (int.TryParse(outputFilenameCounterString, out outputFilenameCounter))
                     {
-                        // Isolate the filaname without the counter part
+                        // Isolate the filename without the counter part
                         outputFilenameWithoutExtension = outputFilenameWithoutExtension.Substring(0, lastDotIndex);
                     }
                 }
