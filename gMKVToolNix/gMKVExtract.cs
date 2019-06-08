@@ -1396,6 +1396,35 @@ namespace gMKVToolNix
                     break;
             }
 
+            // Check if file already exists
+            while (File.Exists(outputFilename))
+            {
+                string outputFilenameDirectory = Path.GetDirectoryName(outputFilename);
+                string outputFilenameWithoutExtension = Path.GetFileNameWithoutExtension(outputFilename);
+                string outputFilenameExtension = Path.GetExtension(outputFilename);
+                int lastDotIndex = outputFilenameWithoutExtension.LastIndexOf('.');
+
+                string outputFilenameCounterString = "";
+                int outputFilenameCounter = 0;
+                // Check if the filename conatins a dot
+                if (lastDotIndex > -1)
+                {
+                    // Get the last part of filename after the last dot
+                    outputFilenameCounterString = outputFilenameWithoutExtension.Substring(lastDotIndex + 1);
+                    // Check if it's an integer (counter)
+                    if (int.TryParse(outputFilenameCounterString, out outputFilenameCounter))
+                    {
+                        // Isolate the filaname without the counter part
+                        outputFilenameWithoutExtension = outputFilenameWithoutExtension.Substring(0, lastDotIndex);
+                    }
+                }
+
+                outputFilename = Path.Combine(
+                    outputFilenameDirectory, 
+                    string.Format("{0}.{1}{2}", outputFilenameWithoutExtension, (outputFilenameCounter + 1), outputFilenameExtension)
+                );
+            }
+
             return outputFilename;
         }
 
