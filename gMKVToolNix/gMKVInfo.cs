@@ -158,6 +158,11 @@ namespace gMKVToolNix
                     if (((gMKVTrack)seg).TrackType != MkvTrackType.subtitles)
                     {
                         _TrackList.Add((gMKVTrack)seg);
+                        // Update the number of tracks for which delays were found, in order to exit early later on
+                        if (((gMKVTrack)seg).Delay != Int32.MinValue)
+                        {
+                            _TrackDelaysFound++;
+                        }
                     }
                 }
             }
@@ -906,10 +911,32 @@ namespace gMKVToolNix
                         {
                             // try to find the delay
                             Match m = Regex.Match(e.Data, String.Format(@"track number {0}, \d+ frame\(s\), timecode (\d+\.\d+)s", tr.TrackNumber));
+                            Match m2 = Regex.Match(e.Data, String.Format(@"track number {0}, \d+ frame\(s\), timestamp (\d{{2}}):(\d{{2}}):(\d{{2}}).(\d{{9}})", tr.TrackNumber));
                             if (m.Success)
                             {
                                 // Parse the delay (get the seconds in decimal, multiply by 1000 to convert them to ms, and then convert to Int32
                                 Int32 delay = Convert.ToInt32(Decimal.Parse(m.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture) * 1000m);
+                                // set the track delay
+                                tr.Delay = delay;
+                                // increase the number of track delays found
+                                _TrackDelaysFound++;
+                                // check if the track is a videotrack and set the VideoTrackDelay
+                                if (tr.TrackType == MkvTrackType.video)
+                                {
+                                    // set the video track delay
+                                    _VideoTrackDelay = delay;
+                                }
+                                break;
+                            }
+                            else if (m2.Success)
+                            {
+                                // Parse the delay (get the seconds in nanoseconds
+                                Int32 delayHours = Convert.ToInt32(Int64.Parse(m2.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture));
+                                Int32 delayMinutes = Convert.ToInt32(Int64.Parse(m2.Groups[2].Value, System.Globalization.CultureInfo.InvariantCulture));
+                                Int32 delaySeconds = Convert.ToInt32(Int64.Parse(m2.Groups[3].Value, System.Globalization.CultureInfo.InvariantCulture));
+                                Int32 delayNanoSeconds = Convert.ToInt32(Int64.Parse(m2.Groups[4].Value, System.Globalization.CultureInfo.InvariantCulture));
+
+                                Int32 delay = Convert.ToInt32(new TimeSpan(0, delayHours, delayMinutes, delaySeconds, delayNanoSeconds / 1000).TotalMilliseconds);
                                 // set the track delay
                                 tr.Delay = delay;
                                 // increase the number of track delays found
