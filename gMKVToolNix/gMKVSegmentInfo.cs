@@ -83,7 +83,7 @@ namespace gMKVToolNix
         public override bool Equals(object oth)
         {
             gMKVSegmentInfo other = oth as gMKVSegmentInfo;
-            if (oth == null)
+            if (other == null)
             {
                 return false;
             }

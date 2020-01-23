@@ -134,7 +134,7 @@ namespace gMKVToolNix
         public override bool Equals(object oth)
         {
             gMKVTrack other = oth as gMKVTrack;
-            if (oth == null)
+            if (other == null)
             {
                 return false;
             }

@@ -30,7 +30,7 @@ namespace gMKVToolNix
         public override bool Equals(object oth)
         {
             gMKVChapter other = oth as gMKVChapter;
-            if (oth == null)
+            if (other == null)
             {
                 return false;
             }

@@ -47,7 +47,7 @@ namespace gMKVToolNix
         public override bool Equals(object oth)
         {
             gMKVAttachment other = oth as gMKVAttachment;
-            if (oth == null)
+            if (other == null)
             {
                 return false;
             }

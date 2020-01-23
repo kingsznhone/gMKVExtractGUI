@@ -139,7 +139,7 @@ namespace gMKVToolNix
         public override bool Equals(object oth)
         {
             gMKVExtractSegmentsParameters other = oth as gMKVExtractSegmentsParameters;
-            if (oth == null)
+            if (other == null)
             {
                 return false;
             }
