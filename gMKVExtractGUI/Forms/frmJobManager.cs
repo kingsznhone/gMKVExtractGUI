@@ -13,6 +13,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
 using System.Collections;
+using System.Threading.Tasks;
 
 namespace gMKVToolNix
 {
@@ -161,7 +162,7 @@ namespace gMKVToolNix
             }
         }
 
-        private void RunJobs(List<gMKVJobInfo> argJobInfoList)
+        private async Task RunJobsAsync(List<gMKVJobInfo> argJobInfoList)
         {
             _ExceptionBuilder.Length = 0;
             foreach (gMKVJobInfo jobInfo in argJobInfoList)
@@ -181,22 +182,20 @@ namespace gMKVToolNix
                     _gMkvExtract.MkvExtractTrackUpdated += _gMkvExtract_MkvExtractTrackUpdated;
                     // increate the current job index
                     _CurrentJob++;
-                    // start the thread
-                    Thread myThread = new Thread(new ParameterizedThreadStart(job.ExtractMethod(_gMkvExtract)));
                     jobInfo.StartTime = DateTime.Now;
                     jobInfo.State = JobState.Running;
                     grdJobs.Refresh();
-                    myThread.Start(job.ParametersList);
 
                     btnAbort.Enabled = true;
                     btnAbortAll.Enabled = true;
                     gTaskbarProgress.SetState(this, gTaskbarProgress.TaskbarStates.Normal);
                     Application.DoEvents();
-                    while (myThread.ThreadState != System.Threading.ThreadState.Stopped)
-                    {
-                        Application.DoEvents();
-                    }
+
+                    // start the task
+                    await Task.Factory.StartNew(() => { job.ExtractMethod(_gMkvExtract)(job.ParametersList); });
+
                     jobInfo.EndTime = DateTime.Now;
+
                     // check for exceptions
                     if (_gMkvExtract.ThreadedException != null)
                     {
@@ -272,7 +271,7 @@ namespace gMKVToolNix
             }
         }
 
-        private void PrepareForRunJobs(List<gMKVJobInfo> argJobInfoList)
+        private async void PrepareForRunJobs(List<gMKVJobInfo> argJobInfoList)
         {
             bool exceptionOccured = false;
             try
@@ -284,7 +283,9 @@ namespace gMKVToolNix
                 _TotalJobs = argJobInfoList.Count;
                 _CurrentJob = 0;
                 prgBrTotal.Maximum = _TotalJobs * 100;
-                RunJobs(new List<gMKVJobInfo>(argJobInfoList));
+
+                await RunJobsAsync(new List<gMKVJobInfo>(argJobInfoList));
+                
                 // Check exception builder for exceptions
                 if (_ExceptionBuilder.Length > 0)
                 {
