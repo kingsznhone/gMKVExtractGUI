@@ -875,7 +875,7 @@ namespace gMKVToolNix.Forms
             };
         }
 
-        private async void btnExtract_btnAddJobs_Click(object sender, EventArgs e)
+        private void btnExtract_btnAddJobs_Click(object sender, EventArgs e)
         {
             bool exceptionOccured = false;
             try
@@ -925,6 +925,7 @@ namespace gMKVToolNix.Forms
                 // Get all the distinct parent nodes that correspond to the checked nodes
                 List<TreeNode> parentNodes = checkedNodes.Where(t => t.Parent != null && t.Parent.Tag != null && t.Parent.Tag is gMKVSegmentInfo).Select(t => t.Parent).Distinct().ToList<TreeNode>();
 
+                Thread myThread = null;
                 List<gMKVJob> jobs = new List<gMKVJob>();
                 List<gMKVSegment> segments = null;
 
@@ -1036,6 +1037,9 @@ namespace gMKVToolNix.Forms
                     {
                         // increate the current job index
                         _CurrentJob++;
+                        // start the thread
+                        myThread = new Thread(new ParameterizedThreadStart(job.ExtractMethod(_gMkvExtract)));
+                        myThread.Start(job.ParametersList);
 
                         btnAbort.Enabled = true;
                         btnAbortAll.Enabled = true;
@@ -1043,10 +1047,10 @@ namespace gMKVToolNix.Forms
                         gTaskbarProgress.SetState(this, gTaskbarProgress.TaskbarStates.Normal);
                         gTaskbarProgress.SetOverlayIcon(this, SystemIcons.Shield, "Extracting...");
                         Application.DoEvents();
-
-                        // start the task
-                        await Task.Factory.StartNew(() => { job.ExtractMethod(_gMkvExtract)(job.ParametersList); });
-
+                        while (myThread.ThreadState != System.Threading.ThreadState.Stopped)
+                        {
+                            Application.DoEvents();
+                        }
                         // check for exceptions
                         if (_gMkvExtract.ThreadedException != null)
                         {
