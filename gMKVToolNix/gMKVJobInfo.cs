@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace gMKVToolNix
 {
@@ -16,52 +14,27 @@ namespace gMKVToolNix
     [Serializable]
     public class gMKVJobInfo
     {
+        public gMKVJob Job { get; set; }
 
-        private gMKVJob _Job = null;
+        public DateTime? StartTime { get; set; }
 
-        public gMKVJob Job
-        {
-            get { return _Job; }
-            set { _Job = value; }
-        }
+        public DateTime? EndTime { get; set; }
 
-        private DateTime? _StartTime = null;
-
-        public DateTime? StartTime
-        {
-            get { return _StartTime; }
-            set { _StartTime = value; }
-        }
-
-        private DateTime? _EndTime = null;
-
-        public DateTime? EndTime
-        {
-            get { return _EndTime; }
-            set { _EndTime = value; }
-        }
-
-        private JobState _State = JobState.Ready;
-
-        public JobState State
-        {
-            get { return _State; }
-            set { _State = value; }
-        }
+        public JobState State { get; set; } = JobState.Ready;
 
         public TimeSpan? Duration
         {
             get
             {
-                if (_StartTime.HasValue)
+                if (StartTime.HasValue)
                 {
-                    if (_EndTime.HasValue)
+                    if (EndTime.HasValue)
                     {
-                        return ((TimeSpan?)(_EndTime - _StartTime)).Value;
+                        return ((TimeSpan?)(EndTime - StartTime)).Value;
                     }
                     else
                     {
-                        return ((TimeSpan?)(DateTime.Now - _StartTime)).Value;
+                        return ((TimeSpan?)(DateTime.Now - StartTime)).Value;
                     }
                 }
                 else
@@ -73,7 +46,7 @@ namespace gMKVToolNix
 
         public gMKVJobInfo(gMKVJob argJob)
         {
-            _Job = argJob;
+            Job = argJob;
         }
 
         // For serialization only!!!
@@ -81,9 +54,9 @@ namespace gMKVToolNix
 
         public void Reset()
         {
-            _EndTime = null;
-            _StartTime = null;
-            _State = JobState.Ready;
+            EndTime = null;
+            StartTime = null;
+            State = JobState.Ready;
         }
     }
 }

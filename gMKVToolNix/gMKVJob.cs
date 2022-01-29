@@ -27,22 +27,21 @@ namespace gMKVToolNix
     [System.Xml.Serialization.XmlInclude(typeof(gMKVAttachment))]
     public class gMKVJob
     {
-        private FormMkvExtractionMode _ExtractionMode;
-        public FormMkvExtractionMode ExtractionMode { 
-            get { return _ExtractionMode; }
-            set { _ExtractionMode = value; }
-        }
+        public FormMkvExtractionMode ExtractionMode { get; set; }
 
-        private String _MKVToolnixPath;
+        public string MKVToolnixPath { get; set; }
 
-        public String MKVToolnixPath
+        public gMKVExtractSegmentsParameters ParametersList { get; set; }
+
+        public gMKVJob(FormMkvExtractionMode argExtractionMode, string argMKVToolnixPath, gMKVExtractSegmentsParameters argParameters)
         {
-            get { return _MKVToolnixPath; }
-            set { _MKVToolnixPath = value; }
+            ExtractionMode = argExtractionMode;
+            MKVToolnixPath = argMKVToolnixPath;
+            ParametersList = argParameters;
         }
 
         public gMkvExtractMethod ExtractMethod(gMKVExtract argGmkvExtract) {
-                switch (_ExtractionMode)
+                switch (ExtractionMode)
                 {
                     case FormMkvExtractionMode.Tracks:
                         return argGmkvExtract.ExtractMKVSegmentsThreaded;
@@ -65,37 +64,24 @@ namespace gMKVToolNix
                 }
         }
 
-        private gMKVExtractSegmentsParameters _ParametersList;
-        public gMKVExtractSegmentsParameters ParametersList { 
-            get { return _ParametersList; }
-            set { _ParametersList = value; }
-        }
-
-        public gMKVJob(FormMkvExtractionMode argExtractionMode, String argMKVToolnixPath, gMKVExtractSegmentsParameters argParameters)
-        {
-            _ExtractionMode = argExtractionMode;
-            _MKVToolnixPath = argMKVToolnixPath;
-            _ParametersList = argParameters;
-        }
-
         // For serialization only!!!
         internal gMKVJob() { }
 
-        private String GetTracks(List<gMKVSegment> argSegmentList)
+        private string GetTracks(List<gMKVSegment> argSegmentList)
         {
             StringBuilder trackBuilder = new StringBuilder();
             foreach (gMKVSegment item in argSegmentList)
             {
-                if (item is gMKVTrack)
+                if (item is gMKVTrack track)
                 {
                     trackBuilder.AppendFormat("[{0}:{1}]",
-                        ((gMKVTrack)item).TrackType.ToString().Substring(0, 3),
-                        ((gMKVTrack)item).TrackID);
+                        track.TrackType.ToString().Substring(0, 3),
+                        track.TrackID);
                 }
-                else if (item is gMKVAttachment)
+                else if (item is gMKVAttachment attachment)
                 {
                     trackBuilder.AppendFormat("[Att:{0}]",                        
-                        ((gMKVAttachment)item).ID);
+                        attachment.ID);
                 }
                 else if (item is gMKVChapter)
                 {
@@ -108,50 +94,51 @@ namespace gMKVToolNix
         public override string ToString()
         {
             StringBuilder retValue = new StringBuilder();
-            switch (_ExtractionMode)
+            switch (ExtractionMode)
             {
                 case FormMkvExtractionMode.Tracks:
                     retValue.AppendFormat("Tracks {0} \r\n{1} \r\n{2}",
                         GetTracks(ParametersList.MKVSegmentsToExtract),
-                        Path.GetFileName(_ParametersList.MKVFile), _ParametersList.OutputDirectory);
+                        Path.GetFileName(ParametersList.MKVFile), ParametersList.OutputDirectory);
                     break;
                 case FormMkvExtractionMode.Cue_Sheet:
                     retValue.AppendFormat("Cue Sheet \r\n{0} \r\n{1}'",
-                        Path.GetFileName(_ParametersList.MKVFile), _ParametersList.OutputDirectory);
+                        Path.GetFileName(ParametersList.MKVFile), ParametersList.OutputDirectory);
                     break;
                 case FormMkvExtractionMode.Tags:
                     retValue.AppendFormat("Tags \r\n{0} \r\n{1}",
-                        Path.GetFileName(_ParametersList.MKVFile), _ParametersList.OutputDirectory);
+                        Path.GetFileName(ParametersList.MKVFile), ParametersList.OutputDirectory);
                     break;
                 case FormMkvExtractionMode.Timecodes:
                     retValue.AppendFormat("Timecodes {0} \r\n{1} \r\n{2}",
-                        GetTracks(_ParametersList.MKVSegmentsToExtract),
-                        Path.GetFileName(_ParametersList.MKVFile), _ParametersList.OutputDirectory);
+                        GetTracks(ParametersList.MKVSegmentsToExtract),
+                        Path.GetFileName(ParametersList.MKVFile), ParametersList.OutputDirectory);
                     break;
                 case FormMkvExtractionMode.Tracks_And_Timecodes:
                     retValue.AppendFormat("Tracks/Timecodes {0} \r\n{1} \r\n{2}",
-                        GetTracks(_ParametersList.MKVSegmentsToExtract),
-                        Path.GetFileName(_ParametersList.MKVFile), _ParametersList.OutputDirectory);
+                        GetTracks(ParametersList.MKVSegmentsToExtract),
+                        Path.GetFileName(ParametersList.MKVFile), ParametersList.OutputDirectory);
                     break;
                 case FormMkvExtractionMode.Cues:
                     retValue.AppendFormat("Cues {0} \r\n{1} \r\n{2}",
-                        GetTracks(_ParametersList.MKVSegmentsToExtract),
-                        Path.GetFileName(_ParametersList.MKVFile), _ParametersList.OutputDirectory);
+                        GetTracks(ParametersList.MKVSegmentsToExtract),
+                        Path.GetFileName(ParametersList.MKVFile), ParametersList.OutputDirectory);
                     break;
                 case FormMkvExtractionMode.Tracks_And_Cues:
                     retValue.AppendFormat("Tracks/Cues {0} \r\n{1} \r\n{2}",
-                        GetTracks(_ParametersList.MKVSegmentsToExtract),
-                        Path.GetFileName(_ParametersList.MKVFile), _ParametersList.OutputDirectory);
+                        GetTracks(ParametersList.MKVSegmentsToExtract),
+                        Path.GetFileName(ParametersList.MKVFile), ParametersList.OutputDirectory);
                     break;
                 case FormMkvExtractionMode.Tracks_And_Cues_And_Timecodes:
                     retValue.AppendFormat("Tracks/Cues/Timecodes {0} \r\n{1} \r\n{2}",
-                        GetTracks(_ParametersList.MKVSegmentsToExtract),
-                        Path.GetFileName(_ParametersList.MKVFile), _ParametersList.OutputDirectory);
+                        GetTracks(ParametersList.MKVSegmentsToExtract),
+                        Path.GetFileName(ParametersList.MKVFile), ParametersList.OutputDirectory);
                     break;
                 default:
                     retValue.AppendFormat("Unknown job!!!");
                     break;
             }
+
             return retValue.ToString();
         }
     }

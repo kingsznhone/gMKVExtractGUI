@@ -1,47 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace gMKVToolNix
 {
     [Serializable]
     public class gMKVAttachment : gMKVSegment
     {
-        private String _Filename;
+        public int ID { get; set; }
 
-        public String Filename
-        {
-            get { return _Filename; }
-            set { _Filename = value; }
-        }
+        public string Filename { get; set; } = "";
 
-        private String _MimeType;
+        public string MimeType { get; set; } = "";
 
-        public String MimeType
-        {
-            get { return _MimeType; }
-            set { _MimeType = value; }
-        }
-
-        private String _FileSize;
-
-        public String FileSize
-        {
-            get { return _FileSize; }
-            set { _FileSize = value; }
-        }
-
-        private int _ID;
-
-        public int ID
-        {
-            get { return _ID; }
-            set { _ID = value; }
-        }
+        public string FileSize { get; set; } = "";
 
         public override string ToString()
         {
-            return String.Format("Attachment {0} [{1}][{2}][{3} bytes]", _ID, _Filename, _MimeType, _FileSize);
+            return $"Attachment {ID} [{Filename}][{MimeType}][{FileSize} bytes]";
         }
 
         public override bool Equals(object oth)
@@ -51,23 +25,28 @@ namespace gMKVToolNix
             {
                 return false;
             }
+
             return
-                this.Filename == other.Filename
-                && this.FileSize == other.FileSize
-                && this.ID == other.ID
-                && this.MimeType == other.MimeType
-                ;
+                Filename.Equals(other.Filename, StringComparison.OrdinalIgnoreCase)
+                && FileSize.Equals(other.FileSize, StringComparison.OrdinalIgnoreCase)
+                && ID == other.ID
+                && MimeType.Equals(other.MimeType, StringComparison.OrdinalIgnoreCase)
+            ;
         }
 
         public override int GetHashCode()
         {
-            return
-                string.Concat(
-                    this.Filename.GetHashCode()
-                    , this.FileSize.GetHashCode()
-                    , this.ID.GetHashCode()
-                    , this.MimeType.GetHashCode()
-                ).GetHashCode();
+            // https://stackoverflow.com/a/263416
+            unchecked // Overflow is fine, just wrap
+            {
+                int hash = 17;
+                // Suitable nullity checks etc, of course :)
+                hash = hash * 23 + Filename.GetHashCode();
+                hash = hash * 23 + FileSize.GetHashCode();
+                hash = hash * 23 + ID.GetHashCode();
+                hash = hash * 23 + MimeType.GetHashCode();
+                return hash;
+            }
         }
     }
 }

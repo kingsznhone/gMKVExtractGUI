@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace gMKVToolNix
 {
@@ -14,17 +12,12 @@ namespace gMKVToolNix
     [Serializable]
     public class gMKVChapter : gMKVSegment
     {
-        private int _ChapterCount = 0;
-
-        public int ChapterCount
-        {
-            get { return _ChapterCount; }
-            set { _ChapterCount = value; }
-        }
+        public int ChapterCount { get; set; }
 
         public override string ToString()
         {
-            return String.Format("Chapters {0} entries", _ChapterCount);
+            string entryString = ChapterCount > 1 ? "entries" : "entry";
+            return $"Chapters {ChapterCount} {entryString}";
         }
 
         public override bool Equals(object oth)
@@ -34,12 +27,13 @@ namespace gMKVToolNix
             {
                 return false;
             }
-            return this.ChapterCount == other.ChapterCount;
+
+            return ChapterCount == other.ChapterCount;
         }
 
         public override int GetHashCode()
         {
-            return this.ChapterCount.GetHashCode();
+            return ChapterCount.GetHashCode();
         }
     }
 }

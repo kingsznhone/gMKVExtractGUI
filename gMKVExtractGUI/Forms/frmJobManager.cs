@@ -18,14 +18,14 @@ namespace gMKVToolNix
 {
     public partial class frmJobManager : gForm
     {
-        private StringBuilder _ExceptionBuilder = new StringBuilder();
-        private IFormMain _MainForm = null;
-        private Int32 _CurrentJob = 0;
-        private Int32 _TotalJobs = 0;
+        private readonly StringBuilder _ExceptionBuilder = new StringBuilder();
+        private readonly IFormMain _MainForm = null;
+        private int _CurrentJob = 0;
+        private int _TotalJobs = 0;
         private gMKVExtract _gMkvExtract = null;
-        private Boolean _ExtractRunning = false;
+        private bool _ExtractRunning = false;
         private gSettings _Settings = null; 
-        private Boolean _FromConstructor = false;
+        private bool _FromConstructor = false;
 
         private BindingList<gMKVJobInfo> _JobList = new BindingList<gMKVJobInfo>();
 
@@ -102,13 +102,13 @@ namespace gMKVToolNix
             _JobList.Add(argJobInfo);
         }
 
-        private void SetAbortStatus(Boolean argStatus)
+        private void SetAbortStatus(bool argStatus)
         {
             btnAbort.Enabled = argStatus;
             btnAbortAll.Enabled = argStatus;
         }
 
-        private void SetActionStatus(Boolean argStatus)
+        private void SetActionStatus(bool argStatus)
         {
             btnRemove.Enabled = argStatus;
             btnRunAll.Enabled = argStatus;

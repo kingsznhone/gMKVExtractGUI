@@ -13,20 +13,21 @@ namespace gMKVToolNix
         /// <summary>
         /// Returns if the running Platform is Linux Or MacOSX
         /// </summary>
-        public static Boolean IsOnLinux
+        public static bool IsOnLinux
         {
             get
             {
                 PlatformID myPlatform = Environment.OSVersion.Platform;
+
                 // 128 is Mono 1.x specific value for Linux systems, so it's there to provide compatibility
-                return (myPlatform == PlatformID.Unix) || (myPlatform == PlatformID.MacOSX) || ((Int32)myPlatform == 128);
+                return (myPlatform == PlatformID.Unix) || (myPlatform == PlatformID.MacOSX) || ((int)myPlatform == 128);
             }
         }
 
         /// <summary>
         /// Gets the mkvmerge GUI executable filename
         /// </summary>
-        public static String MKV_MERGE_GUI_FILENAME 
+        public static string MKV_MERGE_GUI_FILENAME 
         {
             get { return IsOnLinux ? "mmg" : "mmg.exe"; }
         }
@@ -44,7 +45,7 @@ namespace gMKVToolNix
         /// </summary>
         /// <param name="argString"></param>
         /// <returns></returns>
-        public static String UnescapeString(String argString)
+        public static string UnescapeString(string argString)
         {
             return argString.
                 Replace(@"\s", " ").
@@ -61,14 +62,16 @@ namespace gMKVToolNix
         /// </summary>
         /// <param name="argString"></param>
         /// <returns></returns>
-        public static String EscapeString(String argString)
+        public static string EscapeString(string argString)
         {
             return argString.
                 Replace(" ", @"\s").
                 Replace("\"", @"\2").
                 Replace(":", @"\c").
                 Replace("#", @"\h").
-                Replace(@"\", @"\\");
+                Replace(@"\", @"\\").
+                Replace("[", @"\b").
+                Replace("]", @"\B");
         }
 
         /// <summary>
@@ -77,27 +80,27 @@ namespace gMKVToolNix
         /// If it doesn't find it, it throws an exception.
         /// </summary>
         /// <returns></returns>
-        public static String GetMKVToolnixPathViaRegistry()
+        public static string GetMKVToolnixPathViaRegistry()
         {
             // Check if we are on Linux, so we don't have to check the registry
             if (gMKVHelper.IsOnLinux)
             {
                 throw new Exception("Running on Linux...");
             }
-            RegistryKey regUninstall = null;
+
             RegistryKey regMkvToolnix = null;
-            String valuePath = "";
-            Boolean subKeyFound = false;
-            Boolean valueFound = false;
+            string valuePath = "";
+            bool subKeyFound = false;
+            bool valueFound = false;
 
             // First check for Installed MkvToolnix
             // First check Win32 registry
-            regUninstall = Registry.LocalMachine.OpenSubKey("SOFTWARE").OpenSubKey("Microsoft").
+            RegistryKey regUninstall = Registry.LocalMachine.OpenSubKey("SOFTWARE").OpenSubKey("Microsoft").
                 OpenSubKey("Windows").OpenSubKey("CurrentVersion").OpenSubKey("Uninstall");
 
-            foreach (String subKeyName in regUninstall.GetSubKeyNames())
+            foreach (string subKeyName in regUninstall.GetSubKeyNames())
             {
-                if (subKeyName.ToLower().Equals("MKVToolNix".ToLower()))
+                if (subKeyName.Equals("MKVToolNix", StringComparison.OrdinalIgnoreCase))
                 {
                     subKeyFound = true;
                     regMkvToolnix = regUninstall.OpenSubKey("MKVToolNix");
@@ -108,12 +111,12 @@ namespace gMKVToolNix
             // if sub key was found, try to get the executable path
             if (subKeyFound)
             {
-                foreach (String valueName in regMkvToolnix.GetValueNames())
+                foreach (string valueName in regMkvToolnix.GetValueNames())
                 {
-                    if (valueName.ToLower().Equals("DisplayIcon".ToLower()))
+                    if (valueName.Equals("DisplayIcon", StringComparison.OrdinalIgnoreCase))
                     {
                         valueFound = true;
-                        valuePath = (String)regMkvToolnix.GetValue(valueName);
+                        valuePath = (string)regMkvToolnix.GetValue(valueName);
                         break;
                     }
                 }
@@ -127,9 +130,9 @@ namespace gMKVToolNix
                 regUninstall = Registry.LocalMachine.OpenSubKey("SOFTWARE").OpenSubKey("Wow6432Node").OpenSubKey("Microsoft").
                     OpenSubKey("Windows").OpenSubKey("CurrentVersion").OpenSubKey("Uninstall");
 
-                foreach (String subKeyName in regUninstall.GetSubKeyNames())
+                foreach (string subKeyName in regUninstall.GetSubKeyNames())
                 {
-                    if (subKeyName.ToLower().Equals("MKVToolNix".ToLower()))
+                    if (subKeyName.Equals("MKVToolNix", StringComparison.OrdinalIgnoreCase))
                     {
                         subKeyFound = true;
                         regMkvToolnix = regUninstall.OpenSubKey("MKVToolNix");
@@ -140,12 +143,12 @@ namespace gMKVToolNix
                 // if sub key was found, try to get the executable path
                 if (subKeyFound)
                 {
-                    foreach (String valueName in regMkvToolnix.GetValueNames())
+                    foreach (string valueName in regMkvToolnix.GetValueNames())
                     {
-                        if (valueName.ToLower().Equals("DisplayIcon".ToLower()))
+                        if (valueName.Equals("DisplayIcon", StringComparison.OrdinalIgnoreCase))
                         {
                             valueFound = true;
-                            valuePath = (String)regMkvToolnix.GetValue(valueName);
+                            valuePath = (string)regMkvToolnix.GetValue(valueName);
                             break;
                         }
                     }
@@ -158,9 +161,9 @@ namespace gMKVToolNix
             {
                 RegistryKey regSoftware = Registry.CurrentUser.OpenSubKey("Software");
                 subKeyFound = false;
-                foreach (String subKey in regSoftware.GetSubKeyNames())
+                foreach (string subKey in regSoftware.GetSubKeyNames())
                 {
-                    if (subKey.ToLower().Equals("mkvmergeGUI".ToLower()))
+                    if (subKey.Equals("mkvmergeGUI", StringComparison.OrdinalIgnoreCase))
                     {
                         subKeyFound = true;
                         regMkvToolnix = regSoftware.OpenSubKey("mkvmergeGUI");
@@ -171,13 +174,14 @@ namespace gMKVToolNix
                 // if we didn't find the MkvMergeGUI key, all hope is lost
                 if (!subKeyFound)
                 {
-                    throw new Exception("Couldn't find MKVToolNix in your system!" + Environment.NewLine + "Please download and install it or provide a manual path!");
+                    throw new Exception($"Couldn't find MKVToolNix in your system!{Environment.NewLine}Please download and install it or provide a manual path!");
                 }
+
                 RegistryKey regGui = null;
                 Boolean foundGuiKey = false;
-                foreach (String subKey in regMkvToolnix.GetSubKeyNames())
+                foreach (string subKey in regMkvToolnix.GetSubKeyNames())
                 {
-                    if (subKey.ToLower().Equals("GUI".ToLower()))
+                    if (subKey.Equals("GUI", StringComparison.OrdinalIgnoreCase))
                     {
                         foundGuiKey = true;
                         regGui = regMkvToolnix.OpenSubKey("GUI");
@@ -190,12 +194,12 @@ namespace gMKVToolNix
                     throw new Exception("Found MKVToolNix in your system but not the registry Key GUI!");
                 }
 
-                foreach (String valueName in regGui.GetValueNames())
+                foreach (string valueName in regGui.GetValueNames())
                 {
-                    if (valueName.ToLower().Equals("mkvmerge_executable".ToLower()))
+                    if (valueName.Equals("mkvmerge_executable", StringComparison.OrdinalIgnoreCase))
                     {
                         valueFound = true;
-                        valuePath = (String)regGui.GetValue("mkvmerge_executable");
+                        valuePath = (string)regGui.GetValue("mkvmerge_executable");
                         break;
                     }
                 }
@@ -210,7 +214,7 @@ namespace gMKVToolNix
             // let's check if it's valid
             if (!File.Exists(valuePath))
             {
-                throw new Exception("Found a registry value (" + valuePath + ") for MKVToolNix in your system but it is not valid!");
+                throw new Exception($"Found a registry value ({valuePath}) for MKVToolNix in your system but it is not valid!");
             }
 
             // Everything is A-OK! Return the valid Directory value! :)
@@ -223,7 +227,7 @@ namespace gMKVToolNix
         /// <param name="argMkvToolnixPath"></param>
         /// <param name="argInputFile"></param>
         /// <returns></returns>
-        public static List<gMKVSegment> GetMergedMkvSegmentList(String argMkvToolnixPath, String argInputFile)
+        public static List<gMKVSegment> GetMergedMkvSegmentList(string argMkvToolnixPath, string argInputFile)
         {
             gMKVMerge g = new gMKVMerge(argMkvToolnixPath);
             gMKVInfo gInfo = new gMKVInfo(argMkvToolnixPath);
@@ -247,7 +251,7 @@ namespace gMKVToolNix
             {
                 if (seg is gMKVTrack)
                 {
-                    if (!String.IsNullOrEmpty(((gMKVTrack)seg).CodecPrivateData))
+                    if (!string.IsNullOrWhiteSpace(((gMKVTrack)seg).CodecPrivateData))
                     {
                         codecPrivateDataWasFound = true;
                         break;
@@ -273,7 +277,7 @@ namespace gMKVToolNix
                             {
                                 if (((gMKVTrack)seg2).TrackID == ((gMKVTrack)seg).TrackID)
                                 {
-                                    if (!String.IsNullOrEmpty(((gMKVTrack)seg).CodecPrivate))
+                                    if (!string.IsNullOrWhiteSpace(((gMKVTrack)seg).CodecPrivate))
                                     {
                                         ((gMKVTrack)seg2).CodecPrivate = ((gMKVTrack)seg).CodecPrivate;
                                     }
@@ -313,7 +317,6 @@ namespace gMKVToolNix
                         }
                     }
                 }
-                segmentListInfo = null;
             }
 
             // Try to determine the delays from mkvmerge info
@@ -326,8 +329,6 @@ namespace gMKVToolNix
             // Translate codec_private_data in codec_private information
             g.FindCodecPrivate(segmentList);
 
-            gInfo = null;
-
             return segmentList;
         }
 
@@ -336,7 +337,7 @@ namespace gMKVToolNix
         /// </summary>
         /// <param name="argData"></param>
         /// <returns></returns>
-        public static DataReceivedEventArgs GetDataReceivedEventArgs(Object argData)
+        public static DataReceivedEventArgs GetDataReceivedEventArgs(object argData)
         {
             DataReceivedEventArgs eventArgs = (DataReceivedEventArgs)System.Runtime.Serialization.FormatterServices
                          .GetUninitializedObject(typeof(DataReceivedEventArgs));
@@ -360,10 +361,10 @@ namespace gMKVToolNix
             {
                 if (!reader.EndOfStream)
                 {
-                    String c = ((char)reader.Read()).ToString();
-                    if (c == "\r")
+                    char c = (char)reader.Read();
+                    if (c == '\r')
                     {
-                        if (((char)reader.Peek()).ToString() == "\n")
+                        if ((char)reader.Peek() == '\n')
                         {
                             // consume the next character
                             reader.Read();
@@ -372,7 +373,7 @@ namespace gMKVToolNix
                         argHandler(argProcess, GetDataReceivedEventArgs(line.ToString()));
                         line.Length = 0;
                     }
-                    else if (c == "\n")
+                    else if (c == '\n')
                     {
                         argHandler(argProcess, GetDataReceivedEventArgs(line.ToString()));
                         line.Length = 0;

@@ -38,9 +38,9 @@ namespace gMKVToolNix.Forms
 
         private gSettings _Settings = null;
 
-        private Boolean _FromConstructor = false;
+        private bool _FromConstructor = false;
 
-        private Boolean _ExtractRunning = false;
+        private bool _ExtractRunning = false;
 
         private Int32 _CurrentJob = 0;
         private Int32 _TotalJobs = 0;

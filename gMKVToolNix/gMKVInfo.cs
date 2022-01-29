@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Globalization;
 
 namespace gMKVToolNix
 {
@@ -36,69 +37,62 @@ namespace gMKVToolNix
         // mkvinfo [options] <inname>
         internal class OptionValue
         {
-            private MkvInfoOptions _Option;
-            private String _Parameter;
+            public MkvInfoOptions Option { get; set; }
 
-            public MkvInfoOptions Option
-            {
-                get { return _Option; }
-                set { _Option = value; }
-            }
+            public string Parameter { get; set; }
 
-            public String Parameter
+            public OptionValue(MkvInfoOptions opt, string par)
             {
-                get { return _Parameter; }
-                set { _Parameter = value; }
-            }
-
-            public OptionValue(MkvInfoOptions opt, String par)
-            {
-                _Option = opt;
-                _Parameter = par;
+                Option = opt;
+                Parameter = par;
             }
         }
 
         /// <summary>
         /// Gets the mkvinfo executable filename
         /// </summary>
-        public static String MKV_INFO_FILENAME
+        public static string MKV_INFO_FILENAME
         {
             get { return gMKVHelper.IsOnLinux ? "mkvinfo" : "mkvinfo.exe"; }
         }
 
-        private String _MKVToolnixPath = "";
-        private String _MKVInfoFilename = "";
-        private List<gMKVSegment> _SegmentList = new List<gMKVSegment>();
-        private StringBuilder _MKVInfoOutput = new StringBuilder();
-        private StringBuilder _ErrorBuilder = new StringBuilder();
+        private readonly string _MKVToolnixPath = "";
+        private readonly string _MKVInfoFilename = "";
+        private readonly List<gMKVSegment> _SegmentList = new List<gMKVSegment>();
+        private readonly StringBuilder _MKVInfoOutput = new StringBuilder();
+        private readonly StringBuilder _ErrorBuilder = new StringBuilder();
         private Process _MyProcess = null;
-        private List<gMKVTrack> _TrackList = new List<gMKVTrack>();
-        private Int32 _TrackDelaysFound = 0;
-        private Int32 _VideoTrackDelay = Int32.MinValue;
+        private readonly List<gMKVTrack> _TrackList = new List<gMKVTrack>();
+        private int _TrackDelaysFound = 0;
+        private int _VideoTrackDelay = Int32.MinValue;
         private gMKVVersion _Version = null;
 
-        public gMKVInfo(String mkvToonlixPath)
+        public gMKVInfo(string mkvToonlixPath)
         {
-            if (String.IsNullOrWhiteSpace(mkvToonlixPath))
+            if (string.IsNullOrWhiteSpace(mkvToonlixPath))
             {
                 throw new Exception("The MKVToolNix path was not provided!");
             }
             if (!Directory.Exists(mkvToonlixPath))
             {
-                throw new Exception(String.Format("The MKVToolNix path {0} does not exist!", mkvToonlixPath));
+                throw new Exception($"The MKVToolNix path {mkvToonlixPath} does not exist!");
             }
             _MKVToolnixPath = mkvToonlixPath;
             _MKVInfoFilename = Path.Combine(_MKVToolnixPath, MKV_INFO_FILENAME);
             if (!File.Exists(_MKVInfoFilename))
             {
-                throw new Exception(String.Format("Could not find {0}!" + Environment.NewLine + "{1}", MKV_INFO_FILENAME, _MKVInfoFilename));
+                throw new Exception($"Could not find {MKV_INFO_FILENAME}!{Environment.NewLine}{_MKVInfoFilename}");
             }
         }
 
-        public List<gMKVSegment> GetMKVSegments(String argMKVFile)
+        public List<gMKVSegment> GetMKVSegments(string argMKVFile)
         {
-            // check for existence of MKVInfo
-            if (!File.Exists(_MKVInfoFilename)) { throw new Exception(String.Format("Could not find {0}!" + Environment.NewLine + "{1}", MKV_INFO_FILENAME, _MKVInfoFilename)); }
+            // Check for existence of MKVInfo
+            if (!File.Exists(_MKVInfoFilename)) 
+            {
+                throw new Exception($"Could not find {MKV_INFO_FILENAME}!{Environment.NewLine}{_MKVInfoFilename}");
+            }
+
             // First clear the segment list
             _SegmentList.Clear();
             // Clear the mkvinfo output
@@ -123,12 +117,19 @@ namespace gMKVToolNix
             return _SegmentList;
         }
 
-        public void FindAndSetDelays(List<gMKVSegment> argSegmentsList, String argMKVFile)
+        public void FindAndSetDelays(List<gMKVSegment> argSegmentsList, string argMKVFile)
         {
             // check for existence of MKVInfo
-            if (!File.Exists(_MKVInfoFilename)) { throw new Exception(String.Format("Could not find {0}!" + Environment.NewLine + "{1}", MKV_INFO_FILENAME, _MKVInfoFilename)); }
+            if (!File.Exists(_MKVInfoFilename)) 
+            { 
+                throw new Exception($"Could not find {MKV_INFO_FILENAME}!{Environment.NewLine}{_MKVInfoFilename}"); 
+            }
+
             // check for list of track numbers
-            if (argSegmentsList == null || argSegmentsList.Count == 0) { throw new Exception("No mkv segments were provided!"); }
+            if (argSegmentsList == null || argSegmentsList.Count == 0) 
+            { 
+                throw new Exception("No mkv segments were provided!"); 
+            }
 
             // Check if there are any video tracks
             if (!argSegmentsList.Any(x => x is gMKVTrack && (x as gMKVTrack).TrackType == MkvTrackType.video))
@@ -159,7 +160,7 @@ namespace gMKVToolNix
                     {
                         _TrackList.Add((gMKVTrack)seg);
                         // Update the number of tracks for which delays were found, in order to exit early later on
-                        if (((gMKVTrack)seg).Delay != Int32.MinValue)
+                        if (((gMKVTrack)seg).Delay != int.MinValue)
                         {
                             _TrackDelaysFound++;
                         }
@@ -168,8 +169,10 @@ namespace gMKVToolNix
             }
 
             // add the check_mode option for mkvinfo
-            List<OptionValue> optionList = new List<OptionValue>();
-            optionList.Add(new OptionValue(MkvInfoOptions.check_mode, ""));
+            List<OptionValue> optionList = new List<OptionValue>
+            {
+                new OptionValue(MkvInfoOptions.check_mode, "")
+            };
 
             // Execute MKVInfo
             try
@@ -180,7 +183,7 @@ namespace gMKVToolNix
                 {
                     if (tr.TrackType == MkvTrackType.video)
                     {
-                        if (_VideoTrackDelay == Int32.MinValue)
+                        if (_VideoTrackDelay == int.MinValue)
                         {
                             tr.EffectiveDelay = tr.Delay;
                         }
@@ -192,7 +195,7 @@ namespace gMKVToolNix
                     else
                     {
                         // check if the video track delay was found
-                        if (_VideoTrackDelay == Int32.MinValue)
+                        if (_VideoTrackDelay == int.MinValue)
                         {
                             tr.EffectiveDelay = tr.Delay;
                         }
@@ -204,9 +207,9 @@ namespace gMKVToolNix
                     }
 
                     // Check if no delays were detected
-                    if(tr.Delay == Int32.MinValue)
+                    if (tr.Delay == int.MinValue)
                     {
-                        if(tr.EffectiveDelay == Int32.MinValue)
+                        if (tr.EffectiveDelay == int.MinValue)
                         {
                             tr.Delay = 0;
                             tr.EffectiveDelay = 0;
@@ -227,12 +230,16 @@ namespace gMKVToolNix
 
         public gMKVVersion GetMKVInfoVersion()
         {
-            if(_Version != null)
+            if (_Version != null)
             {
                 return _Version;
             }
+
             // check for existence of MKVInfo
-            if (!File.Exists(_MKVInfoFilename)) { throw new Exception(String.Format("Could not find {0}!" + Environment.NewLine + "{1}", MKV_INFO_FILENAME, _MKVInfoFilename)); }
+            if (!File.Exists(_MKVInfoFilename)) 
+            { 
+                throw new Exception($"Could not find {MKV_INFO_FILENAME}!{Environment.NewLine}{_MKVInfoFilename}"); 
+            }
 
             if (gMKVHelper.IsOnLinux)
             {
@@ -244,32 +251,29 @@ namespace gMKVToolNix
                 _ErrorBuilder.Length = 0;
 
                 // Execute MKVInfo
-                List<OptionValue> options = new List<OptionValue>();
-                options.Add(new OptionValue(MkvInfoOptions.version, ""));
+                List<OptionValue> options = new List<OptionValue>
+                {
+                    new OptionValue(MkvInfoOptions.version, "")
+                };
 
                 using (Process myProcess = new Process())
                 {
                     // if on Linux, the language output must be defined from the environment variables LC_ALL, LANG, and LC_MESSAGES
                     // After talking with Mosu, the language output is defined from ui-language, with different language codes for Windows and Linux
-                    if (gMKVHelper.IsOnLinux)
-                    {
-                        options.Add(new OptionValue(MkvInfoOptions.ui_language, "en_US"));
-                    }
-                    else
-                    {
-                        options.Add(new OptionValue(MkvInfoOptions.ui_language, "en"));
-                    }
+                    options.Add(new OptionValue(MkvInfoOptions.ui_language, "en_US"));
 
-                    ProcessStartInfo myProcessInfo = new ProcessStartInfo();
-                    myProcessInfo.FileName = _MKVInfoFilename;
-                    myProcessInfo.Arguments = String.Format("{0}", ConvertOptionValueListToString(options));
-                    myProcessInfo.UseShellExecute = false;
-                    myProcessInfo.RedirectStandardOutput = true;
-                    myProcessInfo.StandardOutputEncoding = Encoding.UTF8;
-                    myProcessInfo.RedirectStandardError = true;
-                    myProcessInfo.StandardErrorEncoding = Encoding.UTF8;
-                    myProcessInfo.CreateNoWindow = true;
-                    myProcessInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    ProcessStartInfo myProcessInfo = new ProcessStartInfo
+                    {
+                        FileName = _MKVInfoFilename,
+                        Arguments = ConvertOptionValueListToString(options),
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        StandardOutputEncoding = Encoding.UTF8,
+                        RedirectStandardError = true,
+                        StandardErrorEncoding = Encoding.UTF8,
+                        CreateNoWindow = true,
+                        WindowStyle = ProcessWindowStyle.Hidden
+                    };
                     myProcess.StartInfo = myProcessInfo;
 
                     Debug.WriteLine(myProcessInfo.Arguments);
@@ -288,8 +292,9 @@ namespace gMKVToolNix
                     myProcess.WaitForExit();
 
                     // Debug write the exit code
-                    Debug.WriteLine(String.Format("Exit code: {0}", myProcess.ExitCode));
-                    gMKVLogger.Log(String.Format("Exit code: {0}", myProcess.ExitCode));
+                    string exitString = $"Exit code: {myProcess.ExitCode}";
+                    Debug.WriteLine(exitString);
+                    gMKVLogger.Log(exitString);
 
                     _MyProcess = null;
 
@@ -298,7 +303,7 @@ namespace gMKVToolNix
                     if (myProcess.ExitCode > 1)
                     {
                         // something went wrong!
-                        throw new Exception(String.Format("Mkvinfo exited with error code {0}!" +
+                        throw new Exception(string.Format("Mkvinfo exited with error code {0}!" +
                             Environment.NewLine + Environment.NewLine + "Errors reported:" + Environment.NewLine + "{1}",
                             myProcess.ExitCode, _ErrorBuilder.ToString()));
                     }
@@ -321,18 +326,20 @@ namespace gMKVToolNix
                     FilePrivatePart = version.FilePrivatePart
                 };
             }
-            if(_Version != null)
+
+            if (_Version != null)
             {
-                gMKVLogger.Log(String.Format("Detected mkvinfo version: {0}.{1}.{2}", 
-                    _Version.FileMajorPart, 
-                    _Version.FileMinorPart, 
+                gMKVLogger.Log(string.Format("Detected mkvinfo version: {0}.{1}.{2}",
+                    _Version.FileMajorPart,
+                    _Version.FileMinorPart,
                     _Version.FilePrivatePart
                 ));
             }
+
             return _Version;
         }
 
-        private void ExecuteMkvInfo(List<OptionValue> argOptionList, String argMKVFile, DataReceivedEventHandler argHandler)
+        private void ExecuteMkvInfo(List<OptionValue> argOptionList, string argMKVFile, DataReceivedEventHandler argHandler)
         {
             using (Process myProcess = new Process())
             {
@@ -345,9 +352,9 @@ namespace gMKVToolNix
                     _Version = GetMKVInfoVersion();
                 }
 
-                String LC_ALL = "";
-                String LANG = "";
-                String LC_MESSAGES = "";
+                string LC_ALL = "";
+                string LANG = "";
+                string LC_MESSAGES = "";
 
                 // if on Linux, the language output must be defined from the environment variables LC_ALL, LANG, and LC_MESSAGES
                 // After talking with Mosu, the language output is defined from ui-language, with different language codes for Windows and Linux
@@ -361,7 +368,7 @@ namespace gMKVToolNix
                     LANG = Environment.GetEnvironmentVariable("LANG", EnvironmentVariableTarget.Process);
                     LC_MESSAGES = Environment.GetEnvironmentVariable("LC_MESSAGES", EnvironmentVariableTarget.Process);
 
-                    gMKVLogger.Log(String.Format("Detected Environment Variables: LC_ALL=\"{0}\",LANG=\"{1}\",LC_MESSAGES=\"{2}\"",
+                    gMKVLogger.Log(string.Format("Detected Environment Variables: LC_ALL=\"{0}\",LANG=\"{1}\",LC_MESSAGES=\"{2}\"",
                         LC_ALL, LANG, LC_MESSAGES));
 
                     // Set the english locale
@@ -375,6 +382,7 @@ namespace gMKVToolNix
                 {
                     optionList.Add(new OptionValue(MkvInfoOptions.ui_language, "en"));
                 }
+
                 //optionList.Add(new OptionValue(MkvInfoOptions.command_line_charset, "\"UTF-8\""));
                 //optionList.Add(new OptionValue(MkvInfoOptions.output_charset, "\"UTF-8\""));
                 
@@ -387,37 +395,38 @@ namespace gMKVToolNix
                         optionList.Add(new OptionValue(MkvInfoOptions.no_gui, ""));
                     }
                 }
+
                 // check for extra options provided from the caller
                 if (argOptionList != null)
                 {
                     optionList.AddRange(argOptionList);
                 }
 
-                ProcessStartInfo myProcessInfo = new ProcessStartInfo();
-                myProcessInfo.FileName = _MKVInfoFilename;
-                // if we didn't provide a filename, then we want to execute mkvinfo with other parameters
-                if (!String.IsNullOrWhiteSpace(argMKVFile))
+                ProcessStartInfo myProcessInfo = new ProcessStartInfo
                 {
-                    myProcessInfo.Arguments = String.Format("{0} \"{1}\"", ConvertOptionValueListToString(optionList), argMKVFile);
+                    FileName = _MKVInfoFilename,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    StandardOutputEncoding = Encoding.UTF8,
+                    RedirectStandardError = true,
+                    StandardErrorEncoding = Encoding.UTF8,
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden
+                };
+
+                // if we didn't provide a filename, then we want to execute mkvinfo with other parameters
+                if (!string.IsNullOrWhiteSpace(argMKVFile))
+                {
+                    myProcessInfo.Arguments = $"{ConvertOptionValueListToString(optionList)} \"{argMKVFile}\"";
                 }
                 else
                 {
-                    myProcessInfo.Arguments = String.Format("{0}", ConvertOptionValueListToString(optionList));                    
+                    myProcessInfo.Arguments = ConvertOptionValueListToString(optionList);                    
                 }                
-                myProcessInfo.UseShellExecute = false;
-                myProcessInfo.RedirectStandardOutput = true;
-                myProcessInfo.StandardOutputEncoding = Encoding.UTF8;
-                myProcessInfo.RedirectStandardError = true;
-                myProcessInfo.StandardErrorEncoding = Encoding.UTF8;
-                myProcessInfo.CreateNoWindow = true;
-                myProcessInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 myProcess.StartInfo = myProcessInfo;
 
-                //// Register the event for reading the StandardOutput
-                //myProcess.OutputDataReceived += argHandler;
-
                 Debug.WriteLine(myProcessInfo.Arguments);
-                gMKVLogger.Log(String.Format("\"{0}\" {1}", _MKVInfoFilename, myProcessInfo.Arguments));
+                gMKVLogger.Log($"\"{_MKVInfoFilename}\" {myProcessInfo.Arguments}");
 
                 // Start the mkvinfo process
                 myProcess.Start();
@@ -425,21 +434,16 @@ namespace gMKVToolNix
                 // Get the Process
                 _MyProcess = myProcess;
 
-                //// Start reading the output
-                //myProcess.BeginOutputReadLine();
-
                 // Read the Standard output character by character
                 gMKVHelper.ReadStreamPerCharacter(myProcess, argHandler);
 
                 // Wait for the process to exit
                 myProcess.WaitForExit();
 
-                //// unregister the event
-                //myProcess.OutputDataReceived -= argHandler;
-
                 // Debug write the exit code
-                Debug.WriteLine(String.Format("Exit code: {0}", myProcess.ExitCode));
-                gMKVLogger.Log(String.Format("Exit code: {0}", myProcess.ExitCode));
+                string exitString = $"Exit code: {myProcess.ExitCode}";
+                Debug.WriteLine(exitString);
+                gMKVLogger.Log(exitString);
 
                 _MyProcess = null;
 
@@ -448,7 +452,7 @@ namespace gMKVToolNix
                 if (myProcess.ExitCode > 1)
                 {
                     // something went wrong!
-                    throw new Exception(String.Format("Mkvinfo exited with error code {0}!" + 
+                    throw new Exception(string.Format("Mkvinfo exited with error code {0}!" + 
                         Environment.NewLine + Environment.NewLine + "Errors reported:" + Environment.NewLine + "{1}",
                         myProcess.ExitCode, _ErrorBuilder.ToString()));
                 }
@@ -460,8 +464,7 @@ namespace gMKVToolNix
                     Environment.SetEnvironmentVariable("LANG", LANG, EnvironmentVariableTarget.Process);
                     Environment.SetEnvironmentVariable("LC_MESSAGES", LC_MESSAGES, EnvironmentVariableTarget.Process);
 
-                    gMKVLogger.Log(String.Format("Resetting Environment Variables: LC_ALL=\"{0}\",LANG=\"{1}\",LC_MESSAGES=\"{2}\"",
-                        LC_ALL, LANG, LC_MESSAGES));
+                    gMKVLogger.Log($"Resetting Environment Variables: LC_ALL=\"{LC_ALL}\",LANG=\"{LANG}\",LC_MESSAGES=\"{LC_MESSAGES}\"");
                 }
             }
         }
@@ -480,9 +483,9 @@ namespace gMKVToolNix
             // start the loop for each line of the output
             gMKVSegment tmpSegment = null;
             MkvInfoParseState tmpState = MkvInfoParseState.Searching;
-            Int32 attachmentID = 1;
-            String[] outputLines = _MKVInfoOutput.ToString().Split(new String[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (String outputLine in outputLines)
+            int attachmentID = 1;
+            string[] outputLines = _MKVInfoOutput.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string outputLine in outputLines)
             {
                 // first determine the parse state we are in
                 //if (outputLine.Contains("Segment,"))
@@ -580,13 +583,13 @@ namespace gMKVToolNix
                             if (outputLine.Contains("track ID for mkvmerge & mkvextract"))
                             {
                                 // if we have version 5.x and newer
-                                ((gMKVTrack)tmpSegment).TrackNumber = Int32.Parse(outputLine.Substring(outputLine.IndexOf(":") + 1, outputLine.IndexOf("(") - outputLine.IndexOf(":") - 1).Trim());
-                                ((gMKVTrack)tmpSegment).TrackID = Int32.Parse(outputLine.Substring(outputLine.LastIndexOf(":") + 1, outputLine.IndexOf(")") - outputLine.LastIndexOf(":") - 1).Trim());
+                                ((gMKVTrack)tmpSegment).TrackNumber = int.Parse(outputLine.Substring(outputLine.IndexOf(":") + 1, outputLine.IndexOf("(") - outputLine.IndexOf(":") - 1).Trim());
+                                ((gMKVTrack)tmpSegment).TrackID = int.Parse(outputLine.Substring(outputLine.LastIndexOf(":") + 1, outputLine.IndexOf(")") - outputLine.LastIndexOf(":") - 1).Trim());
                             }
                             else
                             {
                                 // if we have version 4.x and older
-                                ((gMKVTrack)tmpSegment).TrackNumber = Int32.Parse(outputLine.Substring(outputLine.IndexOf(":") + 1).Trim());
+                                ((gMKVTrack)tmpSegment).TrackNumber = int.Parse(outputLine.Substring(outputLine.IndexOf(":") + 1).Trim());
                                 ((gMKVTrack)tmpSegment).TrackID = ((gMKVTrack)tmpSegment).TrackNumber;
                             }
                         }
@@ -609,8 +612,7 @@ namespace gMKVToolNix
                         else if (outputLine.Contains("Pixel width:"))
                         {
                             string tmp = outputLine.Substring(outputLine.IndexOf(":") + 1).Trim();
-                            Int32 tmpInt;
-                            if(Int32.TryParse(tmp, out tmpInt))
+                            if(int.TryParse(tmp, out int tmpInt))
                             {
                                 ((gMKVTrack)tmpSegment).VideoPixelWidth = tmpInt;
                             }                                
@@ -619,8 +621,7 @@ namespace gMKVToolNix
                         else if (outputLine.Contains("Pixel height:"))
                         {
                             string tmp = outputLine.Substring(outputLine.IndexOf(":") + 1).Trim();
-                            Int32 tmpInt;
-                            if (Int32.TryParse(tmp, out tmpInt))
+                            if (int.TryParse(tmp, out int tmpInt))
                             {
                                 ((gMKVTrack)tmpSegment).VideoPixelHeight = tmpInt;
                             }
@@ -629,8 +630,7 @@ namespace gMKVToolNix
                         else if (outputLine.Contains("Sampling frequency:"))
                         {
                             string tmp = outputLine.Substring(outputLine.IndexOf(":") + 1).Trim();
-                            Int32 tmpInt;
-                            if (Int32.TryParse(tmp, out tmpInt))
+                            if (int.TryParse(tmp, out int tmpInt))
                             {
                                 ((gMKVTrack)tmpSegment).AudioSamplingFrequency = tmpInt;
                             }
@@ -639,8 +639,7 @@ namespace gMKVToolNix
                         else if (outputLine.Contains("Channels:"))
                         {
                             string tmp = outputLine.Substring(outputLine.IndexOf(":") + 1).Trim();
-                            Int32 tmpInt;
-                            if (Int32.TryParse(tmp, out tmpInt))
+                            if (int.TryParse(tmp, out int tmpInt))
                             {
                                 ((gMKVTrack)tmpSegment).AudioChannels = tmpInt;
                             }
@@ -815,6 +814,7 @@ namespace gMKVToolNix
                         break;
                 }
             }
+
             // if the last segment was not added to the list and it is not null, add it to the list
             if (tmpSegment != null)
             {
@@ -824,21 +824,21 @@ namespace gMKVToolNix
 
         private void ParseVersionOutput()
         {
-            String fileMajorVersion = "0";
-            String fileMinorVersion = "0";
-            String filePrivateVersion = "0";
+            string fileMajorVersion = "0";
+            string fileMinorVersion = "0";
+            string filePrivateVersion = "0";
             if (_MKVInfoOutput != null && _MKVInfoOutput.Length > 0)
             {
-                String[] outputLines = _MKVInfoOutput.ToString().Split(new String[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (String outputLine in outputLines)
+                string[] outputLines = _MKVInfoOutput.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string outputLine in outputLines)
                 {
                     if (outputLine.StartsWith("mkvinfo v"))
                     {
-                        String versionString = outputLine.Substring(8);
+                        string versionString = outputLine.Substring(8);
                         versionString = versionString.Substring(1, versionString.IndexOf(" "));
                         if (versionString.Contains("."))
                         {
-                            String[] parts = versionString.Split(new String[] { "." }, StringSplitOptions.None);
+                            string[] parts = versionString.Split(new string[] { "." }, StringSplitOptions.None);
                             if (parts.Length >= 2)
                             {
                                 fileMajorVersion = parts[0];
@@ -856,9 +856,9 @@ namespace gMKVToolNix
 
             gMKVVersion version = new gMKVToolNix.gMKVVersion()
             {
-                FileMajorPart = Convert.ToInt32(fileMajorVersion),
-                FileMinorPart = Convert.ToInt32(fileMinorVersion),
-                FilePrivatePart = Convert.ToInt32(filePrivateVersion)
+                FileMajorPart = int.TryParse(fileMajorVersion, out int majorVersion) ? majorVersion : 0,
+                FileMinorPart = int.TryParse(fileMinorVersion, out int minorVersion) ? minorVersion : 0,
+                FilePrivatePart = int.TryParse(filePrivateVersion, out int privateVersion) ? privateVersion : 0
             };
 
             _Version = version;
@@ -907,15 +907,15 @@ namespace gMKVToolNix
                     foreach (gMKVTrack tr in _TrackList)
                     {
                         // check if the delay is already found
-                        if (tr.Delay == Int32.MinValue)
+                        if (tr.Delay == int.MinValue)
                         {
                             // try to find the delay
-                            Match m = Regex.Match(e.Data, String.Format(@"track number {0}, \d+ frame\(s\), timecode (\d+\.\d+)s", tr.TrackNumber));
-                            Match m2 = Regex.Match(e.Data, String.Format(@"track number {0}, \d+ frame\(s\), timestamp (\d{{2}}):(\d{{2}}):(\d{{2}}).(\d{{9}})", tr.TrackNumber));
+                            Match m = Regex.Match(e.Data, string.Format(@"track number {0}, \d+ frame\(s\), timecode (\d+\.\d+)s", tr.TrackNumber));
+                            Match m2 = Regex.Match(e.Data, string.Format(@"track number {0}, \d+ frame\(s\), timestamp (\d{{2}}):(\d{{2}}):(\d{{2}}).(\d{{9}})", tr.TrackNumber));
                             if (m.Success)
                             {
                                 // Parse the delay (get the seconds in decimal, multiply by 1000 to convert them to ms, and then convert to Int32
-                                Int32 delay = Convert.ToInt32(Decimal.Parse(m.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture) * 1000m);
+                                int delay = Convert.ToInt32(decimal.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture) * 1000m);
                                 // set the track delay
                                 tr.Delay = delay;
                                 // increase the number of track delays found
@@ -931,12 +931,12 @@ namespace gMKVToolNix
                             else if (m2.Success)
                             {
                                 // Parse the delay (get the seconds in nanoseconds
-                                Int32 delayHours = Convert.ToInt32(Int64.Parse(m2.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture));
-                                Int32 delayMinutes = Convert.ToInt32(Int64.Parse(m2.Groups[2].Value, System.Globalization.CultureInfo.InvariantCulture));
-                                Int32 delaySeconds = Convert.ToInt32(Int64.Parse(m2.Groups[3].Value, System.Globalization.CultureInfo.InvariantCulture));
-                                Int32 delayNanoSeconds = Convert.ToInt32(Int64.Parse(m2.Groups[4].Value, System.Globalization.CultureInfo.InvariantCulture));
+                                int delayHours = Convert.ToInt32(long.Parse(m2.Groups[1].Value, CultureInfo.InvariantCulture));
+                                int delayMinutes = Convert.ToInt32(long.Parse(m2.Groups[2].Value, CultureInfo.InvariantCulture));
+                                int delaySeconds = Convert.ToInt32(long.Parse(m2.Groups[3].Value, CultureInfo.InvariantCulture));
+                                int delayNanoSeconds = Convert.ToInt32(long.Parse(m2.Groups[4].Value, CultureInfo.InvariantCulture));
 
-                                Int32 delay = Convert.ToInt32(new TimeSpan(0, delayHours, delayMinutes, delaySeconds, delayNanoSeconds / 1000).TotalMilliseconds);
+                                int delay = Convert.ToInt32(new TimeSpan(0, delayHours, delayMinutes, delaySeconds, delayNanoSeconds / 1000).TotalMilliseconds);
                                 // set the track delay
                                 tr.Delay = delay;
                                 // increase the number of track delays found
@@ -967,7 +967,7 @@ namespace gMKVToolNix
             }
         }
 
-        private String ConvertOptionValueListToString(List<OptionValue> argListOptionValue)
+        private string ConvertOptionValueListToString(List<OptionValue> argListOptionValue)
         {
             StringBuilder optionString = new StringBuilder();
             foreach (OptionValue optVal in argListOptionValue)
@@ -977,9 +977,9 @@ namespace gMKVToolNix
             return optionString.ToString();
         }
 
-        private String ConvertEnumOptionToStringOption(MkvInfoOptions argEnumOption)
+        private string ConvertEnumOptionToStringOption(MkvInfoOptions argEnumOption)
         {
-            return String.Format("--{0}", Enum.GetName(typeof(MkvInfoOptions), argEnumOption).Replace("_", "-"));
+            return $"--{argEnumOption}".Replace("_", "-");
         }
     }
 }

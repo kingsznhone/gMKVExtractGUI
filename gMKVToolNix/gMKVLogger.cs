@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace gMKVToolNix
 {
-    public delegate void LogLineAddedEventHandler(String lineAdded, DateTime actionDate);
+    public delegate void LogLineAddedEventHandler(string lineAdded, DateTime actionDate);
 
     public static class gMKVLogger
     {
-        private static StringBuilder _Log = new StringBuilder();
+        private static readonly StringBuilder _Log = new StringBuilder();
 
-        public static String LogText { get { return _Log.ToString(); } }
+        public static string LogText { get { return _Log.ToString(); } }
 
         public static event LogLineAddedEventHandler LogLineAdded;
 
@@ -19,18 +18,17 @@ namespace gMKVToolNix
             _Log.Length = 0;
         }
 
-        public static void Log(String message)
+        public static void Log(string message)
         {
             DateTime actionDate = DateTime.Now;
-            String logMessage = String.Format("{0} {1}", actionDate.ToString("[yyyy-MM-dd][HH:mm:ss]"), message);
+            string logMessage = $"{actionDate:[yyyy-MM-dd][HH:mm:ss]} {message}";
             _Log.AppendLine(logMessage);
             OnLogLineAdded(logMessage, actionDate);            
         }
 
-        public static void OnLogLineAdded(String lineAdded, DateTime actionDate)
+        public static void OnLogLineAdded(string lineAdded, DateTime actionDate)
         {
-            if (LogLineAdded != null)
-                LogLineAdded(lineAdded, actionDate);
+            LogLineAdded?.Invoke(lineAdded, actionDate);
         }
     }
 }

@@ -1,78 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace gMKVToolNix
 {
     [Serializable]
     public class gMKVSegmentInfo : gMKVSegment
     {
-        private String _TimecodeScale;
+        public string TimecodeScale { get; set; } = "";
 
-        public String TimecodeScale
-        {
-            get { return _TimecodeScale; }
-            set { _TimecodeScale = value; }
-        }
+        public string MuxingApplication { get; set; } = "";
 
-        private String _MuxingApplication;
+        public string WritingApplication { get; set; } = "";
 
-        public String MuxingApplication
-        {
-            get { return _MuxingApplication; }
-            set { _MuxingApplication = value; }
-        }
+        public string Duration { get; set; } = "";
 
-        private String _WritingApplication;
-
-        public String WritingApplication
-        {
-            get { return _WritingApplication; }
-            set { _WritingApplication = value; }
-        }
-
-        private String _Duration;
-
-        public String Duration
-        {
-            get { return _Duration; }
-            set { _Duration = value; }
-        }
-
-        private String _Date;
-
-        public String Date
-        {
-            get { return _Date; }
-            set { _Date = value; }
-        }
-
-        private String _Filename;
+        public string Date { get; set; } = "";
 
         /// <summary>
         /// The segment's file filename
         /// </summary>
-        public String Filename
-        {
-            get { return _Filename; }
-            set { _Filename = value; }
-        }
-
-        private String _Directory;
+        public string Filename { get; set; } = "";
 
         /// <summary>
         /// The segment's file directory
         /// </summary>
-        public String Directory
-        {
-            get { return _Directory; }
-            set { _Directory = value; }
-        }
+        public string Directory { get; set; } = "";
 
         /// <summary>
         /// Returns the segment's full file path
         /// </summary>
-        public String Path
+        public string Path
         {
             get
             {
@@ -87,31 +43,34 @@ namespace gMKVToolNix
             {
                 return false;
             }
+
             return
-                  this.Date == other.Date
-                && this.Directory == other.Directory
-                && this.Duration == other.Duration
-                && this.Filename == other.Filename
-                && this.MuxingApplication == other.MuxingApplication
-                && this.Path == other.Path
-                && this.TimecodeScale == other.TimecodeScale
-                && this.WritingApplication == other.WritingApplication
-                ;
+                Date.Equals(other.Date, StringComparison.OrdinalIgnoreCase)
+                && Directory.Equals(other.Directory, StringComparison.OrdinalIgnoreCase)
+                && Duration.Equals(other.Duration, StringComparison.OrdinalIgnoreCase)
+                && Filename.Equals(other.Filename, StringComparison.OrdinalIgnoreCase)
+                && MuxingApplication.Equals(other.MuxingApplication, StringComparison.OrdinalIgnoreCase)
+                && TimecodeScale.Equals(other.TimecodeScale, StringComparison.OrdinalIgnoreCase)
+                && WritingApplication.Equals(other.WritingApplication, StringComparison.OrdinalIgnoreCase)
+            ;
         }
 
         public override int GetHashCode()
         {
-            return
-                string.Concat(
-                    this.Date.GetHashCode()
-                    , this.Directory.GetHashCode()
-                    , this.Duration.GetHashCode()
-                    , this.Filename.GetHashCode()
-                    , this.MuxingApplication.GetHashCode()
-                    , this.Path.GetHashCode()
-                    , this.TimecodeScale.GetHashCode()
-                    , this.WritingApplication.GetHashCode()
-                ).GetHashCode();
+            // https://stackoverflow.com/a/263416
+            unchecked // Overflow is fine, just wrap
+            {
+                int hash = 17;
+                // Suitable nullity checks etc, of course :)
+                hash = hash * 23 + Date.GetHashCode();
+                hash = hash * 23 + Directory.GetHashCode();
+                hash = hash * 23 + Duration.GetHashCode();
+                hash = hash * 23 + Filename.GetHashCode();
+                hash = hash * 23 + MuxingApplication.GetHashCode();
+                hash = hash * 23 + TimecodeScale.GetHashCode();
+                hash = hash * 23 + WritingApplication.GetHashCode();
+                return hash;
+            }
         }
     }
 }

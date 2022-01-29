@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace gMKVToolNix
@@ -14,121 +13,66 @@ namespace gMKVToolNix
     [Serializable]
     public class gMKVTrack : gMKVSegment
     {
-        private int _TrackNumber;
+        public int TrackNumber { get; set; }
 
-        public int TrackNumber
-        {
-            get { return _TrackNumber; }
-            set { _TrackNumber = value; }
-        }
+        public int TrackID { get; set; }
 
-        private int _TrackID;
+        public MkvTrackType TrackType { get; set; }
 
-        public int TrackID
-        {
-            get { return _TrackID; }
-            set { _TrackID = value; }
-        }
+        public string CodecID { get; set; } = "";
 
-        private MkvTrackType _TrackType;
+        public string CodecPrivate { get; set; } = "";
 
-        public MkvTrackType TrackType
-        {
-            get { return _TrackType; }
-            set { _TrackType = value; }
-        }
+        public string CodecPrivateData { get; set; } = "";
 
-        private String _CodecID;
+        public string Language { get; set; } = "";
 
-        public String CodecID
-        {
-            get { return _CodecID; }
-            set { _CodecID = value; }
-        }
+        public string LanguageIetf { get; set; } = "";
 
-        private String _CodecPrivate = "";
+        public string TrackName { get; set; } = "";
 
-        public String CodecPrivate
-        {
-            get { return _CodecPrivate; }
-            set { _CodecPrivate = value; }
-        }
+        public string ExtraInfo { get; set; } = "";
 
-        private String _CodecPrivateData = "";
+        public int Delay { get; set; } = int.MinValue;
 
-        public String CodecPrivateData
-        {
-            get { return _CodecPrivateData; }
-            set { _CodecPrivateData = value; }
-        }
+        public int EffectiveDelay { get; set; } = int.MinValue;
 
-        private String _Language;
+        /// <summary>
+        /// In nanoseconds
+        /// </summary>
+        public long MinimumTimestamp { get; set; } = long.MinValue;
 
-        public String Language
-        {
-            get { return _Language; }
-            set { _Language = value; }
-        }
 
-        private String _TrackName;
+        public int VideoPixelWidth { get; set; }
+        public int VideoPixelHeight { get; set; }
 
-        public String TrackName
-        {
-            get { return _TrackName; }
-            set { _TrackName = value; }
-        }
-
-        private String _ExtraInfo;
-
-        public String ExtraInfo
-        {
-            get { return _ExtraInfo; }
-            set { _ExtraInfo = value; }
-        }
-
-        private Int32 _Delay = Int32.MinValue;
-
-        public Int32 Delay
-        {
-            get { return _Delay; }
-            set { _Delay = value; }
-        }
-
-        private Int32 _EffectiveDelay = Int32.MinValue;
-
-        public Int32 EffectiveDelay
-        {
-            get { return _EffectiveDelay; }
-            set { _EffectiveDelay = value; }
-        }
-
-        private Int64 _MinimumTimestamp = Int64.MinValue;
-
-        public Int64 MinimumTimestamp // In nanoseconds
-        {
-            get { return _MinimumTimestamp; }
-            set { _MinimumTimestamp = value; }
-        }
-
-        public Int32 VideoPixelWidth { get; set; }
-        public Int32 VideoPixelHeight { get; set; }
-
-        public Int32 AudioSamplingFrequency { get; set; }
-        public Int32 AudioChannels { get; set; }
+        public int AudioSamplingFrequency { get; set; }
+        public int AudioChannels { get; set; }
 
         public override string ToString()
         {
-            String str = String.Format("Track {0} [TID {1}][{2}][{3}][{4}][{5}][{6}]", 
-                _TrackNumber, _TrackID, Enum.GetName(typeof(MkvTrackType), _TrackType), _CodecID, _TrackName, _Language, _ExtraInfo);
-            if (!String.IsNullOrEmpty(_CodecPrivate))
+            StringBuilder outputBuilder = new StringBuilder();
+
+            outputBuilder.Append($"Track {TrackNumber} [TID {TrackID}][{TrackType}][{CodecID}][{TrackName}][{Language}]");
+
+            if (!string.IsNullOrWhiteSpace(LanguageIetf))
             {
-                str = String.Format("{0}[{1}]", str, _CodecPrivate);
+                outputBuilder.Append($"[{LanguageIetf}]");
             }
-            if (_TrackType != MkvTrackType.subtitles)
+
+            outputBuilder.Append($"[{ExtraInfo}]");
+
+            if (!string.IsNullOrWhiteSpace(CodecPrivate))
             {
-                str = String.Format("{0}[{1} ms][{2} ms]", str, _Delay, _EffectiveDelay);
+                outputBuilder.Append($"[{CodecPrivate}]");
             }
-            return str;
+
+            if (TrackType != MkvTrackType.subtitles)
+            {
+                outputBuilder.Append($"[{Delay} ms][{EffectiveDelay} ms]");
+            }
+
+            return outputBuilder.ToString();
         }
 
         public override bool Equals(object oth)
@@ -138,47 +82,54 @@ namespace gMKVToolNix
             {
                 return false;
             }
+
             return
-                this.AudioChannels == other.AudioChannels
-                && this.AudioSamplingFrequency == other.AudioSamplingFrequency
-                && this.CodecID == other.CodecID
-                && this.CodecPrivate == other.CodecPrivate
-                && this.CodecPrivateData == other.CodecPrivateData
-                && this.Delay == other.Delay
-                && this.EffectiveDelay == other.EffectiveDelay
-                && this.ExtraInfo == other.ExtraInfo
-                && this.Language == other.Language
-                && this.MinimumTimestamp == other.MinimumTimestamp
-                && this.TrackID == other.TrackID
-                && this.TrackName == other.TrackName
-                && this.TrackNumber == other.TrackNumber
-                && this.TrackType == other.TrackType
-                && this.VideoPixelHeight == other.VideoPixelHeight
-                && this.VideoPixelWidth == other.VideoPixelWidth
-                ;
+                AudioChannels == other.AudioChannels
+                && AudioSamplingFrequency == other.AudioSamplingFrequency
+                && CodecID.Equals( other.CodecID, StringComparison.OrdinalIgnoreCase)
+                && CodecPrivate.Equals(other.CodecPrivate, StringComparison.OrdinalIgnoreCase)
+                && CodecPrivateData.Equals(other.CodecPrivateData, StringComparison.OrdinalIgnoreCase)
+                && Delay == other.Delay
+                && EffectiveDelay == other.EffectiveDelay
+                && ExtraInfo.Equals(other.ExtraInfo, StringComparison.OrdinalIgnoreCase)
+                && Language.Equals(other.Language, StringComparison.OrdinalIgnoreCase)
+                && LanguageIetf.Equals(other.LanguageIetf, StringComparison.OrdinalIgnoreCase)
+                && MinimumTimestamp == other.MinimumTimestamp
+                && TrackID == other.TrackID
+                && TrackName.Equals(other.TrackName, StringComparison.OrdinalIgnoreCase)
+                && TrackNumber == other.TrackNumber
+                && TrackType == other.TrackType
+                && VideoPixelHeight == other.VideoPixelHeight
+                && VideoPixelWidth == other.VideoPixelWidth
+            ;
         }
 
         public override int GetHashCode()
         {
-            return
-                string.Concat(
-                    this.AudioChannels.GetHashCode()
-                    ,this.AudioSamplingFrequency.GetHashCode()
-                    , this.CodecID.GetHashCode()
-                    , this.CodecPrivate.GetHashCode()
-                    , this.CodecPrivateData.GetHashCode()
-                    , this.Delay.GetHashCode()
-                    , this.EffectiveDelay.GetHashCode()
-                    , this.ExtraInfo.GetHashCode()
-                    , this.Language.GetHashCode()
-                    , this.MinimumTimestamp.GetHashCode()
-                    , this.TrackID.GetHashCode()
-                    , this.TrackName.GetHashCode()
-                    , this.TrackNumber.GetHashCode()
-                    , this.TrackType.GetHashCode()
-                    , this.VideoPixelHeight.GetHashCode()
-                    , this.VideoPixelWidth.GetHashCode()
-                ).GetHashCode();
+            // https://stackoverflow.com/a/263416
+            unchecked // Overflow is fine, just wrap
+            {
+                int hash = 17;
+                // Suitable nullity checks etc, of course :)
+                hash = hash * 23 + AudioChannels.GetHashCode();
+                hash = hash * 23 + AudioSamplingFrequency.GetHashCode();
+                hash = hash * 23 + CodecID.GetHashCode();
+                hash = hash * 23 + CodecPrivate.GetHashCode();
+                hash = hash * 23 + CodecPrivateData.GetHashCode();
+                hash = hash * 23 + Delay.GetHashCode();
+                hash = hash * 23 + EffectiveDelay.GetHashCode();
+                hash = hash * 23 + ExtraInfo.GetHashCode();
+                hash = hash * 23 + Language.GetHashCode();
+                hash = hash * 23 + LanguageIetf.GetHashCode();
+                hash = hash * 23 + MinimumTimestamp.GetHashCode();
+                hash = hash * 23 + TrackID.GetHashCode();
+                hash = hash * 23 + TrackName.GetHashCode();
+                hash = hash * 23 + TrackNumber.GetHashCode();
+                hash = hash * 23 + TrackType.GetHashCode();
+                hash = hash * 23 + VideoPixelHeight.GetHashCode();
+                hash = hash * 23 + VideoPixelWidth.GetHashCode();
+                return hash;
+            }
         }
     }
 }
