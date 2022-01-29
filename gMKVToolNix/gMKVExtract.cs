@@ -68,6 +68,7 @@ namespace gMKVToolNix
         public static readonly string TrackID_000 = "{TrackID:000}";
         public static readonly string TrackName = "{TrackName}";
         public static readonly string TrackLanguage = "{Language}";
+        public static readonly string TrackLanguageIetf = "{LanguageIETF}";
         public static readonly string TrackCodecID = "{CodecID}";
         public static readonly string TrackCodecPrivate = "{CodecPrivate}";
         public static readonly string TrackDelay = "{Delay}";
@@ -1244,6 +1245,7 @@ namespace gMKVToolNix
 
                 argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackName , track.TrackName);
                 argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackLanguage , track.Language);
+                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackLanguageIetf, track.LanguageIetf);
                 argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackCodecID, track.CodecID);
                 argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackCodecPrivate, track.CodecPrivate);
                 argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackDelay, track.Delay.ToString());
