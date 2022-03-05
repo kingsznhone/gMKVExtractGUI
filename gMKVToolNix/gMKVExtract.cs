@@ -186,6 +186,8 @@ namespace gMKVToolNix
 
     public class gMKVExtract
     {
+        private static readonly char[] _invalidFilenameChars = Path.GetInvalidFileNameChars();
+
         private class TrackParameter
         {
             public MkvExtractModes ExtractMode { get; set; } = MkvExtractModes.tracks;
@@ -1222,66 +1224,69 @@ namespace gMKVToolNix
         {
             string mkvFilenameNoExt = Path.GetFileNameWithoutExtension(argMKVFile);
             string mkvFilename = Path.GetFileName(argMKVFile);
+            string finalFilename = argFilenamePattern;
 
             // Common placeholders
-            argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.FilenameNoExt, mkvFilenameNoExt);
-            argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.Filename, mkvFilename);
+            finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.FilenameNoExt, mkvFilenameNoExt);
+            finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.Filename, mkvFilename);
 
             // Track placeholders
-            if (argSeg is gMKVTrack)
+            if (argSeg is gMKVTrack track)
             {
-                gMKVTrack track = argSeg as gMKVTrack;
-
                 // Common Track placeholders
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackNumber, track.TrackNumber.ToString());
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackNumber_0, track.TrackNumber.ToString("0"));
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackNumber_00, track.TrackNumber.ToString("00"));
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackNumber_000, track.TrackNumber.ToString("000"));
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.TrackNumber, track.TrackNumber.ToString());
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.TrackNumber_0, track.TrackNumber.ToString("0"));
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.TrackNumber_00, track.TrackNumber.ToString("00"));
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.TrackNumber_000, track.TrackNumber.ToString("000"));
                 
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackID, track.TrackID.ToString());
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackID_0, track.TrackID.ToString("0"));
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackID_00, track.TrackID.ToString("00"));
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackID_000, track.TrackID.ToString("000"));
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.TrackID, track.TrackID.ToString());
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.TrackID_0, track.TrackID.ToString("0"));
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.TrackID_00, track.TrackID.ToString("00"));
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.TrackID_000, track.TrackID.ToString("000"));
 
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackName , track.TrackName);
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackLanguage , track.Language);
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackLanguageIetf, track.LanguageIetf);
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackCodecID, track.CodecID);
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackCodecPrivate, track.CodecPrivate);
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackDelay, track.Delay.ToString());
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.TrackEffectiveDelay, track.EffectiveDelay.ToString());
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.TrackName , track.TrackName);
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.TrackLanguage , track.Language);
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.TrackLanguageIetf, track.LanguageIetf);
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.TrackCodecID, track.CodecID);
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.TrackCodecPrivate, track.CodecPrivate);
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.TrackDelay, track.Delay.ToString());
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.TrackEffectiveDelay, track.EffectiveDelay.ToString());
 
                 // Video Track placeholders
                 if (track.TrackType == MkvTrackType.video)
                 {
-                    argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.VideoPixelWidth, track.VideoPixelWidth.ToString());
-                    argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.VideoPixelHeight ,track.VideoPixelHeight.ToString());
+                    finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.VideoPixelWidth, track.VideoPixelWidth.ToString());
+                    finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.VideoPixelHeight ,track.VideoPixelHeight.ToString());
                 }
 
                 // Audio Track placeholders
                 else if (track.TrackType == MkvTrackType.audio)
                 {
-                    argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.AudioSamplingFrequency, track.AudioSamplingFrequency.ToString());
-                    argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.AudioChannels, track.AudioChannels.ToString());
+                    finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.AudioSamplingFrequency, track.AudioSamplingFrequency.ToString());
+                    finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.AudioChannels, track.AudioChannels.ToString());
                 }
             }
 
             // Attachment placeholders
-            else if (argSeg is gMKVAttachment)
-            {
-                gMKVAttachment attachment = argSeg as gMKVAttachment;
-                
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.AttachmentID, attachment.ID.ToString());
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.AttachmentID_0, attachment.ID.ToString("0"));
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.AttachmentID_00, attachment.ID.ToString("00"));
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.AttachmentID_000, attachment.ID.ToString("000"));
+            else if (argSeg is gMKVAttachment attachment)
+            {               
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.AttachmentID, attachment.ID.ToString());
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.AttachmentID_0, attachment.ID.ToString("0"));
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.AttachmentID_00, attachment.ID.ToString("00"));
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.AttachmentID_000, attachment.ID.ToString("000"));
 
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.AttachmentFilename, attachment.Filename);
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.AttachmentMimeType, attachment.MimeType);
-                argFilenamePattern = argFilenamePattern.Replace(gMKVExtractFilenamePatterns.AttachmentFileSize, attachment.FileSize);
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.AttachmentFilename, attachment.Filename);
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.AttachmentMimeType, attachment.MimeType);
+                finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.AttachmentFileSize, attachment.FileSize);
             }
 
-            return argFilenamePattern;
+            // Replace illegal filename characters with '_'
+            if (finalFilename.AsEnumerable().Any(c => _invalidFilenameChars.Contains(c)))
+            {
+                finalFilename = string.Join("_", finalFilename.Split(_invalidFilenameChars));
+            }            
+
+            return finalFilename;
         }
 
         public string GetOutputFilename(
@@ -1440,55 +1445,56 @@ namespace gMKVToolNix
         private string GetVideoFileExtensionFromCodecID(gMKVTrack argTrack)
         {
             string outputFileExtension;
-            if (argTrack.CodecID.ToUpper().Contains("V_MS/VFW/FOURCC"))
+            string codecIdUpperCase = argTrack.CodecID.ToUpper();
+            if (codecIdUpperCase.Contains("V_MS/VFW/FOURCC"))
             {
                 outputFileExtension = "avi";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("V_UNCOMPRESSED"))
+            else if (codecIdUpperCase.Contains("V_UNCOMPRESSED"))
             {
                 outputFileExtension = "raw";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("V_MPEG4/ISO/"))
+            else if (codecIdUpperCase.Contains("V_MPEG4/ISO/"))
             {
                 outputFileExtension = "avc";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("V_MPEGH/ISO/HEVC"))
+            else if (codecIdUpperCase.Contains("V_MPEGH/ISO/HEVC"))
             {
                 outputFileExtension = "hevc";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("V_MPEG4/MS/V3"))
+            else if (codecIdUpperCase.Contains("V_MPEG4/MS/V3"))
             {
                 outputFileExtension = "mp4";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("V_MPEG1"))
+            else if (codecIdUpperCase.Contains("V_MPEG1"))
             {
                 outputFileExtension = "mpg";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("V_MPEG2"))
+            else if (codecIdUpperCase.Contains("V_MPEG2"))
             {
                 outputFileExtension = "mpg";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("V_REAL/"))
+            else if (codecIdUpperCase.Contains("V_REAL/"))
             {
                 outputFileExtension = "rm";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("V_QUICKTIME"))
+            else if (codecIdUpperCase.Contains("V_QUICKTIME"))
             {
                 outputFileExtension = "mov";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("V_THEORA"))
+            else if (codecIdUpperCase.Contains("V_THEORA"))
             {
                 outputFileExtension = "ogv";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("V_PRORES"))
+            else if (codecIdUpperCase.Contains("V_PRORES"))
             {
                 outputFileExtension = "mov";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("V_VP"))
+            else if (codecIdUpperCase.Contains("V_VP"))
             {
                 outputFileExtension = "ivf";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("V_DIRAC"))
+            else if (codecIdUpperCase.Contains("V_DIRAC"))
             {
                 outputFileExtension = "drc";
             }
@@ -1502,83 +1508,84 @@ namespace gMKVToolNix
         private string GetAudioFileExtensionFromCodecID(gMKVTrack argTrack)
         {
             string outputFileExtension;
-            if (argTrack.CodecID.ToUpper().Contains("A_MPEG/L3"))
+            string codecIdUpperCase = argTrack.CodecID.ToUpper();
+            if (codecIdUpperCase.Contains("A_MPEG/L3"))
             {
                 outputFileExtension = "mp3";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_MPEG/L2"))
+            else if (codecIdUpperCase.Contains("A_MPEG/L2"))
             {
                 outputFileExtension = "mp2";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_MPEG/L1"))
+            else if (codecIdUpperCase.Contains("A_MPEG/L1"))
             {
                 outputFileExtension = "mpa";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_PCM"))
+            else if (codecIdUpperCase.Contains("A_PCM"))
             {
                 outputFileExtension = "wav";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_MPC"))
+            else if (codecIdUpperCase.Contains("A_MPC"))
             {
                 outputFileExtension = "mpc";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_AC3"))
+            else if (codecIdUpperCase.Contains("A_AC3"))
             {
                 outputFileExtension = "ac3";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_EAC3"))
+            else if (codecIdUpperCase.Contains("A_EAC3"))
             {
                 outputFileExtension = "eac3"; 
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_ALAC"))
+            else if (codecIdUpperCase.Contains("A_ALAC"))
             {
                 outputFileExtension = "caf";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_DTS"))
+            else if (codecIdUpperCase.Contains("A_DTS"))
             {
                 outputFileExtension = "dts";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_VORBIS"))
+            else if (codecIdUpperCase.Contains("A_VORBIS"))
             {
                 outputFileExtension = "ogg";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_FLAC"))
+            else if (codecIdUpperCase.Contains("A_FLAC"))
             {
                 outputFileExtension = "flac";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_REAL"))
+            else if (codecIdUpperCase.Contains("A_REAL"))
             {
                 outputFileExtension = "ra";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_MS/ACM"))
+            else if (codecIdUpperCase.Contains("A_MS/ACM"))
             {
                 outputFileExtension = "wav";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_AAC"))
+            else if (codecIdUpperCase.Contains("A_AAC"))
             {
                 outputFileExtension = "aac";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_QUICKTIME"))
+            else if (codecIdUpperCase.Contains("A_QUICKTIME"))
             {
                 outputFileExtension = "mov";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_TRUEHD"))
+            else if (codecIdUpperCase.Contains("A_TRUEHD"))
             {
                 outputFileExtension = "thd";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_TTA1"))
+            else if (codecIdUpperCase.Contains("A_TTA1"))
             {
                 outputFileExtension = "tta";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_WAVPACK4"))
+            else if (codecIdUpperCase.Contains("A_WAVPACK4"))
             {
                 outputFileExtension = "wv";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_OPUS"))
+            else if (codecIdUpperCase.Contains("A_OPUS"))
             {
                 outputFileExtension = "opus";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("A_MLP"))
+            else if (codecIdUpperCase.Contains("A_MLP"))
             {
                 outputFileExtension = "mlp";
             }
@@ -1592,51 +1599,52 @@ namespace gMKVToolNix
         private string GetSubtitleFileExtensionFromCodecID(gMKVTrack argTrack)
         {
             string outputFileExtension;
-            if (argTrack.CodecID.ToUpper().Contains("S_TEXT/UTF8"))
+            string codecIdUpperCase = argTrack.CodecID.ToUpper();
+            if (codecIdUpperCase.Contains("S_TEXT/UTF8"))
             {
                 outputFileExtension = "srt";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("S_TEXT/ASCII"))
+            else if (codecIdUpperCase.Contains("S_TEXT/ASCII"))
             {
                 outputFileExtension = "srt";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("S_TEXT/SSA"))
+            else if (codecIdUpperCase.Contains("S_TEXT/SSA"))
             {
                 outputFileExtension = "ass";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("S_TEXT/ASS"))
+            else if (codecIdUpperCase.Contains("S_TEXT/ASS"))
             {
                 outputFileExtension = "ass";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("S_TEXT/USF"))
+            else if (codecIdUpperCase.Contains("S_TEXT/USF"))
             {
                 outputFileExtension = "usf";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("S_TEXT/WEBVTT"))
+            else if (codecIdUpperCase.Contains("S_TEXT/WEBVTT"))
             {
                 outputFileExtension = "webvtt";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("S_IMAGE/BMP"))
+            else if (codecIdUpperCase.Contains("S_IMAGE/BMP"))
             {
                 outputFileExtension = "sub";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("S_VOBSUB"))
+            else if (codecIdUpperCase.Contains("S_VOBSUB"))
             {
                 outputFileExtension = "sub";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("S_DVBSUB"))
+            else if (codecIdUpperCase.Contains("S_DVBSUB"))
             {
                 outputFileExtension = "dvbsub";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("S_HDMV/PGS"))
+            else if (codecIdUpperCase.Contains("S_HDMV/PGS"))
             {
                 outputFileExtension = "sup";
             }
-            else if (argTrack.CodecID.ToUpper().Contains("S_HDMV/TEXTST"))
+            else if (codecIdUpperCase.Contains("S_HDMV/TEXTST"))
             {
                 outputFileExtension = "textst";
             }            
-            else if (argTrack.CodecID.ToUpper().Contains("S_KATE"))
+            else if (codecIdUpperCase.Contains("S_KATE"))
             {
                 outputFileExtension = "ogg";
             }
