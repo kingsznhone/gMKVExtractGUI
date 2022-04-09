@@ -374,7 +374,7 @@ namespace gMKVToolNix
                         "",
                         string.Format("{0}:\"{1}\"",
                             ((gMKVAttachment)argSeg).ID,
-                            GetOutputFilename(argSeg, argOutputDirectory, "", argFilenamePatterns, MkvExtractModes.attachments)
+                            GetOutputFilename(argSeg, argOutputDirectory, argMKVFile, argFilenamePatterns, MkvExtractModes.attachments)
                         ),
                         false,
                         ""
