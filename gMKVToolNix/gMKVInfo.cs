@@ -936,7 +936,7 @@ namespace gMKVToolNix
                                 int delaySeconds = Convert.ToInt32(long.Parse(m2.Groups[3].Value, CultureInfo.InvariantCulture));
                                 int delayNanoSeconds = Convert.ToInt32(long.Parse(m2.Groups[4].Value, CultureInfo.InvariantCulture));
 
-                                int delay = Convert.ToInt32(new TimeSpan(0, delayHours, delayMinutes, delaySeconds, delayNanoSeconds / 1000).TotalMilliseconds);
+                                int delay = Convert.ToInt32(new TimeSpan(0, delayHours, delayMinutes, delaySeconds, delayNanoSeconds / 1000000).TotalMilliseconds);
                                 // set the track delay
                                 tr.Delay = delay;
                                 // increase the number of track delays found
