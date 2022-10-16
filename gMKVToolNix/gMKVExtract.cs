@@ -1286,7 +1286,8 @@ namespace gMKVToolNix
                 finalFilename = string.Join("_", finalFilename.Split(_invalidFilenameChars));
             }
 
-            return finalFilename;
+            // Final Trim to avoid having filenames like "test .mkv"
+            return finalFilename.Trim();
         }
 
         public static string GetOutputFilename(
