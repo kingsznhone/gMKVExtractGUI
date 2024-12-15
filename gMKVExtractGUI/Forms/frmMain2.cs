@@ -1091,9 +1091,13 @@ namespace gMKVToolNix.Forms
                         }
                         UpdateProgress(100);
                     }
+                    btnAbort.Enabled = false;
+                    btnAbortAll.Enabled = false;
+                    this.Refresh();
+                    Application.DoEvents();
                     if (chkShowPopup.Checked)
                     {
-                        ShowSuccessMessage("The extraction was completed successfully!");
+                        ShowSuccessMessage("The extraction was completed successfully!", true);
                     }
                     else
                     {

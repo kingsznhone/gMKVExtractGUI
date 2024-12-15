@@ -9,6 +9,8 @@ namespace gMKVToolNix
 {
     public class gForm : Form
     {
+        private static readonly string _errorMessagePrefix = $"An error has occured!{Environment.NewLine}{Environment.NewLine}";
+
         public static short LOWORD(int number)
         {
             return (short)number;
@@ -201,14 +203,64 @@ namespace gMKVToolNix
             return Assembly.GetExecutingAssembly().GetName().Version;
         }
 
-        protected void ShowErrorMessage(String argMessage)
+        protected void ShowErrorMessage(string argMessage, bool dialogOnTop = false)
         {
-            MessageBox.Show("An error has occured!" + Environment.NewLine + Environment.NewLine + argMessage, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (dialogOnTop)
+            {
+                // Create a dummy form that is on top of all other windows in desktop
+                using (Form form = new Form { TopMost = true })
+                {
+                    MessageBox.Show(
+                        form,
+                        _errorMessagePrefix + argMessage,
+                        "Error!",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show(
+                    _errorMessagePrefix + argMessage,
+                    "Error!",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            // Return to the original form
+            this.BringToFront();
+            this.Activate();
+            this.Show();
         }
 
-        protected void ShowSuccessMessage(String argMessage)
+        protected void ShowSuccessMessage(string argMessage, bool dialogOnTop = false)
         {
-            MessageBox.Show(argMessage, "Success!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            if (dialogOnTop)
+            {
+                // Create a dummy form that is on top of all other windows in desktop
+                using (Form form = new Form { TopMost = true })
+                {
+                    MessageBox.Show(
+                        form,
+                        argMessage,
+                        "Success!",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                }
+            }
+            else 
+            {
+                MessageBox.Show(
+                    argMessage,
+                    "Success!",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            }
+            // Return to the original form
+            this.BringToFront();
+            this.Activate();
+            this.Show();
         }
 
         protected DialogResult ShowQuestion(String argQuestion, String argTitle, bool argShowCancel = true)
@@ -248,6 +300,5 @@ namespace gMKVToolNix
                 }
             }
         }
-
     }
 }

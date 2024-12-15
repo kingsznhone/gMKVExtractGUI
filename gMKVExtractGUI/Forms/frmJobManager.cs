@@ -297,9 +297,10 @@ namespace gMKVToolNix
                     throw new Exception(_ExceptionBuilder.ToString());
                 }
                 UpdateCurrentProgress(100);
+                SetAbortStatus(false);
                 if (chkShowPopup.Checked)
                 {
-                    ShowSuccessMessage("The jobs completed successfully!");
+                    ShowSuccessMessage("The jobs completed successfully!", true);
                 }
                 else
                 {
