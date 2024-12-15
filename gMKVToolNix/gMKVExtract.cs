@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -56,6 +55,7 @@ namespace gMKVToolNix
         // Common placeholders
         public static readonly string FilenameNoExt = "{FilenameNoExt}";
         public static readonly string Filename = "{Filename}";
+        public static readonly string DirectorySeparator = "{DirSeparator}";
 
         // Common Track placeholders
         public static readonly string TrackNumber = "{TrackNumber}";
@@ -187,6 +187,7 @@ namespace gMKVToolNix
     public class gMKVExtract
     {
         private static readonly char[] _invalidFilenameChars = Path.GetInvalidFileNameChars();
+        private static readonly string _directorySeparator = Path.DirectorySeparatorChar.ToString();
 
         private class TrackParameter
         {
@@ -1286,6 +1287,9 @@ namespace gMKVToolNix
                 finalFilename = string.Join("_", finalFilename.Split(_invalidFilenameChars));
             }
 
+            // Replace directory separator
+            finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.DirectorySeparator, _directorySeparator);
+
             // Final Trim to avoid having filenames like "test .mkv"
             return finalFilename.Trim();
         }
@@ -1303,6 +1307,8 @@ namespace gMKVToolNix
             string outputFileExtension = "";
             string argMkvFilenameNoExt = Path.GetFileNameWithoutExtension(argMKVFile);
             string replacedFilePattern = "";
+
+            string outputDirectory = argOutputDirectory;
 
             switch (argMkvExtractMode)
             {
@@ -1334,7 +1340,7 @@ namespace gMKVToolNix
                             break;
                     }
                     outputFilename = Path.Combine(
-                        argOutputDirectory,
+                        outputDirectory,
                         string.Format("{0}.{1}",
                             replacedFilePattern
                             , outputFileExtension)
@@ -1342,7 +1348,7 @@ namespace gMKVToolNix
                     break;
                 case MkvExtractModes.tags:
                     outputFilename = Path.Combine(
-                        argOutputDirectory,
+                        outputDirectory,
                         string.Format("{0}_tags.xml", argMkvFilenameNoExt));
                     break;
                 case MkvExtractModes.attachments:
@@ -1351,7 +1357,7 @@ namespace gMKVToolNix
                         throw new Exception("Called GetOutputFilename without attachment!");
                     }
                     outputFilename = Path.Combine(
-                        argOutputDirectory,
+                        outputDirectory,
                         ReplaceFilenamePlaceholders(argSeg, argMKVFile, argFilenamePatterns.AttachmentFilenamePattern)
                     );
                     break;
@@ -1372,7 +1378,7 @@ namespace gMKVToolNix
                             break;
                     }
                     outputFilename = Path.Combine(
-                            argOutputDirectory,
+                            outputDirectory,
                             string.Format("{0}.{1}",
                                 ReplaceFilenamePlaceholders(argSeg, argMKVFile, argFilenamePatterns.ChapterFilenamePattern),
                                 outputFileExtension)
@@ -1380,7 +1386,7 @@ namespace gMKVToolNix
                     break;
                 case MkvExtractModes.cuesheet:
                     outputFilename = Path.Combine(
-                        argOutputDirectory,
+                        outputDirectory,
                         string.Format("{0}_cuesheet.cue", argMkvFilenameNoExt));
                     break;
                 case MkvExtractModes.timecodes_v2:
@@ -1390,7 +1396,7 @@ namespace gMKVToolNix
                         throw new Exception("Called GetOutputFilename without track/timestamps!");
                     }
                     outputFilename = Path.Combine(
-                        argOutputDirectory,
+                        outputDirectory,
                         string.Format("{0}_track{1}_[{2}].tc.txt",
                             argMkvFilenameNoExt,
                             timeTrack.TrackNumber,
@@ -1402,7 +1408,7 @@ namespace gMKVToolNix
                         throw new Exception("Called GetOutputFilename without track/cues!");
                     }
                     outputFilename = Path.Combine(
-                        argOutputDirectory,
+                        outputDirectory,
                         string.Format("{0}_track{1}_[{2}].cue",
                             argMkvFilenameNoExt,
                             cueTrack.TrackNumber,

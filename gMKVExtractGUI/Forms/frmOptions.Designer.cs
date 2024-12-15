@@ -55,6 +55,7 @@
             this.txtAttachmentsFilename = new gMKVToolNix.gTextBox();
             this.grpInfo = new gMKVToolNix.gGroupBox();
             this.txtInfo = new gMKVToolNix.gRichTextBox();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.tlpMain.SuspendLayout();
             this.grpChapters.SuspendLayout();
             this.grpActions.SuspendLayout();
@@ -76,10 +77,11 @@
             this.tlpMain.Controls.Add(this.grpSubtitleTracks, 0, 3);
             this.tlpMain.Controls.Add(this.grpAttachments, 0, 5);
             this.tlpMain.Controls.Add(this.grpInfo, 0, 0);
+            this.tlpMain.Controls.Add(this.statusStrip1, 0, 7);
             this.tlpMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpMain.Location = new System.Drawing.Point(0, 0);
             this.tlpMain.Name = "tlpMain";
-            this.tlpMain.RowCount = 7;
+            this.tlpMain.RowCount = 8;
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
@@ -87,7 +89,8 @@
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
-            this.tlpMain.Size = new System.Drawing.Size(654, 481);
+            this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tlpMain.Size = new System.Drawing.Size(654, 501);
             this.tlpMain.TabIndex = 0;
             // 
             // grpChapters
@@ -96,9 +99,9 @@
             this.grpChapters.Controls.Add(this.btnAddChapterPlaceholder);
             this.grpChapters.Controls.Add(this.txtChaptersFilename);
             this.grpChapters.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grpChapters.Location = new System.Drawing.Point(3, 334);
+            this.grpChapters.Location = new System.Drawing.Point(3, 304);
             this.grpChapters.Name = "grpChapters";
-            this.grpChapters.Size = new System.Drawing.Size(619, 54);
+            this.grpChapters.Size = new System.Drawing.Size(648, 54);
             this.grpChapters.TabIndex = 0;
             this.grpChapters.TabStop = false;
             this.grpChapters.Text = "Chapters";
@@ -106,7 +109,7 @@
             // btnDefaultChapterPlaceholder
             // 
             this.btnDefaultChapterPlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDefaultChapterPlaceholder.Location = new System.Drawing.Point(533, 16);
+            this.btnDefaultChapterPlaceholder.Location = new System.Drawing.Point(562, 16);
             this.btnDefaultChapterPlaceholder.Name = "btnDefaultChapterPlaceholder";
             this.btnDefaultChapterPlaceholder.Size = new System.Drawing.Size(83, 30);
             this.btnDefaultChapterPlaceholder.TabIndex = 5;
@@ -117,7 +120,7 @@
             // btnAddChapterPlaceholder
             // 
             this.btnAddChapterPlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddChapterPlaceholder.Location = new System.Drawing.Point(447, 16);
+            this.btnAddChapterPlaceholder.Location = new System.Drawing.Point(476, 16);
             this.btnAddChapterPlaceholder.Name = "btnAddChapterPlaceholder";
             this.btnAddChapterPlaceholder.Size = new System.Drawing.Size(83, 30);
             this.btnAddChapterPlaceholder.TabIndex = 4;
@@ -132,7 +135,7 @@
             this.txtChaptersFilename.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
             this.txtChaptersFilename.Location = new System.Drawing.Point(9, 20);
             this.txtChaptersFilename.Name = "txtChaptersFilename";
-            this.txtChaptersFilename.Size = new System.Drawing.Size(433, 23);
+            this.txtChaptersFilename.Size = new System.Drawing.Size(462, 23);
             this.txtChaptersFilename.TabIndex = 1;
             // 
             // grpActions
@@ -141,9 +144,9 @@
             this.grpActions.Controls.Add(this.btnOK);
             this.grpActions.Controls.Add(this.btnCancel);
             this.grpActions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grpActions.Location = new System.Drawing.Point(3, 454);
+            this.grpActions.Location = new System.Drawing.Point(3, 424);
             this.grpActions.Name = "grpActions";
-            this.grpActions.Size = new System.Drawing.Size(619, 54);
+            this.grpActions.Size = new System.Drawing.Size(648, 54);
             this.grpActions.TabIndex = 0;
             this.grpActions.TabStop = false;
             // 
@@ -160,7 +163,7 @@
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(447, 17);
+            this.btnOK.Location = new System.Drawing.Point(476, 17);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 30);
             this.btnOK.TabIndex = 1;
@@ -172,7 +175,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(533, 17);
+            this.btnCancel.Location = new System.Drawing.Point(562, 17);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 30);
             this.btnCancel.TabIndex = 0;
@@ -186,9 +189,9 @@
             this.grpVideoTracks.Controls.Add(this.btnAddVideoTrackPlaceholder);
             this.grpVideoTracks.Controls.Add(this.txtVideoTracksFilename);
             this.grpVideoTracks.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grpVideoTracks.Location = new System.Drawing.Point(3, 154);
+            this.grpVideoTracks.Location = new System.Drawing.Point(3, 124);
             this.grpVideoTracks.Name = "grpVideoTracks";
-            this.grpVideoTracks.Size = new System.Drawing.Size(619, 54);
+            this.grpVideoTracks.Size = new System.Drawing.Size(648, 54);
             this.grpVideoTracks.TabIndex = 1;
             this.grpVideoTracks.TabStop = false;
             this.grpVideoTracks.Text = "Video Tracks";
@@ -196,7 +199,7 @@
             // btnDefaultVideoTrackPlaceholder
             // 
             this.btnDefaultVideoTrackPlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDefaultVideoTrackPlaceholder.Location = new System.Drawing.Point(533, 18);
+            this.btnDefaultVideoTrackPlaceholder.Location = new System.Drawing.Point(562, 18);
             this.btnDefaultVideoTrackPlaceholder.Name = "btnDefaultVideoTrackPlaceholder";
             this.btnDefaultVideoTrackPlaceholder.Size = new System.Drawing.Size(83, 30);
             this.btnDefaultVideoTrackPlaceholder.TabIndex = 2;
@@ -207,7 +210,7 @@
             // btnAddVideoTrackPlaceholder
             // 
             this.btnAddVideoTrackPlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddVideoTrackPlaceholder.Location = new System.Drawing.Point(447, 18);
+            this.btnAddVideoTrackPlaceholder.Location = new System.Drawing.Point(476, 18);
             this.btnAddVideoTrackPlaceholder.Name = "btnAddVideoTrackPlaceholder";
             this.btnAddVideoTrackPlaceholder.Size = new System.Drawing.Size(83, 30);
             this.btnAddVideoTrackPlaceholder.TabIndex = 1;
@@ -222,7 +225,7 @@
             this.txtVideoTracksFilename.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
             this.txtVideoTracksFilename.Location = new System.Drawing.Point(9, 22);
             this.txtVideoTracksFilename.Name = "txtVideoTracksFilename";
-            this.txtVideoTracksFilename.Size = new System.Drawing.Size(433, 23);
+            this.txtVideoTracksFilename.Size = new System.Drawing.Size(462, 23);
             this.txtVideoTracksFilename.TabIndex = 0;
             // 
             // grpAudioTracks
@@ -231,9 +234,9 @@
             this.grpAudioTracks.Controls.Add(this.btnAddAudioTrackPlaceholder);
             this.grpAudioTracks.Controls.Add(this.txtAudioTracksFilename);
             this.grpAudioTracks.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grpAudioTracks.Location = new System.Drawing.Point(3, 214);
+            this.grpAudioTracks.Location = new System.Drawing.Point(3, 184);
             this.grpAudioTracks.Name = "grpAudioTracks";
-            this.grpAudioTracks.Size = new System.Drawing.Size(619, 54);
+            this.grpAudioTracks.Size = new System.Drawing.Size(648, 54);
             this.grpAudioTracks.TabIndex = 2;
             this.grpAudioTracks.TabStop = false;
             this.grpAudioTracks.Text = "Audio Tracks";
@@ -241,7 +244,7 @@
             // btnDefaultAudioTrackPlaceholder
             // 
             this.btnDefaultAudioTrackPlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDefaultAudioTrackPlaceholder.Location = new System.Drawing.Point(533, 18);
+            this.btnDefaultAudioTrackPlaceholder.Location = new System.Drawing.Point(562, 18);
             this.btnDefaultAudioTrackPlaceholder.Name = "btnDefaultAudioTrackPlaceholder";
             this.btnDefaultAudioTrackPlaceholder.Size = new System.Drawing.Size(83, 30);
             this.btnDefaultAudioTrackPlaceholder.TabIndex = 3;
@@ -252,7 +255,7 @@
             // btnAddAudioTrackPlaceholder
             // 
             this.btnAddAudioTrackPlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddAudioTrackPlaceholder.Location = new System.Drawing.Point(447, 18);
+            this.btnAddAudioTrackPlaceholder.Location = new System.Drawing.Point(476, 18);
             this.btnAddAudioTrackPlaceholder.Name = "btnAddAudioTrackPlaceholder";
             this.btnAddAudioTrackPlaceholder.Size = new System.Drawing.Size(83, 30);
             this.btnAddAudioTrackPlaceholder.TabIndex = 2;
@@ -267,7 +270,7 @@
             this.txtAudioTracksFilename.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
             this.txtAudioTracksFilename.Location = new System.Drawing.Point(9, 22);
             this.txtAudioTracksFilename.Name = "txtAudioTracksFilename";
-            this.txtAudioTracksFilename.Size = new System.Drawing.Size(433, 23);
+            this.txtAudioTracksFilename.Size = new System.Drawing.Size(462, 23);
             this.txtAudioTracksFilename.TabIndex = 1;
             // 
             // grpSubtitleTracks
@@ -276,9 +279,9 @@
             this.grpSubtitleTracks.Controls.Add(this.btnAddSubtitleTrackPlaceholder);
             this.grpSubtitleTracks.Controls.Add(this.txtSubtitleTracksFilename);
             this.grpSubtitleTracks.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grpSubtitleTracks.Location = new System.Drawing.Point(3, 274);
+            this.grpSubtitleTracks.Location = new System.Drawing.Point(3, 244);
             this.grpSubtitleTracks.Name = "grpSubtitleTracks";
-            this.grpSubtitleTracks.Size = new System.Drawing.Size(619, 54);
+            this.grpSubtitleTracks.Size = new System.Drawing.Size(648, 54);
             this.grpSubtitleTracks.TabIndex = 3;
             this.grpSubtitleTracks.TabStop = false;
             this.grpSubtitleTracks.Text = "Subtitle Tracks";
@@ -286,7 +289,7 @@
             // btnDefaultSubtitleTrackPlaceholder
             // 
             this.btnDefaultSubtitleTrackPlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDefaultSubtitleTrackPlaceholder.Location = new System.Drawing.Point(533, 18);
+            this.btnDefaultSubtitleTrackPlaceholder.Location = new System.Drawing.Point(562, 18);
             this.btnDefaultSubtitleTrackPlaceholder.Name = "btnDefaultSubtitleTrackPlaceholder";
             this.btnDefaultSubtitleTrackPlaceholder.Size = new System.Drawing.Size(83, 30);
             this.btnDefaultSubtitleTrackPlaceholder.TabIndex = 4;
@@ -297,7 +300,7 @@
             // btnAddSubtitleTrackPlaceholder
             // 
             this.btnAddSubtitleTrackPlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddSubtitleTrackPlaceholder.Location = new System.Drawing.Point(447, 18);
+            this.btnAddSubtitleTrackPlaceholder.Location = new System.Drawing.Point(476, 18);
             this.btnAddSubtitleTrackPlaceholder.Name = "btnAddSubtitleTrackPlaceholder";
             this.btnAddSubtitleTrackPlaceholder.Size = new System.Drawing.Size(83, 30);
             this.btnAddSubtitleTrackPlaceholder.TabIndex = 3;
@@ -312,7 +315,7 @@
             this.txtSubtitleTracksFilename.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
             this.txtSubtitleTracksFilename.Location = new System.Drawing.Point(9, 22);
             this.txtSubtitleTracksFilename.Name = "txtSubtitleTracksFilename";
-            this.txtSubtitleTracksFilename.Size = new System.Drawing.Size(433, 23);
+            this.txtSubtitleTracksFilename.Size = new System.Drawing.Size(462, 23);
             this.txtSubtitleTracksFilename.TabIndex = 1;
             // 
             // grpAttachments
@@ -321,9 +324,9 @@
             this.grpAttachments.Controls.Add(this.btnAddAttachmentPlaceholder);
             this.grpAttachments.Controls.Add(this.txtAttachmentsFilename);
             this.grpAttachments.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grpAttachments.Location = new System.Drawing.Point(3, 394);
+            this.grpAttachments.Location = new System.Drawing.Point(3, 364);
             this.grpAttachments.Name = "grpAttachments";
-            this.grpAttachments.Size = new System.Drawing.Size(619, 54);
+            this.grpAttachments.Size = new System.Drawing.Size(648, 54);
             this.grpAttachments.TabIndex = 4;
             this.grpAttachments.TabStop = false;
             this.grpAttachments.Text = "Attachments";
@@ -331,7 +334,7 @@
             // btnDefaultAttachmentPlaceholder
             // 
             this.btnDefaultAttachmentPlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDefaultAttachmentPlaceholder.Location = new System.Drawing.Point(533, 19);
+            this.btnDefaultAttachmentPlaceholder.Location = new System.Drawing.Point(562, 19);
             this.btnDefaultAttachmentPlaceholder.Name = "btnDefaultAttachmentPlaceholder";
             this.btnDefaultAttachmentPlaceholder.Size = new System.Drawing.Size(83, 30);
             this.btnDefaultAttachmentPlaceholder.TabIndex = 6;
@@ -342,7 +345,7 @@
             // btnAddAttachmentPlaceholder
             // 
             this.btnAddAttachmentPlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddAttachmentPlaceholder.Location = new System.Drawing.Point(447, 19);
+            this.btnAddAttachmentPlaceholder.Location = new System.Drawing.Point(476, 19);
             this.btnAddAttachmentPlaceholder.Name = "btnAddAttachmentPlaceholder";
             this.btnAddAttachmentPlaceholder.Size = new System.Drawing.Size(83, 30);
             this.btnAddAttachmentPlaceholder.TabIndex = 5;
@@ -357,7 +360,7 @@
             this.txtAttachmentsFilename.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
             this.txtAttachmentsFilename.Location = new System.Drawing.Point(9, 23);
             this.txtAttachmentsFilename.Name = "txtAttachmentsFilename";
-            this.txtAttachmentsFilename.Size = new System.Drawing.Size(433, 23);
+            this.txtAttachmentsFilename.Size = new System.Drawing.Size(462, 23);
             this.txtAttachmentsFilename.TabIndex = 1;
             // 
             // grpInfo
@@ -366,7 +369,7 @@
             this.grpInfo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grpInfo.Location = new System.Drawing.Point(3, 3);
             this.grpInfo.Name = "grpInfo";
-            this.grpInfo.Size = new System.Drawing.Size(619, 145);
+            this.grpInfo.Size = new System.Drawing.Size(648, 115);
             this.grpInfo.TabIndex = 5;
             this.grpInfo.TabStop = false;
             this.grpInfo.Text = "Information";
@@ -379,21 +382,32 @@
             this.txtInfo.Name = "txtInfo";
             this.txtInfo.ReadOnly = true;
             this.txtInfo.ShortcutsEnabled = false;
-            this.txtInfo.Size = new System.Drawing.Size(613, 123);
+            this.txtInfo.Size = new System.Drawing.Size(642, 93);
             this.txtInfo.TabIndex = 0;
             this.txtInfo.Text = "";
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.statusStrip1.Location = new System.Drawing.Point(0, 481);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(654, 20);
+            this.statusStrip1.TabIndex = 6;
+            this.statusStrip1.Text = "statusStrip1";
             // 
             // frmOptions
             // 
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(654, 481);
+            this.ClientSize = new System.Drawing.Size(654, 501);
             this.Controls.Add(this.tlpMain);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
+            this.MinimumSize = new System.Drawing.Size(400, 400);
             this.Name = "frmOptions";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Options";
             this.Load += new System.EventHandler(this.frmOptions_Load);
             this.tlpMain.ResumeLayout(false);
+            this.tlpMain.PerformLayout();
             this.grpChapters.ResumeLayout(false);
             this.grpChapters.PerformLayout();
             this.grpActions.ResumeLayout(false);
@@ -439,5 +453,6 @@
         private System.Windows.Forms.Button btnDefaultSubtitleTrackPlaceholder;
         private System.Windows.Forms.Button btnDefaultAttachmentPlaceholder;
         private System.Windows.Forms.Button btnDefaults;
+        private System.Windows.Forms.StatusStrip statusStrip1;
     }
 }

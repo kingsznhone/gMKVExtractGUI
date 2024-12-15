@@ -1,18 +1,15 @@
-﻿using gMKVToolNix.Forms;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Media;
-using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using System.Linq;
-using System.Collections;
+using gMKVToolNix.Forms;
 
 namespace gMKVToolNix
 {
@@ -24,8 +21,8 @@ namespace gMKVToolNix
         private int _TotalJobs = 0;
         private gMKVExtract _gMkvExtract = null;
         private bool _ExtractRunning = false;
-        private gSettings _Settings = null; 
-        private bool _FromConstructor = false;
+        private readonly gSettings _Settings = null; 
+        private readonly bool _FromConstructor = false;
 
         private BindingList<gMKVJobInfo> _JobList = new BindingList<gMKVJobInfo>();
 
@@ -116,13 +113,13 @@ namespace gMKVToolNix
             btnSaveJobs.Enabled = argStatus;
         }
 
-        void _gMkvExtract_MkvExtractTrackUpdated(string filename, string trackName)
+        void gMkvExtract_MkvExtractTrackUpdated(string filename, string trackName)
         {
             this.Invoke(new UpdateTrackLabelDelegate(UpdateTrackLabel), new object[] { filename, trackName });
             Debug.WriteLine(trackName);
         }
 
-        void _gMkvExtract_MkvExtractProgressUpdated(int progress)
+        void gMkvExtract_MkvExtractProgressUpdated(int progress)
         {
             this.Invoke(new UpdateProgressDelegate(UpdateCurrentProgress), new object[] { progress });
         }
@@ -177,8 +174,8 @@ namespace gMKVToolNix
                     gMKVJob job = jobInfo.Job;
                     // create the new gMKVExtract object
                     _gMkvExtract = new gMKVExtract(job.MKVToolnixPath);
-                    _gMkvExtract.MkvExtractProgressUpdated += _gMkvExtract_MkvExtractProgressUpdated;
-                    _gMkvExtract.MkvExtractTrackUpdated += _gMkvExtract_MkvExtractTrackUpdated;
+                    _gMkvExtract.MkvExtractProgressUpdated += gMkvExtract_MkvExtractProgressUpdated;
+                    _gMkvExtract.MkvExtractTrackUpdated += gMkvExtract_MkvExtractTrackUpdated;
                     // increate the current job index
                     _CurrentJob++;
                     // start the thread
@@ -219,8 +216,8 @@ namespace gMKVToolNix
                 {
                     if (_gMkvExtract != null)
                     {
-                        _gMkvExtract.MkvExtractProgressUpdated -= _gMkvExtract_MkvExtractProgressUpdated;
-                        _gMkvExtract.MkvExtractTrackUpdated -= _gMkvExtract_MkvExtractTrackUpdated;
+                        _gMkvExtract.MkvExtractProgressUpdated -= gMkvExtract_MkvExtractProgressUpdated;
+                        _gMkvExtract.MkvExtractTrackUpdated -= gMkvExtract_MkvExtractTrackUpdated;
                     }
                 }
             }
@@ -417,10 +414,12 @@ namespace gMKVToolNix
             try
             {
                 // ask for path
-                SaveFileDialog sfd = new SaveFileDialog();
-                sfd.Title = "Select job file...";
-                sfd.InitialDirectory = GetCurrentDirectory();
-                sfd.Filter = "*.xml|*.xml";
+                SaveFileDialog sfd = new SaveFileDialog
+                {
+                    Title = "Select job file...",
+                    InitialDirectory = GetCurrentDirectory(),
+                    Filter = "*.xml|*.xml"
+                };
                 if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     using (System.IO.StreamWriter sw = new System.IO.StreamWriter(sfd.FileName))
@@ -451,10 +450,12 @@ namespace gMKVToolNix
             try
             {
                 // Ask for path
-                OpenFileDialog ofd = new OpenFileDialog();
-                ofd.InitialDirectory = GetCurrentDirectory();
-                ofd.Title = "Select jobs file...";
-                ofd.Filter = "*.xml|*.xml";
+                OpenFileDialog ofd = new OpenFileDialog
+                {
+                    InitialDirectory = GetCurrentDirectory(),
+                    Title = "Select jobs file...",
+                    Filter = "*.xml|*.xml"
+                };
                 if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     List<gMKVJobInfo> jobList = null;

@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Reflection;
-using System.Text;
-using System.Windows.Forms;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Threading;
 using System.Media;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace gMKVToolNix.Forms
 {
@@ -36,7 +33,7 @@ namespace gMKVToolNix.Forms
 
         private gMKVExtract _gMkvExtract = null;
 
-        private gSettings _Settings = null;
+        private readonly gSettings _Settings = null;
 
         private bool _FromConstructor = false;
 
@@ -695,12 +692,16 @@ namespace gMKVToolNix.Forms
 
             gMKVSegmentInfo segInfo = (gMKVSegmentInfo)segmentList.FirstOrDefault(s => s is gMKVSegmentInfo);
 
-            TreeNode infoNode = new TreeNode(Path.GetFileName(argFilename));
-            infoNode.Tag = segInfo;
+            TreeNode infoNode = new TreeNode(Path.GetFileName(argFilename))
+            {
+                Tag = segInfo
+            };
             foreach (gMKVSegment seg in segmentList.Where(s => !(s is gMKVSegmentInfo)).ToList())
             {
-                TreeNode segNode = new TreeNode(seg.ToString());
-                segNode.Tag = seg;
+                TreeNode segNode = new TreeNode(seg.ToString())
+                {
+                    Tag = seg
+                };
                 infoNode.Nodes.Add(segNode);
             }
 
@@ -1268,13 +1269,15 @@ namespace gMKVToolNix.Forms
                 // check if output directory is the same as the source
                 if (!chkUseSourceDirectory.Checked)
                 {
-                    SaveFileDialog sfd = new SaveFileDialog();
-                    sfd.RestoreDirectory = true;
-                    sfd.CheckFileExists = false;
-                    sfd.CheckPathExists = false;
-                    sfd.OverwritePrompt = false;
-                    sfd.FileName = "Select directory";
-                    sfd.Title = "Select output directory...";
+                    SaveFileDialog sfd = new SaveFileDialog
+                    {
+                        RestoreDirectory = true,
+                        CheckFileExists = false,
+                        CheckPathExists = false,
+                        OverwritePrompt = false,
+                        FileName = "Select directory",
+                        Title = "Select output directory..."
+                    };
                     if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
                         txtOutputDirectory.Text = Path.GetDirectoryName(sfd.FileName);
@@ -1302,12 +1305,14 @@ namespace gMKVToolNix.Forms
                     }
                 }
 
-                OpenFileDialog ofd = new OpenFileDialog();
-                ofd.RestoreDirectory = true;
-                ofd.CheckFileExists = false;
-                ofd.CheckPathExists = false;
-                ofd.FileName = "Select directory";
-                ofd.Title = "Select MKVToolnix directory...";
+                OpenFileDialog ofd = new OpenFileDialog
+                {
+                    RestoreDirectory = true,
+                    CheckFileExists = false,
+                    CheckPathExists = false,
+                    FileName = "Select directory",
+                    Title = "Select MKVToolnix directory..."
+                };
                 if (!string.IsNullOrWhiteSpace(txtMKVToolnixPath.Text))
                 {
                     if (Directory.Exists(txtMKVToolnixPath.Text.Trim()))
@@ -2252,11 +2257,13 @@ namespace gMKVToolNix.Forms
         {
             try
             {
-                OpenFileDialog ofd = new OpenFileDialog();
-                ofd.Title = "Select an input matroska file...";
-                ofd.Filter = "Matroska files (*.mkv;*.mka;*.mks;*.mk3d;*.webm)|*.mkv;*.mka;*.mks;*.mk3d;*.webm|Matroska video files (*.mkv)|*.mkv|Matroska audio files (*.mka)|*.mka|Matroska subtitle files (*.mks)|*.mks|Matroska 3D files (*.mk3d)|*.mk3d|Webm files (*.webm)|*.webm";
-                ofd.Multiselect = true;
-                ofd.AutoUpgradeEnabled = true;
+                OpenFileDialog ofd = new OpenFileDialog
+                {
+                    Title = "Select an input matroska file...",
+                    Filter = "Matroska files (*.mkv;*.mka;*.mks;*.mk3d;*.webm)|*.mkv;*.mka;*.mks;*.mk3d;*.webm|Matroska video files (*.mkv)|*.mkv|Matroska audio files (*.mka)|*.mka|Matroska subtitle files (*.mks)|*.mks|Matroska 3D files (*.mk3d)|*.mk3d|Webm files (*.webm)|*.webm",
+                    Multiselect = true,
+                    AutoUpgradeEnabled = true
+                };
                 if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     AddFileNodes(txtMKVToolnixPath.Text, new List<string>(ofd.FileNames), true);

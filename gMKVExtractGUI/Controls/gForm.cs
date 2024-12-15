@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 
 namespace gMKVToolNix
@@ -31,7 +28,7 @@ namespace gMKVToolNix
         /// </summary>
         public Int32 BorderWidth
         {
-            get { return Convert.ToInt32(Convert.ToDouble((this.Width - this.ClientSize.Width)) / 2.0); }
+            get { return Convert.ToInt32(Convert.ToDouble(this.Width - this.ClientSize.Width) / 2.0); }
         }
 
         /// <summary>

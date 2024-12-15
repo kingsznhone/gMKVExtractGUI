@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 
 namespace gMKVToolNix.Forms
@@ -103,20 +97,30 @@ namespace gMKVToolNix.Forms
             _VideoTrackContextMenu.Items.Add(GetToolstripMenuItem("Input Filename (without extension)", gMKVExtractFilenamePatterns.FilenameNoExt, txtVideoTracksFilename));
             _VideoTrackContextMenu.Items.Add(GetToolstripMenuItem("Input Filename (with extension)", gMKVExtractFilenamePatterns.Filename, txtVideoTracksFilename));
             _VideoTrackContextMenu.Items.Add("-");
+            _VideoTrackContextMenu.Items.Add(GetToolstripMenuItem("Directory Separator", gMKVExtractFilenamePatterns.DirectorySeparator, txtVideoTracksFilename));
+            _VideoTrackContextMenu.Items.Add("-");
 
             _AudioTrackContextMenu.Items.Add(GetToolstripMenuItem("Input Filename (without extension)", gMKVExtractFilenamePatterns.FilenameNoExt, txtAudioTracksFilename));
             _AudioTrackContextMenu.Items.Add(GetToolstripMenuItem("Input Filename (with extension)", gMKVExtractFilenamePatterns.Filename, txtAudioTracksFilename));
+            _AudioTrackContextMenu.Items.Add("-");
+            _AudioTrackContextMenu.Items.Add(GetToolstripMenuItem("Directory Separator", gMKVExtractFilenamePatterns.DirectorySeparator, txtAudioTracksFilename));
             _AudioTrackContextMenu.Items.Add("-");
 
             _SubtitleTrackContextMenu.Items.Add(GetToolstripMenuItem("Input Filename (without extension)", gMKVExtractFilenamePatterns.FilenameNoExt, txtSubtitleTracksFilename));
             _SubtitleTrackContextMenu.Items.Add(GetToolstripMenuItem("Input Filename (with extension)", gMKVExtractFilenamePatterns.Filename, txtSubtitleTracksFilename));
             _SubtitleTrackContextMenu.Items.Add("-");
+            _SubtitleTrackContextMenu.Items.Add(GetToolstripMenuItem("Directory Separator", gMKVExtractFilenamePatterns.DirectorySeparator, txtSubtitleTracksFilename));
+            _SubtitleTrackContextMenu.Items.Add("-");
 
             _ChapterContextMenu.Items.Add(GetToolstripMenuItem("Input Filename (without extension)", gMKVExtractFilenamePatterns.FilenameNoExt, txtChaptersFilename));
             _ChapterContextMenu.Items.Add(GetToolstripMenuItem("Input Filename (with extension)", gMKVExtractFilenamePatterns.Filename, txtChaptersFilename));
+            _ChapterContextMenu.Items.Add("-");
+            _ChapterContextMenu.Items.Add(GetToolstripMenuItem("Directory Separator", gMKVExtractFilenamePatterns.DirectorySeparator, txtChaptersFilename));            
 
             _AttachmentContextMenu.Items.Add(GetToolstripMenuItem("Input Filename (without extension)", gMKVExtractFilenamePatterns.FilenameNoExt, txtAttachmentsFilename));
             _AttachmentContextMenu.Items.Add(GetToolstripMenuItem("Input Filename (with extension)", gMKVExtractFilenamePatterns.Filename, txtAttachmentsFilename));
+            _AttachmentContextMenu.Items.Add("-");
+            _AttachmentContextMenu.Items.Add(GetToolstripMenuItem("Directory Separator", gMKVExtractFilenamePatterns.DirectorySeparator, txtAttachmentsFilename));
             _AttachmentContextMenu.Items.Add("-");
             // ============================================================================================================================
 
