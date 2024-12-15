@@ -101,6 +101,13 @@ namespace gMKVToolNix
             set { _ShowPopupInJobManager = value; }
         }
 
+        private Boolean _AppendOnDragAndDrop = false;
+        public Boolean AppendOnDragAndDrop
+        {
+            get { return _AppendOnDragAndDrop; }
+            set { _AppendOnDragAndDrop = value; }
+        }
+
         private String _VideoTrackFilenamePattern = "{FilenameNoExt}_track{TrackNumber}_[{Language}]";
         [DefaultValue("{FilenameNoExt}_track{TrackNumber}_[{Language}]")]
         public String VideoTrackFilenamePattern
@@ -155,13 +162,13 @@ namespace gMKVToolNix
             return (T)v;
         }
 
-        private static readonly String _SETTINGS_FILE = "gMKVExtractGUI.ini";
+        private static readonly string _SETTINGS_FILE = "gMKVExtractGUI.ini";
         private readonly string _SettingsPath = "";
 
-        public gSettings(String appPath)
+        public gSettings(string appPath)
         {
             // check if user has permission for appPath
-            Boolean userHasPermission = false;
+            bool userHasPermission = false;
             try
             {
                 using (FileStream tmp = File.Open(Path.Combine(appPath, _SETTINGS_FILE), FileMode.OpenOrCreate, FileAccess.ReadWrite))
@@ -188,7 +195,7 @@ namespace gMKVToolNix
             }
 
             // Log the detected settings path
-            gMKVLogger.Log(String.Format("Detected settings path: {0}", _SettingsPath));
+            gMKVLogger.Log(string.Format("Detected settings path: {0}", _SettingsPath));
         }
 
         public void Reload()
@@ -203,7 +210,7 @@ namespace gMKVToolNix
                 gMKVLogger.Log("Begin loading settings...");
                 using (StreamReader sr = new StreamReader(Path.Combine(_SettingsPath, _SETTINGS_FILE), Encoding.UTF8))
                 {
-                    String line = "";
+                    string line = "";
                     while ((line = sr.ReadLine()) != null)
                     {
                         if (line.StartsWith("MKVToolnix Path:"))
@@ -460,6 +467,19 @@ namespace gMKVToolNix
                                 _AttachmentFilenamePattern = "";
                             }
                         }
+                        else if (line.StartsWith("Append On Drag and Drop:"))
+                        {
+                            try
+                            {
+                                _AppendOnDragAndDrop = Boolean.Parse(line.Substring(line.IndexOf(":") + 1));
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading Append On Drag and Drop! {0}", ex.Message));
+                                _AppendOnDragAndDrop = false;
+                            }
+                        }
                     }
                 }
                 gMKVLogger.Log("Finished loading settings!");
@@ -484,6 +504,7 @@ namespace gMKVToolNix
                 sw.WriteLine(String.Format("Window State:{0}", _WindowState.ToString()));
                 sw.WriteLine(String.Format("Show Popup:{0}", _ShowPopup));
                 sw.WriteLine(String.Format("Show Popup In Job Manager:{0}", _ShowPopupInJobManager));
+                sw.WriteLine(String.Format("Append On Drag and Drop:{0}", _AppendOnDragAndDrop));
 
                 sw.WriteLine(String.Format("VideoTrackFilenamePattern:{0}", _VideoTrackFilenamePattern));
                 sw.WriteLine(String.Format("AudioTrackFilenamePattern:{0}", _AudioTrackFilenamePattern));

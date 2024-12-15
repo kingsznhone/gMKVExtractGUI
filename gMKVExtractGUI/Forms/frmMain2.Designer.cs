@@ -58,6 +58,7 @@ namespace gMKVToolNix.Forms
             this.txtMKVToolnixPath = new gMKVToolNix.gTextBox();
             this.btnBrowseMKVToolnixPath = new System.Windows.Forms.Button();
             this.grpInputFiles = new gMKVToolNix.gGroupBox();
+            this.tlpInput = new System.Windows.Forms.TableLayoutPanel();
             this.trvInputFiles = new gMKVToolNix.gTreeView();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addInputFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -95,6 +96,7 @@ namespace gMKVToolNix.Forms
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.expandAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collapseAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.chkAppendOnDragAndDrop = new System.Windows.Forms.CheckBox();
             this.grpSelectedFileInfo = new gMKVToolNix.gGroupBox();
             this.txtSegmentInfo = new gMKVToolNix.gRichTextBox();
             this.btnAbort = new System.Windows.Forms.Button();
@@ -107,6 +109,7 @@ namespace gMKVToolNix.Forms
             this.contextMenuStripOutputDirectory.SuspendLayout();
             this.grpConfig.SuspendLayout();
             this.grpInputFiles.SuspendLayout();
+            this.tlpInput.SuspendLayout();
             this.contextMenuStrip.SuspendLayout();
             this.grpSelectedFileInfo.SuspendLayout();
             this.SuspendLayout();
@@ -404,7 +407,7 @@ namespace gMKVToolNix.Forms
             // 
             // grpInputFiles
             // 
-            this.grpInputFiles.Controls.Add(this.trvInputFiles);
+            this.grpInputFiles.Controls.Add(this.tlpInput);
             this.grpInputFiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.grpInputFiles.Location = new System.Drawing.Point(3, 63);
             this.grpInputFiles.Name = "grpInputFiles";
@@ -412,6 +415,21 @@ namespace gMKVToolNix.Forms
             this.grpInputFiles.TabIndex = 1;
             this.grpInputFiles.TabStop = false;
             this.grpInputFiles.Text = "Input Files (you can drag and drop files or directories)";
+            // 
+            // tlpInput
+            // 
+            this.tlpInput.ColumnCount = 1;
+            this.tlpInput.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpInput.Controls.Add(this.trvInputFiles, 0, 0);
+            this.tlpInput.Controls.Add(this.chkAppendOnDragAndDrop, 0, 1);
+            this.tlpInput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpInput.Location = new System.Drawing.Point(3, 19);
+            this.tlpInput.Name = "tlpInput";
+            this.tlpInput.RowCount = 2;
+            this.tlpInput.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpInput.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this.tlpInput.Size = new System.Drawing.Size(612, 217);
+            this.tlpInput.TabIndex = 1;
             // 
             // trvInputFiles
             // 
@@ -421,11 +439,11 @@ namespace gMKVToolNix.Forms
             this.trvInputFiles.ContextMenuStrip = this.contextMenuStrip;
             this.trvInputFiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.trvInputFiles.HideSelection = false;
-            this.trvInputFiles.Location = new System.Drawing.Point(3, 19);
+            this.trvInputFiles.Location = new System.Drawing.Point(3, 3);
             this.trvInputFiles.Name = "trvInputFiles";
             this.trvInputFiles.SelectOnRightClick = true;
             this.trvInputFiles.ShowNodeToolTips = true;
-            this.trvInputFiles.Size = new System.Drawing.Size(612, 217);
+            this.trvInputFiles.Size = new System.Drawing.Size(606, 186);
             this.trvInputFiles.TabIndex = 0;
             this.trvInputFiles.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.trvInputFiles_AfterSelect);
             this.trvInputFiles.DragDrop += new System.Windows.Forms.DragEventHandler(this.trvInputFiles_DragDrop);
@@ -706,6 +724,17 @@ namespace gMKVToolNix.Forms
             this.collapseAllToolStripMenuItem.Text = "Collapse All";
             this.collapseAllToolStripMenuItem.Click += new System.EventHandler(this.collapseAllToolStripMenuItem_Click);
             // 
+            // chkAppendOnDragAndDrop
+            // 
+            this.chkAppendOnDragAndDrop.AutoSize = true;
+            this.chkAppendOnDragAndDrop.Location = new System.Drawing.Point(3, 195);
+            this.chkAppendOnDragAndDrop.Name = "chkAppendOnDragAndDrop";
+            this.chkAppendOnDragAndDrop.Size = new System.Drawing.Size(194, 19);
+            this.chkAppendOnDragAndDrop.TabIndex = 1;
+            this.chkAppendOnDragAndDrop.Text = "Append input on drag and drop";
+            this.chkAppendOnDragAndDrop.UseVisualStyleBackColor = true;
+            this.chkAppendOnDragAndDrop.CheckedChanged += new System.EventHandler(this.chkAppendOnDragAndDrop_CheckedChanged);
+            // 
             // grpSelectedFileInfo
             // 
             this.grpSelectedFileInfo.AllowDrop = true;
@@ -796,6 +825,8 @@ namespace gMKVToolNix.Forms
             this.grpConfig.ResumeLayout(false);
             this.grpConfig.PerformLayout();
             this.grpInputFiles.ResumeLayout(false);
+            this.tlpInput.ResumeLayout(false);
+            this.tlpInput.PerformLayout();
             this.contextMenuStrip.ResumeLayout(false);
             this.grpSelectedFileInfo.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -873,5 +904,7 @@ namespace gMKVToolNix.Forms
         private System.Windows.Forms.ContextMenuStrip contextMenuStripOutputDirectory;
         private System.Windows.Forms.ToolStripMenuItem setAsDefaultDirectoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem useCurrentlySetDefaultDirectoryToolStripMenuItem;
+        private System.Windows.Forms.TableLayoutPanel tlpInput;
+        private System.Windows.Forms.CheckBox chkAppendOnDragAndDrop;
     }
 }

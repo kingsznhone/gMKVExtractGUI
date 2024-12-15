@@ -92,6 +92,7 @@ namespace gMKVToolNix.Forms
                     txtOutputDirectory.Text = _Settings.OutputDirectory;
                 }
                 chkShowPopup.Checked = _Settings.ShowPopup;
+                chkAppendOnDragAndDrop.Checked = _Settings.AppendOnDragAndDrop;
                 gMKVLogger.Log("Finished setting chapter type, output directory and job mode from settings!");
 
                 _FromConstructor = false;
@@ -479,7 +480,7 @@ namespace gMKVToolNix.Forms
                         }
 
                         // Add files to the TreeView
-                        AddFileNodes(txtMKVToolnixPath.Text, fileList);
+                        AddFileNodes(txtMKVToolnixPath.Text, fileList, chkAppendOnDragAndDrop.Checked);
 
                         Cursor = Cursors.Default;
                         tlpMain.Enabled = true;
@@ -1496,6 +1497,16 @@ namespace gMKVToolNix.Forms
             {
                 _Settings.ShowPopup = chkShowPopup.Checked;
                 gMKVLogger.Log("Changing ShowPopup");
+                _Settings.Save();
+            }
+        }
+
+        private void chkAppendOnDragAndDrop_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!_FromConstructor)
+            {
+                _Settings.AppendOnDragAndDrop = chkAppendOnDragAndDrop.Checked;
+                gMKVLogger.Log("Changing AppendOnDragAndDrop");
                 _Settings.Save();
             }
         }
