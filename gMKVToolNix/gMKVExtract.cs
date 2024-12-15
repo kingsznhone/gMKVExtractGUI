@@ -1469,6 +1469,10 @@ namespace gMKVToolNix
             {
                 outputFileExtension = "hevc";
             }
+            else if (codecIdUpperCase.Contains("V_AV1"))
+            {
+                outputFileExtension = "av1";
+            }
             else if (codecIdUpperCase.Contains("V_MPEG4/MS/V3"))
             {
                 outputFileExtension = "mp4";
