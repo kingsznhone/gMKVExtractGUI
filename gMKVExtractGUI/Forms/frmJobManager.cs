@@ -9,6 +9,7 @@ using System.Media;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using gMKVToolNix.Controls;
 using gMKVToolNix.Forms;
 
 namespace gMKVToolNix
@@ -27,7 +28,9 @@ namespace gMKVToolNix
         private BindingList<gMKVJobInfo> _JobList = new BindingList<gMKVJobInfo>();
 
         private Boolean _AbortAll = false;
-        
+
+        private readonly DarkModeManager _darkModeManager = null;
+
         public frmJobManager(IFormMain argMainForm)
         {
             try
@@ -44,6 +47,11 @@ namespace gMKVToolNix
                 // Load settings
                 _Settings = new gSettings(this.GetCurrentDirectory());
                 _Settings.Reload();
+
+                if (_Settings.DarkMode)
+                {
+                    _darkModeManager = new DarkModeManager(this, DisplayMode.DarkMode);
+                }
 
                 chkShowPopup.Checked = _Settings.ShowPopupInJobManager;
 

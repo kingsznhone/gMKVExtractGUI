@@ -1,23 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using gMKVToolNix;
-using System.Diagnostics;
-using System.IO;
+using gMKVToolNix.Controls;
 
 namespace gMKVToolNix
 {
     public partial class frmLog : gForm
     {
+        private readonly gSettings _Settings = null;
+        private readonly DarkModeManager _darkModeManager = null;
+
         public frmLog()
         {
             InitializeComponent();
             InitForm();
+
+            // Load settings
+            _Settings = new gSettings(this.GetCurrentDirectory());
+            _Settings.Reload();
+
+            if (_Settings.DarkMode)
+            {
+                _darkModeManager = new DarkModeManager(this, DisplayMode.DarkMode);
+            }
 
             // Initialize the DPI aware scaling
             InitDPI();

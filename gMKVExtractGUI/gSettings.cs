@@ -108,6 +108,13 @@ namespace gMKVToolNix
             set { _AppendOnDragAndDrop = value; }
         }
 
+        private Boolean _DarkMode = false;
+        public Boolean DarkMode
+        {
+            get { return _DarkMode; }
+            set { _DarkMode = value; }
+        }
+
         private String _VideoTrackFilenamePattern = "{FilenameNoExt}_track{TrackNumber}_[{Language}]";
         [DefaultValue("{FilenameNoExt}_track{TrackNumber}_[{Language}]")]
         public String VideoTrackFilenamePattern
@@ -480,6 +487,19 @@ namespace gMKVToolNix
                                 _AppendOnDragAndDrop = false;
                             }
                         }
+                        else if (line.StartsWith("Dark Mode:"))
+                        {
+                            try
+                            {
+                                _DarkMode = Boolean.Parse(line.Substring(line.IndexOf(":") + 1));
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex);
+                                gMKVLogger.Log(String.Format("Error reading Dark Mode! {0}", ex.Message));
+                                _DarkMode = false;
+                            }
+                        }
                     }
                 }
                 gMKVLogger.Log("Finished loading settings!");
@@ -505,6 +525,7 @@ namespace gMKVToolNix
                 sw.WriteLine(String.Format("Show Popup:{0}", _ShowPopup));
                 sw.WriteLine(String.Format("Show Popup In Job Manager:{0}", _ShowPopupInJobManager));
                 sw.WriteLine(String.Format("Append On Drag and Drop:{0}", _AppendOnDragAndDrop));
+                sw.WriteLine(String.Format("Dark Mode:{0}", _DarkMode));
 
                 sw.WriteLine(String.Format("VideoTrackFilenamePattern:{0}", _VideoTrackFilenamePattern));
                 sw.WriteLine(String.Format("AudioTrackFilenamePattern:{0}", _AudioTrackFilenamePattern));
