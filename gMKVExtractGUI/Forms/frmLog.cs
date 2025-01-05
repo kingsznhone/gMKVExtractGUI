@@ -35,7 +35,7 @@ namespace gMKVToolNix
         private void InitForm()
         {
             Icon = Icon.ExtractAssociatedIcon(GetExecutingAssemblyLocation());
-            Text = String.Format("gMKVExtractGUI v{0} -- Log", GetCurrentVersion());
+            Text = string.Format("gMKVExtractGUI v{0} -- Log", GetCurrentVersion());
         }
 
         private void frmLog_Activated(object sender, EventArgs e)
@@ -47,7 +47,7 @@ namespace gMKVToolNix
         {
             txtLog.Select(txtLog.TextLength + 1, 0);
             txtLog.ScrollToCaret();
-            grpLog.Text = String.Format("Log ({0})", txtLog.Lines.LongLength);
+            grpLog.Text = string.Format("Log ({0})", txtLog.Lines.LongLength);
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -128,7 +128,7 @@ namespace gMKVToolNix
                 sfd.CheckFileExists = true;
                 sfd.DefaultExt = "txt";
                 sfd.Filter = "*.txt|*.txt";
-                sfd.FileName = String.Format("[{0}][{1}][gMKVExtractGUI_v{2}].txt", 
+                sfd.FileName = string.Format("[{0}][{1}][gMKVExtractGUI_v{2}].txt", 
                     DateTime.Now.ToString("yyyy-MM-dd"),
                     DateTime.Now.ToString("HH-mm-ss"),
                     Assembly.GetExecutingAssembly().GetName().Version);
@@ -138,7 +138,7 @@ namespace gMKVToolNix
                     {
                         sw.Write(gMKVLogger.LogText);
                     }
-                    ShowSuccessMessage(String.Format("The log was saved to {0}!", sfd.FileName));
+                    ShowSuccessMessage(string.Format("The log was saved to {0}!", sfd.FileName));
                 }
             }
             catch (Exception ex)

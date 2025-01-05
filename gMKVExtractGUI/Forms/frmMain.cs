@@ -1214,7 +1214,7 @@ namespace gMKVToolNix
 
         #endregion
 
-        public void SetTableLayoutMainStatus(Boolean argStatus)
+        public void SetTableLayoutMainStatus(bool argStatus)
         {
             tlpMain.Enabled = argStatus;
             Application.DoEvents();

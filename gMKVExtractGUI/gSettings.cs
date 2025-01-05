@@ -10,8 +10,8 @@ namespace gMKVToolNix
 {
     public class gSettings
     {
-        private String _MkvToolnixPath = "";
-        public String MkvToolnixPath
+        private string _MkvToolnixPath = "";
+        public string MkvToolnixPath
         {
             get { return _MkvToolnixPath; }
             set { _MkvToolnixPath = value; }
@@ -24,57 +24,57 @@ namespace gMKVToolNix
             set { _ChapterType = value; }
         }
 
-        private Boolean _LockedOutputDirectory;
-        public Boolean LockedOutputDirectory
+        private bool _LockedOutputDirectory;
+        public bool LockedOutputDirectory
         {
             get { return _LockedOutputDirectory; }
             set { _LockedOutputDirectory = value; }
         }
 
-        private String _OutputDirectory;
-        public String OutputDirectory
+        private string _OutputDirectory;
+        public string OutputDirectory
         {
             get { return _OutputDirectory; }
             set { _OutputDirectory = value; }
         }
 
-        private String _DefaultOutputDirectory;
-        public String DefaultOutputDirectory
+        private string _DefaultOutputDirectory;
+        public string DefaultOutputDirectory
         {
             get { return _DefaultOutputDirectory; }
             set { _DefaultOutputDirectory = value; }
         }
 
-        private Int32 _WindowPosX;
-        public Int32 WindowPosX
+        private int _WindowPosX;
+        public int WindowPosX
         {
             get { return _WindowPosX; }
             set { _WindowPosX = value; }
         }
 
-        private Int32 _WindowPosY;
-        public Int32 WindowPosY
+        private int _WindowPosY;
+        public int WindowPosY
         {
             get { return _WindowPosY; }
             set { _WindowPosY = value; }
         }
 
-        private Int32 _WindowSizeWidth = 640;
-        public Int32 WindowSizeWidth
+        private int _WindowSizeWidth = 640;
+        public int WindowSizeWidth
         {
             get { return _WindowSizeWidth; }
             set { _WindowSizeWidth = value; }
         }
 
-        private Int32 _WindowSizeHeight = 600;
-        public Int32 WindowSizeHeight
+        private int _WindowSizeHeight = 600;
+        public int WindowSizeHeight
         {
             get { return _WindowSizeHeight; }
             set { _WindowSizeHeight = value; }
         }
 
-        private Boolean _JobMode;
-        public Boolean JobMode
+        private bool _JobMode;
+        public bool JobMode
         {
             get { return _JobMode; }
             set { _JobMode = value; }
@@ -87,69 +87,69 @@ namespace gMKVToolNix
             set { _WindowState = value; }
         }
 
-        private Boolean _ShowPopup = true;
-        public Boolean ShowPopup
+        private bool _ShowPopup = true;
+        public bool ShowPopup
         {
             get { return _ShowPopup; }
             set { _ShowPopup = value; }
         }
 
-        private Boolean _ShowPopupInJobManager = true;
-        public Boolean ShowPopupInJobManager
+        private bool _ShowPopupInJobManager = true;
+        public bool ShowPopupInJobManager
         {
             get { return _ShowPopupInJobManager; }
             set { _ShowPopupInJobManager = value; }
         }
 
-        private Boolean _AppendOnDragAndDrop = false;
-        public Boolean AppendOnDragAndDrop
+        private bool _AppendOnDragAndDrop = false;
+        public bool AppendOnDragAndDrop
         {
             get { return _AppendOnDragAndDrop; }
             set { _AppendOnDragAndDrop = value; }
         }
 
-        private Boolean _DarkMode = false;
-        public Boolean DarkMode
+        private bool _DarkMode = false;
+        public bool DarkMode
         {
             get { return _DarkMode; }
             set { _DarkMode = value; }
         }
 
-        private String _VideoTrackFilenamePattern = "{FilenameNoExt}_track{TrackNumber}_[{Language}]";
+        private string _VideoTrackFilenamePattern = "{FilenameNoExt}_track{TrackNumber}_[{Language}]";
         [DefaultValue("{FilenameNoExt}_track{TrackNumber}_[{Language}]")]
-        public String VideoTrackFilenamePattern
+        public string VideoTrackFilenamePattern
         {
             get { return _VideoTrackFilenamePattern; }
             set { _VideoTrackFilenamePattern = value; }
         }
 
-        private String _AudioTrackFilenamePattern = "{FilenameNoExt}_track{TrackNumber}_[{Language}]_DELAY {EffectiveDelay}ms";
+        private string _AudioTrackFilenamePattern = "{FilenameNoExt}_track{TrackNumber}_[{Language}]_DELAY {EffectiveDelay}ms";
         [DefaultValue("{FilenameNoExt}_track{TrackNumber}_[{Language}]_DELAY {EffectiveDelay}ms")]
-        public String AudioTrackFilenamePattern
+        public string AudioTrackFilenamePattern
         {
             get { return _AudioTrackFilenamePattern; }
             set { _AudioTrackFilenamePattern = value; }
         }
 
-        private String _SubtitleTrackFilenamePattern = "{FilenameNoExt}_track{TrackNumber}_[{Language}]";
+        private string _SubtitleTrackFilenamePattern = "{FilenameNoExt}_track{TrackNumber}_[{Language}]";
         [DefaultValue("{FilenameNoExt}_track{TrackNumber}_[{Language}]")]
-        public String SubtitleTrackFilenamePattern
+        public string SubtitleTrackFilenamePattern
         {
             get { return _SubtitleTrackFilenamePattern; }
             set { _SubtitleTrackFilenamePattern = value; }
         }
 
-        private String _ChapterFilenamePattern = "{FilenameNoExt}_chapters";
+        private string _ChapterFilenamePattern = "{FilenameNoExt}_chapters";
         [DefaultValue("{FilenameNoExt}_chapters")]
-        public String ChapterFilenamePattern
+        public string ChapterFilenamePattern
         {
             get { return _ChapterFilenamePattern; }
             set { _ChapterFilenamePattern = value; }
         }
 
-        private String _AttachmentFilenamePattern = "{AttachmentFilename}";
+        private string _AttachmentFilenamePattern = "{AttachmentFilename}";
         [DefaultValue("{AttachmentFilename}")]
-        public String AttachmentFilenamePattern
+        public string AttachmentFilenamePattern
         {
             get { return _AttachmentFilenamePattern; }
             set { _AttachmentFilenamePattern = value; }
@@ -209,7 +209,7 @@ namespace gMKVToolNix
         {
             if (!File.Exists(Path.Combine(_SettingsPath, _SETTINGS_FILE)))
             {
-                gMKVLogger.Log(String.Format("Settings file '{0}' not found! Saving defaults...", Path.Combine(_SettingsPath, _SETTINGS_FILE)));
+                gMKVLogger.Log(string.Format("Settings file '{0}' not found! Saving defaults...", Path.Combine(_SettingsPath, _SETTINGS_FILE)));
                 Save();
             }
             else
@@ -229,7 +229,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading MKVToolnix Path! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading MKVToolnix Path! {0}", ex.Message));
                                 _MkvToolnixPath = "";
                             }
                         }
@@ -242,7 +242,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading Chapter Type! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading Chapter Type! {0}", ex.Message));
                                 _ChapterType = MkvChapterTypes.XML;
                             }
                         }
@@ -255,7 +255,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading Output Directory! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading Output Directory! {0}", ex.Message));
                                 _OutputDirectory = "";
                             }
                         }
@@ -268,7 +268,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading Default Output Directory! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading Default Output Directory! {0}", ex.Message));
                                 _DefaultOutputDirectory = "";
                             }
                         }
@@ -276,12 +276,12 @@ namespace gMKVToolNix
                         {
                             try
                             {
-                                _LockedOutputDirectory = Boolean.Parse(line.Substring(line.IndexOf(":") + 1));
+                                _LockedOutputDirectory = bool.Parse(line.Substring(line.IndexOf(":") + 1));
                             }
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading Lock Output Directory! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading Lock Output Directory! {0}", ex.Message));
                                 _LockedOutputDirectory = false;
                             }
                         }
@@ -289,12 +289,12 @@ namespace gMKVToolNix
                         {
                             try
                             {
-                                _WindowPosX = Int32.Parse(line.Substring(line.IndexOf(":") + 1));
+                                _WindowPosX = int.Parse(line.Substring(line.IndexOf(":") + 1));
                             }
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading Initial Window Position X! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading Initial Window Position X! {0}", ex.Message));
                                 _WindowPosX = 0;
                             }
                         }
@@ -302,12 +302,12 @@ namespace gMKVToolNix
                         {
                             try
                             {
-                                _WindowPosY = Int32.Parse(line.Substring(line.IndexOf(":") + 1));
+                                _WindowPosY = int.Parse(line.Substring(line.IndexOf(":") + 1));
                             }
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading Initial Window Position Y! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading Initial Window Position Y! {0}", ex.Message));
                                 _WindowPosY = 0;
                             }
                         }
@@ -315,12 +315,12 @@ namespace gMKVToolNix
                         {
                             try
                             {
-                                _WindowSizeWidth = Int32.Parse(line.Substring(line.IndexOf(":") + 1));
+                                _WindowSizeWidth = int.Parse(line.Substring(line.IndexOf(":") + 1));
                             }
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading Initial Window Size Width! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading Initial Window Size Width! {0}", ex.Message));
                                 _WindowSizeWidth = 640;
                             }
                         }
@@ -328,12 +328,12 @@ namespace gMKVToolNix
                         {
                             try
                             {
-                                _WindowSizeHeight = Int32.Parse(line.Substring(line.IndexOf(":") + 1));
+                                _WindowSizeHeight = int.Parse(line.Substring(line.IndexOf(":") + 1));
                             }
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading Initial Window Size Height! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading Initial Window Size Height! {0}", ex.Message));
                                 _WindowSizeHeight = 600;
                             }
                         }
@@ -341,12 +341,12 @@ namespace gMKVToolNix
                         {
                             try
                             {
-                                _JobMode = Boolean.Parse(line.Substring(line.IndexOf(":") + 1));
+                                _JobMode = bool.Parse(line.Substring(line.IndexOf(":") + 1));
                             }
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading Job Mode! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading Job Mode! {0}", ex.Message));
                                 _JobMode = false;
                             }
                         }
@@ -359,7 +359,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading Window State! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading Window State! {0}", ex.Message));
                                 _WindowState = FormWindowState.Normal;
                             }
                         }
@@ -367,12 +367,12 @@ namespace gMKVToolNix
                         {
                             try
                             {
-                                _ShowPopup = Boolean.Parse(line.Substring(line.IndexOf(":") + 1));
+                                _ShowPopup = bool.Parse(line.Substring(line.IndexOf(":") + 1));
                             }
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading Show Popup! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading Show Popup! {0}", ex.Message));
                                 _ShowPopup = true;
                             }
                         }
@@ -380,12 +380,12 @@ namespace gMKVToolNix
                         {
                             try
                             {
-                                _ShowPopupInJobManager = Boolean.Parse(line.Substring(line.IndexOf(":") + 1));
+                                _ShowPopupInJobManager = bool.Parse(line.Substring(line.IndexOf(":") + 1));
                             }
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading Show Popup In Job Manager! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading Show Popup In Job Manager! {0}", ex.Message));
                                 _ShowPopupInJobManager = true;
                             }
                         }
@@ -402,7 +402,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading VideoTrackFilenamePattern! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading VideoTrackFilenamePattern! {0}", ex.Message));
                                 _VideoTrackFilenamePattern = "";
                             }
                         }
@@ -419,7 +419,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading AudioTrackFilenamePattern! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading AudioTrackFilenamePattern! {0}", ex.Message));
                                 _AudioTrackFilenamePattern = "";
                             }
                         }
@@ -436,7 +436,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading SubtitleTrackFilenamePattern! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading SubtitleTrackFilenamePattern! {0}", ex.Message));
                                 _SubtitleTrackFilenamePattern = "";
                             }
                         }
@@ -453,7 +453,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading ChapterFilenamePattern! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading ChapterFilenamePattern! {0}", ex.Message));
                                 _ChapterFilenamePattern = "";
                             }
                         }
@@ -470,7 +470,7 @@ namespace gMKVToolNix
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading AttachmentFilenamePattern! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading AttachmentFilenamePattern! {0}", ex.Message));
                                 _AttachmentFilenamePattern = "";
                             }
                         }
@@ -478,12 +478,12 @@ namespace gMKVToolNix
                         {
                             try
                             {
-                                _AppendOnDragAndDrop = Boolean.Parse(line.Substring(line.IndexOf(":") + 1));
+                                _AppendOnDragAndDrop = bool.Parse(line.Substring(line.IndexOf(":") + 1));
                             }
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading Append On Drag and Drop! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading Append On Drag and Drop! {0}", ex.Message));
                                 _AppendOnDragAndDrop = false;
                             }
                         }
@@ -491,12 +491,12 @@ namespace gMKVToolNix
                         {
                             try
                             {
-                                _DarkMode = Boolean.Parse(line.Substring(line.IndexOf(":") + 1));
+                                _DarkMode = bool.Parse(line.Substring(line.IndexOf(":") + 1));
                             }
                             catch (Exception ex)
                             {
                                 Debug.WriteLine(ex);
-                                gMKVLogger.Log(String.Format("Error reading Dark Mode! {0}", ex.Message));
+                                gMKVLogger.Log(string.Format("Error reading Dark Mode! {0}", ex.Message));
                                 _DarkMode = false;
                             }
                         }
@@ -511,27 +511,27 @@ namespace gMKVToolNix
             gMKVLogger.Log("Saving settings...");
             using (StreamWriter sw = new StreamWriter(Path.Combine(_SettingsPath, _SETTINGS_FILE), false, Encoding.UTF8))
             {
-                sw.WriteLine(String.Format("MKVToolnix Path:{0}", _MkvToolnixPath));
-                sw.WriteLine(String.Format("Chapter Type:{0}", _ChapterType));
-                sw.WriteLine(String.Format("Output Directory:{0}", _OutputDirectory));
-                sw.WriteLine(String.Format("Default Output Directory:{0}", _DefaultOutputDirectory));
-                sw.WriteLine(String.Format("Lock Output Directory:{0}", _LockedOutputDirectory));
-                sw.WriteLine(String.Format("Initial Window Position X:{0}", _WindowPosX));
-                sw.WriteLine(String.Format("Initial Window Position Y:{0}", _WindowPosY));
-                sw.WriteLine(String.Format("Initial Window Size Width:{0}", _WindowSizeWidth));
-                sw.WriteLine(String.Format("Initial Window Size Height:{0}", _WindowSizeHeight));
-                sw.WriteLine(String.Format("Job Mode:{0}", _JobMode));
-                sw.WriteLine(String.Format("Window State:{0}", _WindowState.ToString()));
-                sw.WriteLine(String.Format("Show Popup:{0}", _ShowPopup));
-                sw.WriteLine(String.Format("Show Popup In Job Manager:{0}", _ShowPopupInJobManager));
-                sw.WriteLine(String.Format("Append On Drag and Drop:{0}", _AppendOnDragAndDrop));
-                sw.WriteLine(String.Format("Dark Mode:{0}", _DarkMode));
+                sw.WriteLine(string.Format("MKVToolnix Path:{0}", _MkvToolnixPath));
+                sw.WriteLine(string.Format("Chapter Type:{0}", _ChapterType));
+                sw.WriteLine(string.Format("Output Directory:{0}", _OutputDirectory));
+                sw.WriteLine(string.Format("Default Output Directory:{0}", _DefaultOutputDirectory));
+                sw.WriteLine(string.Format("Lock Output Directory:{0}", _LockedOutputDirectory));
+                sw.WriteLine(string.Format("Initial Window Position X:{0}", _WindowPosX));
+                sw.WriteLine(string.Format("Initial Window Position Y:{0}", _WindowPosY));
+                sw.WriteLine(string.Format("Initial Window Size Width:{0}", _WindowSizeWidth));
+                sw.WriteLine(string.Format("Initial Window Size Height:{0}", _WindowSizeHeight));
+                sw.WriteLine(string.Format("Job Mode:{0}", _JobMode));
+                sw.WriteLine(string.Format("Window State:{0}", _WindowState.ToString()));
+                sw.WriteLine(string.Format("Show Popup:{0}", _ShowPopup));
+                sw.WriteLine(string.Format("Show Popup In Job Manager:{0}", _ShowPopupInJobManager));
+                sw.WriteLine(string.Format("Append On Drag and Drop:{0}", _AppendOnDragAndDrop));
+                sw.WriteLine(string.Format("Dark Mode:{0}", _DarkMode));
 
-                sw.WriteLine(String.Format("VideoTrackFilenamePattern:{0}", _VideoTrackFilenamePattern));
-                sw.WriteLine(String.Format("AudioTrackFilenamePattern:{0}", _AudioTrackFilenamePattern));
-                sw.WriteLine(String.Format("SubtitleTrackFilenamePattern:{0}", _SubtitleTrackFilenamePattern));
-                sw.WriteLine(String.Format("ChapterFilenamePattern:{0}", _ChapterFilenamePattern));
-                sw.WriteLine(String.Format("AttachmentFilenamePattern:{0}", _AttachmentFilenamePattern));
+                sw.WriteLine(string.Format("VideoTrackFilenamePattern:{0}", _VideoTrackFilenamePattern));
+                sw.WriteLine(string.Format("AudioTrackFilenamePattern:{0}", _AudioTrackFilenamePattern));
+                sw.WriteLine(string.Format("SubtitleTrackFilenamePattern:{0}", _SubtitleTrackFilenamePattern));
+                sw.WriteLine(string.Format("ChapterFilenamePattern:{0}", _ChapterFilenamePattern));
+                sw.WriteLine(string.Format("AttachmentFilenamePattern:{0}", _AttachmentFilenamePattern));
             }
         }
     }

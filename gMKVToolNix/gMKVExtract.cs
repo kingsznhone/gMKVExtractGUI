@@ -1211,7 +1211,7 @@ namespace gMKVToolNix
                 }
             }
 
-            gMKVVersion version = new gMKVToolNix.gMKVVersion()
+            gMKVVersion version = new gMKVVersion()
             {
                 FileMajorPart = int.TryParse(fileMajorVersion, out int majorVersion) ? majorVersion : 0,
                 FileMinorPart = int.TryParse(fileMinorVersion, out int minorVersion) ? minorVersion : 0,

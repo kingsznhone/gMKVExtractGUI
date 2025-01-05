@@ -27,7 +27,7 @@ namespace gMKVToolNix
 
         private BindingList<gMKVJobInfo> _JobList = new BindingList<gMKVJobInfo>();
 
-        private Boolean _AbortAll = false;
+        private bool _AbortAll = false;
 
         private readonly DarkModeManager _darkModeManager = null;
 
@@ -40,7 +40,7 @@ namespace gMKVToolNix
                 _MainForm = argMainForm;
 
                 Icon = Icon.ExtractAssociatedIcon(GetExecutingAssemblyLocation());
-                Text = String.Format("gMKVExtractGUI v{0} -- Job Manager", GetCurrentVersion());
+                Text = string.Format("gMKVExtractGUI v{0} -- Job Manager", GetCurrentVersion());
 
                 _FromConstructor = true;
 
@@ -231,20 +231,20 @@ namespace gMKVToolNix
             }
         }
 
-        public void UpdateCurrentProgress(Object val)
+        public void UpdateCurrentProgress(object val)
         {
             prgBrCurrent.Value = Convert.ToInt32(val);
             prgBrTotal.Value = (_CurrentJob - 1) * 100 + Convert.ToInt32(val);
-            lblCurrentProgressValue.Text = String.Format("{0}%", Convert.ToInt32(val));
-            lblTotalProgressValue.Text = String.Format("{0}%", prgBrTotal.Value / _TotalJobs);
+            lblCurrentProgressValue.Text = string.Format("{0}%", Convert.ToInt32(val));
+            lblTotalProgressValue.Text = string.Format("{0}%", prgBrTotal.Value / _TotalJobs);
             gTaskbarProgress.SetValue(this, Convert.ToUInt64(val), (UInt64)100);
             grdJobs.Refresh();
             Application.DoEvents();
         }
 
-        public void UpdateTrackLabel(Object filename, Object val)
+        public void UpdateTrackLabel(object filename, object val)
         {
-            txtCurrentTrack.Text = String.Format("{0} from {1}", val, Path.GetFileName((string)filename));
+            txtCurrentTrack.Text = string.Format("{0} from {1}", val, Path.GetFileName((string)filename));
             Application.DoEvents();
         }
 
@@ -383,9 +383,9 @@ namespace gMKVToolNix
             }
         }
 
-        private Int32 GetNumberOfJobs(JobState argState)
+        private int GetNumberOfJobs(JobState argState)
         {
-            Int32 counter = 0;
+            int counter = 0;
             foreach (DataGridViewRow drJobInfo in grdJobs.Rows)
             {
                 gMKVJobInfo jobInfo = (gMKVJobInfo)drJobInfo.DataBoundItem;
@@ -429,9 +429,9 @@ namespace gMKVToolNix
                     InitialDirectory = GetCurrentDirectory(),
                     Filter = "*.xml|*.xml"
                 };
-                if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                if (sfd.ShowDialog() == DialogResult.OK)
                 {
-                    using (System.IO.StreamWriter sw = new System.IO.StreamWriter(sfd.FileName))
+                    using (StreamWriter sw = new StreamWriter(sfd.FileName))
                     {
                         System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(typeof(List<gMKVJobInfo>));
                         
@@ -465,10 +465,10 @@ namespace gMKVToolNix
                     Title = "Select jobs file...",
                     Filter = "*.xml|*.xml"
                 };
-                if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     List<gMKVJobInfo> jobList = null;
-                    using (System.IO.StreamReader sr = new System.IO.StreamReader(ofd.FileName))
+                    using (StreamReader sr = new StreamReader(ofd.FileName))
                     {
                         System.Xml.Serialization.XmlSerializer x = new System.Xml.Serialization.XmlSerializer(typeof(List<gMKVJobInfo>));
                         
@@ -549,7 +549,7 @@ namespace gMKVToolNix
         {
             try
             {
-                grpJobs.Text = String.Format("Jobs ({0})", grdJobs.Rows.Count);
+                grpJobs.Text = string.Format("Jobs ({0})", grdJobs.Rows.Count);
             }
             catch (Exception ex)
             {

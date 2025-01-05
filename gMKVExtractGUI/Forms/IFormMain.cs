@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace gMKVToolNix.Forms
+﻿namespace gMKVToolNix.Forms
 {
     public interface IFormMain
     {
-        void SetTableLayoutMainStatus(Boolean argStatus);
-
+        void SetTableLayoutMainStatus(bool argStatus);
     }
 }

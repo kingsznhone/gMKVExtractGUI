@@ -636,7 +636,7 @@ namespace gMKVToolNix.Forms
             {
                 prgBrStatus.Maximum = argFiles.Count;
             });
-            Int32 counter = 0;
+            int counter = 0;
 
             foreach (var sf in argFiles.OrderBy(f => Path.GetDirectoryName(f)).ThenBy(f => Path.GetFileName(f)))
             {
