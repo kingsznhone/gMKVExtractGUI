@@ -406,7 +406,7 @@ namespace gMKVToolNix.Controls
             else if (control is ComboBox comboBox)
             {
                 // Fixing a glitch that makes all instances of the ComboBox showing as having a Selected value, even when they dont
-                control.BeginInvoke(new Action(() => (control as ComboBox).SelectionLength = 0));
+                // control.BeginInvoke(new Action(() => comboBox.SelectionLength = 0));
 
                 // Fixes a glitch showing the Combo Backgroud white when the control is Disabled:
                 if (!control.Enabled && isDarkMode)
