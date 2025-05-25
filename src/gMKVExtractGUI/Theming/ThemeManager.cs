@@ -64,26 +64,22 @@ namespace gMKVToolNix.Theming
                 control.BackColor = containerBackColor;
                 control.ForeColor = containerForeColor; // This sets the default for child controls that inherit
 
-                if (darkMode && !control.Enabled)
+                void groupBoxPaintEventHandler(object sender, PaintEventArgs e)
                 {
-                    // Re-assert ForeColor for the container itself (may affect GroupBox title if lucky, but often doesn't)
-                    control.ForeColor = DarkModeContainerForeColor;
-
-                    // Explicitly set ForeColor for common child text controls
-                    foreach (Control child in control.Controls)
+                    if (control.Enabled == false && darkMode)
                     {
-                        if (child is Label || child is CheckBox || child is RadioButton) // Add other relevant types if needed
+                        var radio = (sender as GroupBox);
+                        using (Brush B = new SolidBrush(control.ForeColor))
                         {
-                            // Forcing ForeColor on children of a disabled container.
-                            // Standard behavior is for child.Enabled to also be false, 
-                            // and they'd typically render with a system disabled text color.
-                            // This override attempts to keep them white.
-                            child.ForeColor = DarkModeContainerForeColor;
+                            e.Graphics.DrawString(radio.Text, radio.Font, B, new System.Drawing.PointF(6, 0));
                         }
-                        // Potentially recurse if there are nested containers, though ApplyTheme handles this by iterating all controls.
-                        // However, a direct recursive call here for children of a disabled parent might be more targeted.
-                        // For now, let's stick to immediate children.
                     }
+                }
+
+                if (control is GroupBox)
+                {
+                    control.Paint -= groupBoxPaintEventHandler;
+                    control.Paint += groupBoxPaintEventHandler;
                 }
             }
             else if (control is TextBox || control is RichTextBox || control is gTextBox || control is gRichTextBox)
@@ -331,12 +327,18 @@ namespace gMKVToolNix.Theming
                 pb.ForeColor = darkMode ? Color.FromArgb(0, 122, 204) : SystemColors.Highlight;
             }
             // For other controls, apply general container styling if no specific styling is applied
-            else if (control.HasChildren && !(control is Form || control is gForm || control is GroupBox || control is Panel || control is TabControl || control is gGroupBox || control is gTableLayoutPanel))
+            else if (control.HasChildren 
+                && !(control is Form 
+                || control is gForm 
+                || control is GroupBox 
+                || control is Panel 
+                || control is TabControl 
+                || control is gGroupBox 
+                || control is gTableLayoutPanel))
             {
                 control.BackColor = containerBackColor;
                 control.ForeColor = containerForeColor;
             }
-
 
             foreach (Control childControl in control.Controls)
             {
