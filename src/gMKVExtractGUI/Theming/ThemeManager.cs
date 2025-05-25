@@ -86,6 +86,11 @@ namespace gMKVToolNix.Theming
             {
                 control.BackColor = textBackColor;
                 control.ForeColor = textForeColor;
+                
+                if (control is gRichTextBox gRich)
+                {
+                    gRich.DarkMode = darkMode; // Set the dark mode property for gRichTextBox
+                }
 
                 if (control is RichTextBox rich)
                 {
@@ -344,6 +349,11 @@ namespace gMKVToolNix.Theming
             {
                 ApplyTheme(childControl, darkMode);
             }
+        }
+
+        private static void Tv_EnabledChanged(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         public static void ApplyToolStripItemTheme(ToolStripItem item, bool darkMode)
