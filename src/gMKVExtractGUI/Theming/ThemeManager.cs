@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using gMKVToolNix.Controls; // For custom gControls
+using gMKVToolNix.WinAPI;
 
 namespace gMKVToolNix.Theming
 {
@@ -53,6 +53,8 @@ namespace gMKVToolNix.Theming
             Color menuBackColor = darkMode ? DarkModeMenuBackColor : LightModeMenuBackColor;
             Color menuForeColor = darkMode ? DarkModeMenuForeColor : LightModeMenuForeColor;
 
+            NativeMethods.SetWindowThemeManaged(control.Handle, darkMode);
+            NativeMethods.TrySetImmersiveDarkMode(control.Handle, darkMode);
 
             if (control is Form || control is gForm)
             {
@@ -93,7 +95,12 @@ namespace gMKVToolNix.Theming
             {
                 control.BackColor = textBackColor;
                 control.ForeColor = textForeColor;
-                
+
+                if (control is TextBox textBox)
+                {
+                    textBox.BorderStyle = darkMode ? BorderStyle.FixedSingle : BorderStyle.Fixed3D;
+                }
+
                 if (control is gRichTextBox gRich)
                 {
                     gRich.DarkMode = darkMode; // Set the dark mode property for gRichTextBox
@@ -104,7 +111,8 @@ namespace gMKVToolNix.Theming
                     // For RichTextBox, ensure the selection colors are set correctly
                     if (darkMode)
                     {
-                        rich.BorderStyle = BorderStyle.FixedSingle;
+                        rich.BackColor = rich.Parent.BackColor;
+                        rich.BorderStyle = BorderStyle.None;
                         rich.SelectionBackColor = Color.FromArgb(80, 80, 80); // Dark selection background
                         rich.SelectionColor = Color.White; // White text on dark selection
                     }

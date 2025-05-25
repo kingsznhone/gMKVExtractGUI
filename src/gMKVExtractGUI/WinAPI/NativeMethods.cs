@@ -8,26 +8,43 @@ namespace gMKVToolNix.WinAPI // Or any appropriate namespace
         [DllImport("dwmapi.dll")]
         public static extern int DwmSetWindowAttribute(IntPtr hwnd, DWMWINDOWATTRIBUTE dwAttribute, ref int pvAttribute, int cbAttribute);
 
-        public enum DWMWINDOWATTRIBUTE : uint
+        public enum DWMWINDOWATTRIBUTE : int
         {
             DWMWA_USE_IMMERSIVE_DARK_MODE = 20, // For Windows 10 18985+ and Windows 11
             DWMWA_USE_IMMERSIVE_DARK_MODE_PRE_20H1 = 19, // For Windows 10 17763 to 18985 (optional to support both)
         }
 
-        // Helper method to attempt setting the dark mode
-        // Returns true if successful, false otherwise.
+        /// <summary>
+        /// Helper method to attempt setting the dark mode
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <param name="enabled"></param>
+        /// <returns>true if successful, false otherwise.</returns>
         public static bool TrySetImmersiveDarkMode(IntPtr handle, bool enabled)
         {
+            if (gMKVHelper.IsOnLinux)
+            {
+                return true;
+            }
+
             try
             {
-                int useDarkMode = enabled ? 1 : 0;
+                int darkModeValue = enabled ? 1 : 0;
                 // First, try with attribute 20 (DWMWA_USE_IMMERSIVE_DARK_MODE)
-                int result = DwmSetWindowAttribute(handle, DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE, ref useDarkMode, sizeof(int));
+                int result = DwmSetWindowAttribute(
+                    handle, 
+                    DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE, 
+                    ref darkModeValue, 
+                    Marshal.SizeOf(typeof(int)));
 
                 // if the above fails and you want to try the older attribute value (19)
                 if (result != 0) // 0 means S_OK (success)
                 {
-                    result = DwmSetWindowAttribute(handle, DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE_PRE_20H1, ref useDarkMode, sizeof(int));
+                    result = DwmSetWindowAttribute(
+                        handle, 
+                        DWMWINDOWATTRIBUTE.DWMWA_USE_IMMERSIVE_DARK_MODE_PRE_20H1, 
+                        ref darkModeValue, 
+                        Marshal.SizeOf(typeof(int)));
                 }
 
                 return result == 0;
@@ -37,6 +54,29 @@ namespace gMKVToolNix.WinAPI // Or any appropriate namespace
                 // This can happen if dwmapi.dll is not found or the attribute is not supported.
                 return false;
             }
+        }
+
+        [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
+        private static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
+
+        /// <summary>
+        /// Sets the window theme to dark mode or light mode based on the provided boolean value.
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <param name="darkModeEnabled"></param>
+        /// <param name="pszSubIdList"></param>
+        /// <returns>true if successful, false otherwise.</returns>
+        public static bool SetWindowThemeManaged(IntPtr hWnd, bool darkModeEnabled, string pszSubIdList = null)        {
+            if (gMKVHelper.IsOnLinux)
+            {
+                return true;
+            }
+
+            string mode = darkModeEnabled ? "DarkMode_Explorer" : "ClearMode_Explorer";
+
+            int result = SetWindowTheme(hWnd, mode, pszSubIdList);
+            
+            return result == 0;
         }
     }
 }

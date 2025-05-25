@@ -107,12 +107,14 @@ namespace gMKVToolNix.Forms
                 }
                 if (this.Handle != IntPtr.Zero) // Ensure handle is created
                 {
+                    NativeMethods.SetWindowThemeManaged(this.Handle, _Settings.DarkMode);
                     NativeMethods.TrySetImmersiveDarkMode(this.Handle, _Settings.DarkMode);
                 }
                 else
                 {
                     // If handle not created yet, do it in Load or Shown event
                     this.Shown += (s, ev) => {
+                        NativeMethods.SetWindowThemeManaged(this.Handle, _Settings.DarkMode);
                         NativeMethods.TrySetImmersiveDarkMode(this.Handle, _Settings.DarkMode);
                     };
                 }
@@ -2449,6 +2451,7 @@ namespace gMKVToolNix.Forms
                 {
                     chkDarkMode.BackColor = Color.FromArgb(55, 55, 55);
                 }
+                NativeMethods.SetWindowThemeManaged(this.Handle, _Settings.DarkMode);
                 NativeMethods.TrySetImmersiveDarkMode(this.Handle, _Settings.DarkMode);
 
                 // Apply theme to context menu

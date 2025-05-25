@@ -61,6 +61,7 @@ namespace gMKVToolNix.Forms
             txtInfo.ForeColor = _Settings.DarkMode
                 ? ThemeManager.DarkModeTextForeColor
                 : ThemeManager.LightModeTextForeColor;
+            NativeMethods.SetWindowThemeManaged(this.Handle, _Settings.DarkMode);
             NativeMethods.TrySetImmersiveDarkMode(this.Handle, _Settings.DarkMode);
 
             // Apply theme to context menus

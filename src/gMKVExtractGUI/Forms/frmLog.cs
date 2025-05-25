@@ -22,15 +22,20 @@ namespace gMKVToolNix
             _Settings = new gSettings(this.GetCurrentDirectory());
             _Settings.Reload();
 
-            ThemeManager.ApplyTheme(this, _Settings.DarkMode);
             if (this.Handle != IntPtr.Zero)
             {
+                NativeMethods.SetWindowThemeManaged(this.Handle, _Settings.DarkMode);
                 NativeMethods.TrySetImmersiveDarkMode(this.Handle, _Settings.DarkMode);
             }
             else
             {
-                this.Shown += (s, ev) => { NativeMethods.TrySetImmersiveDarkMode(this.Handle, _Settings.DarkMode); };
+                this.Shown += (s, ev) => 
+                {
+                    NativeMethods.SetWindowThemeManaged(this.Handle, _Settings.DarkMode);
+                    NativeMethods.TrySetImmersiveDarkMode(this.Handle, _Settings.DarkMode); 
+                };
             }
+            ThemeManager.ApplyTheme(this, _Settings.DarkMode);
 
             InitDPI();
         }
@@ -48,7 +53,7 @@ namespace gMKVToolNix
 
         private void txtLog_TextChanged(object sender, EventArgs e)
         {
-            txtLog.Select(txtLog.TextLength + 1, 0);
+            txtLog.Select(txtLog.TextLength, 0);
             txtLog.ScrollToCaret();
             grpLog.Text = string.Format("Log ({0})", txtLog.Lines.LongLength);
         }
@@ -157,6 +162,7 @@ namespace gMKVToolNix
             ThemeManager.ApplyTheme(this, darkMode);
             if (this.IsHandleCreated) // Important check
             {
+                NativeMethods.SetWindowThemeManaged(this.Handle, darkMode);
                 NativeMethods.TrySetImmersiveDarkMode(this.Handle, darkMode);
             }
             else
@@ -164,6 +170,7 @@ namespace gMKVToolNix
                 // If handle not created yet, defer until it is.
                 // This might be less critical for already shown forms but good for robustness.
                 this.HandleCreated += (s, e) => {
+                    NativeMethods.SetWindowThemeManaged(this.Handle, darkMode);
                     NativeMethods.TrySetImmersiveDarkMode(this.Handle, darkMode);
                 };
             }

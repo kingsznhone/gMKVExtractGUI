@@ -56,11 +56,16 @@ namespace gMKVToolNix
                 ThemeManager.ApplyTheme(this, _isCurrentlyDarkMode); // Use field
                 if (this.Handle != IntPtr.Zero) // Or IsHandleCreated if preferred
                 {
+                    NativeMethods.SetWindowThemeManaged(this.Handle, _isCurrentlyDarkMode);
                     NativeMethods.TrySetImmersiveDarkMode(this.Handle, _isCurrentlyDarkMode);
                 }
                 else
                 {
-                    this.Shown += (s, ev) => { NativeMethods.TrySetImmersiveDarkMode(this.Handle, _isCurrentlyDarkMode); };
+                    this.Shown += (s, ev) => 
+                    {
+                        NativeMethods.SetWindowThemeManaged(this.Handle, _isCurrentlyDarkMode);
+                        NativeMethods.TrySetImmersiveDarkMode(this.Handle, _isCurrentlyDarkMode); 
+                    };
                 }
 
                 // Apply theme to context menu
@@ -579,11 +584,13 @@ namespace gMKVToolNix
             ThemeManager.ApplyTheme(this, _isCurrentlyDarkMode); // Use field
             if (this.IsHandleCreated)
             {
+                NativeMethods.SetWindowThemeManaged(this.Handle, _isCurrentlyDarkMode);
                 NativeMethods.TrySetImmersiveDarkMode(this.Handle, _isCurrentlyDarkMode);
             }
             else
             {
                 this.HandleCreated += (s, e) => {
+                    NativeMethods.SetWindowThemeManaged(this.Handle, _isCurrentlyDarkMode);
                     NativeMethods.TrySetImmersiveDarkMode(this.Handle, _isCurrentlyDarkMode);
                 };
             }

@@ -5,7 +5,7 @@ using gMKVToolNix.Controls;
 
 namespace gMKVToolNix
 {
-    public class gTextBox:TextBox
+    public class gTextBox : TextBox
     {
         public gTextBox()
             : base()
