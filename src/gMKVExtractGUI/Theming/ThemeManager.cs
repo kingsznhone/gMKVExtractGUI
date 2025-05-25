@@ -74,10 +74,11 @@ namespace gMKVToolNix.Theming
                             e.Graphics.DrawString(
                                 groupBox.Text, 
                                 groupBox.Font, 
-                                brush, 
+                                brush,
                                 new PointF(
-                                    groupBox.Font.SizeInPoints - 2, 
-                                    -1));
+                                    groupBox.Font.SizeInPoints, 
+                                    -1),
+                                StringFormat.GenericTypographic);
                         }
                     }
                 }
@@ -112,6 +113,12 @@ namespace gMKVToolNix.Theming
                         rich.BorderStyle = BorderStyle.Fixed3D;
                         rich.SelectionBackColor = SystemColors.Highlight; // Standard highlight color
                         rich.SelectionColor = SystemColors.HighlightText; // Standard highlight text color
+
+                        // For ReadOnly, we want to have a different back color than the default
+                        if (rich.ReadOnly)
+                        {
+                            control.BackColor = SystemColors.Control;
+                        }
                     }
                 }
             }
@@ -228,10 +235,7 @@ namespace gMKVToolNix.Theming
                 }
                 else
                 {
-                    // Try a very light gray for lines in light mode
-                    // SystemColors.ControlLight can sometimes be too subtle or vary too much.
-                    // A specific light gray might be more reliable.
-                    tv.LineColor = Color.FromArgb(220, 220, 220); // A light gray, less aggressive than ControlDark or GrayText
+                    tv.LineColor = SystemColors.ControlLight;
                 }
             }
             else if (control is DataGridView dgv)
