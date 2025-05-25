@@ -221,11 +221,13 @@ namespace gMKVToolNix
             else
             {
                 MessageBox.Show(
+                    this,
                     _errorMessagePrefix + argMessage,
                     "Error!",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
+
             // Return to the original form
             this.BringToFront();
             this.Activate();
@@ -251,12 +253,14 @@ namespace gMKVToolNix
             else 
             {
                 MessageBox.Show(
+                    this,
                     argMessage,
                     "Success!",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information
                 );
             }
+
             // Return to the original form
             this.BringToFront();
             this.Activate();
@@ -270,7 +274,13 @@ namespace gMKVToolNix
             {
                 msgBoxBtns = MessageBoxButtons.YesNo;
             }
-            return MessageBox.Show(argQuestion, argTitle, msgBoxBtns, MessageBoxIcon.Question);
+
+            return MessageBox.Show(
+                this, 
+                argQuestion, 
+                argTitle, 
+                msgBoxBtns, 
+                MessageBoxIcon.Question);
         }
 
         private void InitializeComponent()
