@@ -39,11 +39,11 @@ namespace gMKVToolNix
 
             // ITaskbarList3
             [PreserveSig]
-            Int32 SetProgressValue(IntPtr hwnd, UInt64 ullCompleted, UInt64 ullTotal);
+            int SetProgressValue(IntPtr hwnd, ulong ullCompleted, ulong ullTotal);
             [PreserveSig]
-            Int32 SetProgressState(IntPtr hwnd, TaskbarStates state);
+            int SetProgressState(IntPtr hwnd, TaskbarStates state);
             [PreserveSig]
-            Int32 SetOverlayIcon(IntPtr hwnd, IntPtr hIcon, [MarshalAs(UnmanagedType.LPWStr)] String pszDescription);
+            int SetOverlayIcon(IntPtr hwnd, IntPtr hIcon, [MarshalAs(UnmanagedType.LPWStr)] string pszDescription);
         }
 
         [GuidAttribute("56FDF344-FD6D-11d0-958A-006097C9A090")]
@@ -72,16 +72,19 @@ namespace gMKVToolNix
             if (IsTaskbarSupported) { Instance().SetProgressState(frm.Handle, taskbarState); }
         }
 
-        public static void SetValue(Form frm, UInt64 progressValue, UInt64 progressMax)
+        public static void SetValue(Form frm, ulong progressValue, ulong progressMax)
         {
-            if (IsTaskbarSupported) { Instance().SetProgressValue(frm.Handle, (UInt64)progressValue, (UInt64)progressMax); }
+            if (IsTaskbarSupported) { Instance().SetProgressValue(frm.Handle, (ulong)progressValue, (ulong)progressMax); }
         }
 
-        public static void SetOverlayIcon(Form frm, System.Drawing.Icon icn, String description)
+        public static void SetOverlayIcon(Form frm, System.Drawing.Icon icn, string description)
         {
             if (IsTaskbarSupported) 
             {
-                Debug.WriteLine(String.Format("{1}: HRESULT:0x{0:X8}", Instance().SetOverlayIcon(frm.Handle, icn == null ? IntPtr.Zero : icn.Handle, description ?? ""), description ?? ""));
+                Debug.WriteLine(string.Format(
+                    "{1}: HRESULT:0x{0:X8}", 
+                    Instance().SetOverlayIcon(frm.Handle, icn == null ? IntPtr.Zero : icn.Handle, description ?? ""), 
+                    description ?? ""));
             }
         }
     }

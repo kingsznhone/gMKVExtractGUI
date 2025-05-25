@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace gMKVToolNix.Controls
@@ -46,14 +43,14 @@ namespace gMKVToolNix.Controls
             {
                 try
                 {
-                    if (this.SelectedIndex > -1 && !String.IsNullOrWhiteSpace(this.Text))
+                    if (this.SelectedIndex > -1 && !string.IsNullOrWhiteSpace(this.Text))
                     {
                         Clipboard.SetText(this.Text);
                     }
                 }
                 catch (Exception ex)
                 {
-                    ex.ShowException();
+                    ex.ShowException(this.FindForm());
                 }
             };
 
@@ -65,7 +62,7 @@ namespace gMKVToolNix.Controls
                 }
                 catch (Exception ex)
                 {
-                    ex.ShowException();
+                    ex.ShowException(this.FindForm());
                 }
             };
 
@@ -121,7 +118,7 @@ namespace gMKVToolNix.Controls
             }
             catch (Exception ex)
             {
-                ex.ShowException();
+                ex.ShowException(this.FindForm());
             }
         }
 

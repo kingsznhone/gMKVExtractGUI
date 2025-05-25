@@ -28,15 +28,15 @@ namespace gMKVToolNix
         /// <summary>
         /// Gets the form's border width in pixels
         /// </summary>
-        public Int32 BorderWidth
+        public int BorderWidth
         {
-            get { return Convert.ToInt32(Convert.ToDouble(this.Width - this.ClientSize.Width) / 2.0); }
+            get { return Convert.ToInt32((double)(this.Width - this.ClientSize.Width) / 2.0); }
         }
 
         /// <summary>
         /// Gets the form's Title Bar Height in pixels
         /// </summary>
-        public Int32 TitlebarHeight
+        public int TitlebarHeight
         {
             get { return this.Height - this.ClientSize.Height - 2 * BorderWidth; }
         }
@@ -180,7 +180,7 @@ namespace gMKVToolNix
         /// Returns the full path and filename of the executing assembly
         /// </summary>
         /// <returns></returns>
-        protected String GetExecutingAssemblyLocation()
+        protected string GetExecutingAssemblyLocation()
         {
             return Assembly.GetExecutingAssembly().Location;
         }
@@ -189,7 +189,7 @@ namespace gMKVToolNix
         /// Returns the current directory of the executing assembly
         /// </summary>
         /// <returns></returns>
-        protected String GetCurrentDirectory()
+        protected string GetCurrentDirectory()
         {
             return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         }
@@ -267,7 +267,7 @@ namespace gMKVToolNix
             this.Show();
         }
 
-        protected DialogResult ShowQuestion(String argQuestion, String argTitle, bool argShowCancel = true)
+        protected DialogResult ShowQuestion(string argQuestion, string argTitle, bool argShowCancel = true)
         {
             MessageBoxButtons msgBoxBtns = MessageBoxButtons.YesNoCancel;
             if (!argShowCancel)
@@ -296,7 +296,7 @@ namespace gMKVToolNix
             this.ResumeLayout(false);
         }
 
-        protected void ToggleControls(Control argRootControl, Boolean argStatus)
+        protected void ToggleControls(Control argRootControl, bool argStatus)
         {
             foreach (Control ctrl in argRootControl.Controls)
             {

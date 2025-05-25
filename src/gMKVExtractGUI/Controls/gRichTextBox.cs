@@ -1,9 +1,7 @@
-﻿using gMKVToolNix.Controls;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
-using System.Text;
 using System.Windows.Forms;
+using gMKVToolNix.Controls;
 
 namespace gMKVToolNix
 {
@@ -31,7 +29,7 @@ namespace gMKVToolNix
                 }
                 else if (e.Control && e.KeyCode == Keys.C)
                 {
-                    if (!String.IsNullOrWhiteSpace(this.SelectedText))
+                    if (!string.IsNullOrWhiteSpace(this.SelectedText))
                     {
                         Clipboard.SetText(this.SelectedText, TextDataFormat.UnicodeText);
                     }
@@ -40,7 +38,7 @@ namespace gMKVToolNix
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                ex.ShowException();
+                ex.ShowException(this.FindForm());
             }
         }
     }

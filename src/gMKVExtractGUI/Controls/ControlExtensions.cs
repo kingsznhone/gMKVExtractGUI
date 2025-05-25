@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 
 namespace gMKVToolNix.Controls
@@ -11,7 +8,7 @@ namespace gMKVToolNix.Controls
     public static class ControlExtensions
     {
         [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, Int32 wMsg, bool wParam, Int32 lParam);
+        public static extern int SendMessage(IntPtr hWnd, int wMsg, bool wParam, int lParam);
 
         private const int WM_SETREDRAW = 11;
 
@@ -34,11 +31,11 @@ namespace gMKVToolNix.Controls
             parent.Invalidate(true);
         }
 
-        private static Boolean GetDesignMode(this Control control)
+        private static bool GetDesignMode(this Control control)
         {
             BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static;
             PropertyInfo prop = control.GetType().GetProperty("DesignMode", bindFlags);
-            return (Boolean)prop.GetValue(control, null);
+            return (bool)prop.GetValue(control, null);
         }
 
         /// <summary>
@@ -46,7 +43,7 @@ namespace gMKVToolNix.Controls
         /// </summary>
         /// <param name="control"></param>
         /// <returns></returns>
-        public static Boolean IsInDesignMode(this Control control)
+        public static bool IsInDesignMode(this Control control)
         {
             Control parent = control.Parent;
             while (parent != null)

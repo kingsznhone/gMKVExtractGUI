@@ -1,36 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace gMKVToolNix.Controls
 {
     public class gDataGridView:DataGridView
     {
-        protected Int32 _LastClickedRowIndex = -1;
+        protected int _LastClickedRowIndex = -1;
 
         [Browsable(false)]
-        public Int32 LastClickedRowIndex
+        public int LastClickedRowIndex
         {
             get { return _LastClickedRowIndex; }
             set { _LastClickedRowIndex = value; }
         }
 
-        protected Int32 _LastClickedColumnIndex = -1;
+        protected int _LastClickedColumnIndex = -1;
 
         [Browsable(false)]
-        public Int32 LastClickedColumnIndex
+        public int LastClickedColumnIndex
         {
             get { return _LastClickedColumnIndex; }
             set { _LastClickedColumnIndex = value; }
         }
 
-        protected Int32 _ColumnResizedIndex = -1;
-        protected Boolean _ColumnResizing = false;
+        protected int _ColumnResizedIndex = -1;
+        protected bool _ColumnResizing = false;
 
         public gDataGridView()
             : base()
@@ -65,7 +62,7 @@ namespace gMKVToolNix.Controls
             }
             catch (Exception ex)
             {
-                ex.ShowException();
+                ex.ShowException(this.FindForm());
             }
         }
 
@@ -94,7 +91,7 @@ namespace gMKVToolNix.Controls
             }
             catch (Exception ex)
             {
-                ex.ShowException();
+                ex.ShowException(this.FindForm());
             }
         }
 
@@ -126,6 +123,5 @@ namespace gMKVToolNix.Controls
                 Debug.WriteLine(ex);
             }
         }
-
     }
 }

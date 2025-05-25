@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 
 namespace gMKVToolNix
 {
-
     public class gTreeView : TreeView
     {
         private const int TVIF_STATE = 0x8;
@@ -75,9 +72,9 @@ namespace gMKVToolNix
             }
         }
 
-        private void GetAllNodes(Object rootNode, List<TreeNode> nodeList)
+        private void GetAllNodes(object rootNode, List<TreeNode> nodeList)
         {
-            if(rootNode == null)
+            if (rootNode == null)
             {
                 return;
             }
@@ -119,7 +116,7 @@ namespace gMKVToolNix
             }
         }
 
-        private void GetCheckedNodes(Object rootNode, List<TreeNode> nodeList)
+        private void GetCheckedNodes(object rootNode, List<TreeNode> nodeList)
         {
             if (nodeList == null)
             {
@@ -194,7 +191,7 @@ namespace gMKVToolNix
                 throw new ArgumentNullException("node");
             if (node.TreeView == null)
                 throw new InvalidOperationException("The node does not belong to a tree.");
-            
+
             // If we are on Linux, we can't use P/Invoke to user32.dll
             // So if the node's check box visibility has the same value as the node's TreeView CheckBoxes property 
             if (gMKVHelper.IsOnLinux) { return node.TreeView.CheckBoxes; }
@@ -216,7 +213,7 @@ namespace gMKVToolNix
             base.OnNodeMouseClick(e);
             if (_CheckOnClick)
             {
-                if (e.Button == MouseButtons.Left && 
+                if (e.Button == MouseButtons.Left &&
                     e.Node.Bounds.Contains(new Point(e.X, e.Y))
                     && this.CheckBoxes
                     && IsCheckBoxVisible(e.Node)
@@ -225,7 +222,7 @@ namespace gMKVToolNix
                     e.Node.Checked = !e.Node.Checked;
                 }
             }
-            if(_SelectOnRightClick && e.Button == MouseButtons.Right)
+            if (_SelectOnRightClick && e.Button == MouseButtons.Right)
             {
                 this.SelectedNode = e.Node;
             }
