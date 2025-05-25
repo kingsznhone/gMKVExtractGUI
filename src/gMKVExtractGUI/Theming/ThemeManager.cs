@@ -66,12 +66,18 @@ namespace gMKVToolNix.Theming
 
                 void groupBoxPaintEventHandler(object sender, PaintEventArgs e)
                 {
-                    if (control.Enabled == false && darkMode)
+                    var groupBox = sender as GroupBox;
+                    if (groupBox.Enabled == false && darkMode)
                     {
-                        var radio = (sender as GroupBox);
-                        using (Brush B = new SolidBrush(control.ForeColor))
+                        using (Brush brush = new SolidBrush(control.ForeColor))
                         {
-                            e.Graphics.DrawString(radio.Text, radio.Font, B, new System.Drawing.PointF(6, 0));
+                            e.Graphics.DrawString(
+                                groupBox.Text, 
+                                groupBox.Font, 
+                                brush, 
+                                new PointF(
+                                    groupBox.Font.SizeInPoints - 2, 
+                                    -1));
                         }
                     }
                 }
