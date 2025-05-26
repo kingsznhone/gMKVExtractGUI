@@ -96,17 +96,10 @@ namespace gMKVToolNix
             // Draw text
             if (!string.IsNullOrEmpty(Text))
             {
-                var textRect = new Rectangle(4, 4, Width - 8, Height - 8);
-                TextRenderer.DrawText(g, Text, Font, textRect,
+                TextRenderer.DrawText(g, Text, Font, ClientRectangle,
                     ForeColor, BackColor,
                     TextFormatFlags.Left | TextFormatFlags.Top |
                     TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl);
-            }
-
-            // Draw border if needed
-            using (var borderPen = new Pen(Color.FromArgb(100, 100, 100)))
-            {
-                g.DrawRectangle(borderPen, 0, 0, Width - 1, Height - 1);
             }
         }
 

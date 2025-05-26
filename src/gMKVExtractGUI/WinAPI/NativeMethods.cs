@@ -67,15 +67,31 @@ namespace gMKVToolNix.WinAPI // Or any appropriate namespace
         /// <param name="pszSubIdList"></param>
         /// <returns>true if successful, false otherwise.</returns>
         public static bool SetWindowThemeManaged(IntPtr hWnd, bool darkModeEnabled, string pszSubIdList = null)        {
+            string mode = darkModeEnabled ? "DarkMode_Explorer" : "ClearMode_Explorer";
+            return SetWindowThemeInternal(hWnd, mode, pszSubIdList);
+        }
+
+        /// <summary>
+        /// Sets the window theme to dark mode or light mode based on the provided boolean value.
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <param name="darkModeEnabled"></param>
+        /// <param name="pszSubIdList"></param>
+        /// <returns>true if successful, false otherwise.</returns>
+        public static bool SetWindowThemeForComboBoxManaged(IntPtr hWnd, bool darkModeEnabled, string pszSubIdList = null)        {
+            string mode = darkModeEnabled ? "DarkMode_CFD" : "ClearMode_CFD";
+            return SetWindowThemeInternal(hWnd, mode, pszSubIdList);
+        }
+
+        private static bool SetWindowThemeInternal(IntPtr hWnd, string mode, string pszSubIdList = null)
+        {
             if (gMKVHelper.IsOnLinux)
             {
                 return true;
             }
 
-            string mode = darkModeEnabled ? "DarkMode_Explorer" : "ClearMode_Explorer";
-
             int result = SetWindowTheme(hWnd, mode, pszSubIdList);
-            
+
             return result == 0;
         }
     }

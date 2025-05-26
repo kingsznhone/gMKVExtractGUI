@@ -159,14 +159,12 @@ namespace gMKVToolNix
         /// <param name="value"><value>true</value> to make the checkbox visible on the tree node; otherwise <value>false</value>.</param>
         public void SetIsCheckBoxVisible(TreeNode node, bool value)
         {
-            if (node == null)
-                throw new ArgumentNullException("node");
-            if (node.TreeView == null)
-                throw new InvalidOperationException("The node does not belong to a tree.");
+            if (node == null) throw new ArgumentNullException("node");
+            if (node.TreeView == null) throw new InvalidOperationException("The node does not belong to a tree.");
 
             // If we are on Linux, we can't use P/Invoke to user32.dll
             // So this function can't do anything
-            if (gMKVHelper.IsOnLinux) { return; }
+            if (gMKVHelper.IsOnLinux) return;
 
             var tvi = new TVITEM
             {
@@ -175,9 +173,10 @@ namespace gMKVToolNix
                 stateMask = TVIS_STATEIMAGEMASK,
                 state = (value ? node.Checked ? 2 : 1 : 0) << 12
             };
+            
             var result = SendMessage(node.TreeView.Handle, TVM_SETITEM, IntPtr.Zero, ref tvi);
-            if (result == IntPtr.Zero)
-                throw new ApplicationException("Error setting TreeNode state.");
+            
+            if (result == IntPtr.Zero) throw new ApplicationException("Error setting TreeNode state.");
         }
 
         /// <summary>
@@ -187,23 +186,23 @@ namespace gMKVToolNix
         /// <returns><value>true</value> if the checkbox is visible on the tree node; otherwise <value>false</value>.</returns>
         public bool IsCheckBoxVisible(TreeNode node)
         {
-            if (node == null)
-                throw new ArgumentNullException("node");
-            if (node.TreeView == null)
-                throw new InvalidOperationException("The node does not belong to a tree.");
+            if (node == null) throw new ArgumentNullException("node");
+            if (node.TreeView == null) throw new InvalidOperationException("The node does not belong to a tree.");
 
             // If we are on Linux, we can't use P/Invoke to user32.dll
             // So if the node's check box visibility has the same value as the node's TreeView CheckBoxes property 
-            if (gMKVHelper.IsOnLinux) { return node.TreeView.CheckBoxes; }
+            if (gMKVHelper.IsOnLinux) return node.TreeView.CheckBoxes;
 
             var tvi = new TVITEM
             {
                 hItem = node.Handle,
                 mask = TVIF_STATE
             };
+            
             var result = SendMessage(node.TreeView.Handle, TVM_GETITEM, node.Handle, ref tvi);
-            if (result == IntPtr.Zero)
-                throw new ApplicationException("Error getting TreeNode state.");
+            
+            if (result == IntPtr.Zero) throw new ApplicationException("Error getting TreeNode state.");
+            
             var imageIndex = (tvi.state & TVIS_STATEIMAGEMASK) >> 12;
             return (imageIndex != 0);
         }
@@ -211,17 +210,18 @@ namespace gMKVToolNix
         protected override void OnNodeMouseClick(TreeNodeMouseClickEventArgs e)
         {
             base.OnNodeMouseClick(e);
+
             if (_CheckOnClick)
             {
                 if (e.Button == MouseButtons.Left &&
                     e.Node.Bounds.Contains(new Point(e.X, e.Y))
                     && this.CheckBoxes
-                    && IsCheckBoxVisible(e.Node)
-                )
+                    && IsCheckBoxVisible(e.Node))
                 {
                     e.Node.Checked = !e.Node.Checked;
                 }
             }
+
             if (_SelectOnRightClick && e.Button == MouseButtons.Right)
             {
                 this.SelectedNode = e.Node;

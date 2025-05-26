@@ -1,11 +1,10 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace gMKVToolNix
 {
     public class gGroupBox:GroupBox
     {
-        public const Int32 WM_ERASEBKGND = 0x0014;
+        public const int WM_ERASEBKGND = 0x0014;
 
         public gGroupBox()
             : base()

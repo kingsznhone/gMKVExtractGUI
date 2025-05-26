@@ -1,6 +1,6 @@
-using System;
 using System.Drawing;
 using System.Windows.Forms;
+using gMKVToolNix.Controls;
 using gMKVToolNix.WinAPI;
 
 namespace gMKVToolNix.Theming
@@ -31,7 +31,7 @@ namespace gMKVToolNix.Theming
         public static Color DarkModeContainerForeColor { get; set; } = Color.White;
         public static Color DarkModeTextBackColor { get; set; } = Color.FromArgb(60, 60, 60);
         public static Color DarkModeTextForeColor { get; set; } = Color.White;
-        public static Color DarkModeButtonBackColor { get; set; } = Color.FromArgb(80, 80, 80);
+        public static Color DarkModeButtonBackColor { get; set; } = Color.FromArgb(60, 60, 60);
         public static Color DarkModeButtonForeColor { get; set; } = Color.White;
         public static Color DarkModeMenuBackColor { get; set; } = Color.FromArgb(60, 60, 60);
         public static Color DarkModeMenuForeColor { get; set; } = Color.White;
@@ -66,29 +66,15 @@ namespace gMKVToolNix.Theming
                 control.BackColor = containerBackColor;
                 control.ForeColor = containerForeColor; // This sets the default for child controls that inherit
 
-                void groupBoxPaintEventHandler(object sender, PaintEventArgs e)
-                {
-                    var groupBox = sender as GroupBox;
-                    if (groupBox.Enabled == false && darkMode)
-                    {
-                        using (Brush brush = new SolidBrush(control.ForeColor))
-                        {
-                            e.Graphics.DrawString(
-                                groupBox.Text, 
-                                groupBox.Font, 
-                                brush,
-                                new PointF(
-                                    groupBox.Font.SizeInPoints, 
-                                    -1),
-                                StringFormat.GenericTypographic);
-                        }
-                    }
-                }
-
                 if (control is GroupBox)
                 {
                     control.Paint -= groupBoxPaintEventHandler;
-                    control.Paint += groupBoxPaintEventHandler;
+                    
+                    // Only for Dark mode, since in light mode it creates an issue
+                    if (darkMode)
+                    {
+                        control.Paint += groupBoxPaintEventHandler;
+                    }
                 }
             }
             else if (control is TextBox || control is RichTextBox || control is gTextBox || control is gRichTextBox)
@@ -138,6 +124,7 @@ namespace gMKVToolNix.Theming
                     btn.FlatAppearance.BorderColor = Color.DarkGray;
                     btn.BackColor = DarkModeButtonBackColor;
                     btn.ForeColor = DarkModeButtonForeColor;
+                    btn.UseVisualStyleBackColor = true;
                 }
                 else
                 {
@@ -177,20 +164,19 @@ namespace gMKVToolNix.Theming
             }
             else if (control is ComboBox cb)
             {
-                // Existing ComboBox theming logic (user's sequence from previous step)
+                // Apply Windows Color Mode:
+                NativeMethods.SetWindowThemeForComboBoxManaged(control.Handle, darkMode);
+
                 ComboBoxStyle originalStyle = cb.DropDownStyle;
                 try
                 {
-                    cb.DropDownStyle = ComboBoxStyle.Simple;
                     if (darkMode)
                     {
-                        cb.FlatStyle = FlatStyle.Flat;
                         cb.BackColor = DarkModeTextBackColor;
                         cb.ForeColor = DarkModeFormForeColor; // Using DarkModeFormForeColor for text
                     }
                     else // Light Mode
                     {
-                        cb.FlatStyle = FlatStyle.Standard;
                         cb.BackColor = SystemColors.Window;
                         cb.ForeColor = SystemColors.ControlText;
                     }
@@ -201,14 +187,13 @@ namespace gMKVToolNix.Theming
                     cb.DropDownStyle = originalStyle;
                 }
 
-                // New logic for ComboBox ContextMenuStrip (from user snippets)
-                if (cb is gMKVToolNix.Controls.gComboBox gcmb && gcmb.ContextMenuStrip != null)
+                if (cb is gComboBox gcmb && gcmb.ContextMenuStrip != null)
                 {
                     if (darkMode)
                     {
-                        gcmb.ContextMenuStrip.BackColor = DarkModeButtonBackColor; // Use ThemeManager's color
-                        gcmb.ContextMenuStrip.ForeColor = DarkModeFormForeColor;   // Use ThemeManager's color for text
-                        gcmb.ContextMenuStrip.RenderMode = ToolStripRenderMode.ManagerRenderMode; // Ensure consistency
+                        gcmb.ContextMenuStrip.BackColor = DarkModeButtonBackColor;
+                        gcmb.ContextMenuStrip.ForeColor = DarkModeFormForeColor;
+                        gcmb.ContextMenuStrip.RenderMode = ToolStripRenderMode.ManagerRenderMode;
                         foreach (ToolStripItem item in gcmb.ContextMenuStrip.Items)
                         {
                             ApplyToolStripItemThemeForComboBox(item, darkMode); // Use a dedicated helper
@@ -216,9 +201,9 @@ namespace gMKVToolNix.Theming
                     }
                     else // Light Mode for ComboBox ContextMenuStrip
                     {
-                        gcmb.ContextMenuStrip.BackColor = SystemColors.ControlLightLight; // User snippet
-                        gcmb.ContextMenuStrip.ForeColor = SystemColors.ControlText;       // User snippet
-                        gcmb.ContextMenuStrip.RenderMode = ToolStripRenderMode.System; // User snippet implies system default look
+                        gcmb.ContextMenuStrip.BackColor = SystemColors.ControlLightLight;
+                        gcmb.ContextMenuStrip.ForeColor = SystemColors.ControlText;
+                        gcmb.ContextMenuStrip.RenderMode = ToolStripRenderMode.System;
                         foreach (ToolStripItem item in gcmb.ContextMenuStrip.Items)
                         {
                             ApplyToolStripItemThemeForComboBox(item, darkMode); // Use a dedicated helper
@@ -369,11 +354,6 @@ namespace gMKVToolNix.Theming
             }
         }
 
-        private static void Tv_EnabledChanged(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
         public static void ApplyToolStripItemTheme(ToolStripItem item, bool darkMode)
         {
             if (darkMode)
@@ -435,7 +415,7 @@ namespace gMKVToolNix.Theming
                 item.ForeColor = SystemColors.ControlText;       // From user snippet
             }
 
-            if (item is ToolStripMenuItem menuItem && menuItem.HasDropDownItems) // Corrected to HasDropDownItems
+            if (item is ToolStripMenuItem menuItem && menuItem.HasDropDownItems)
             {
                 // For dropdowns of menu items, apply recursively
                 // The DropDown is a ToolStripDropDownMenu which is a kind of ContextMenuStrip
@@ -450,6 +430,25 @@ namespace gMKVToolNix.Theming
                 foreach (ToolStripItem dropDownItem in menuItem.DropDownItems)
                 {
                     ApplyToolStripItemThemeForComboBox(dropDownItem, darkMode); // Recursive call
+                }
+            }
+        }
+
+        private static void groupBoxPaintEventHandler(object sender, PaintEventArgs e)
+        {
+            var groupBox = sender as GroupBox;
+            if (groupBox.Enabled == false)
+            {
+                using (Brush brush = new SolidBrush(groupBox.ForeColor))
+                {
+                    e.Graphics.DrawString(
+                        groupBox.Text,
+                        groupBox.Font,
+                        brush,
+                        new PointF(
+                            groupBox.Font.SizeInPoints,
+                            -1),
+                        StringFormat.GenericTypographic);
                 }
             }
         }
