@@ -807,7 +807,11 @@ namespace gMKVToolNix.Forms
             prgBrTotalStatus.Value = (_CurrentJob - 1) * 100 + Convert.ToInt32(val);
             lblStatus.Text = string.Format("{0}%", Convert.ToInt32(val));
             lblTotalStatus.Text = string.Format("{0}%", prgBrTotalStatus.Value / _TotalJobs);
-            gTaskbarProgress.SetValue(this, Convert.ToUInt64(val), (UInt64)100);
+            
+            // Update the task bar progress bar based on the total progress and not on the individual job
+            gTaskbarProgress.SetValue(this, Convert.ToUInt64(prgBrTotalStatus.Value), (UInt64)prgBrTotalStatus.Maximum);
+            //gTaskbarProgress.SetValue(this, Convert.ToUInt64(val), (UInt64)100);
+
             Application.DoEvents();
         }
 
