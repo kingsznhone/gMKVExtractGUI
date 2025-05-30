@@ -163,7 +163,11 @@ namespace gMKVToolNix.Forms
                             }
                             else
                             {
+                                // We set the flag to bypass the checks
+                                // since it's a manual path from the arguments and we don't want to save it in the settings
+                                _FromConstructor = true;
                                 txtMKVToolnixPath.Text = manualPath;
+                                _FromConstructor = false;
                             }
                         }
                     }
@@ -179,65 +183,43 @@ namespace gMKVToolNix.Forms
                     // Find MKVToolnix path
                     try
                     {
-                        if (!gMKVHelper.IsOnLinux)
+                        // First check the ini file
+                        gMKVLogger.Log($"Checking in ini path for mkvmerge... ({_Settings.MkvToolnixPath})");
+
+                        if (File.Exists(Path.Combine(_Settings.MkvToolnixPath, gMKVHelper.MKV_MERGE_GUI_FILENAME))
+                            || File.Exists(Path.Combine(_Settings.MkvToolnixPath, gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
                         {
-                            // When on Windows, check the registry first
-                            gMKVLogger.Log("Checking registry for mkvmerge...");
-                            txtMKVToolnixPath.Text = gMKVHelper.GetMKVToolnixPathViaRegistry();
+                            // We set the flag to bypass the checks
+                            // since the path already exists in the settings
+                            _FromConstructor = true;
+                            txtMKVToolnixPath.Text = _Settings.MkvToolnixPath;
+                            _FromConstructor = false;
                         }
                         else
                         {
-                            // When on Linux, check the usr/bin first
-                            string linuxDefaultPath = Path.Combine("/usr", "bin");
-                            if (File.Exists(Path.Combine(linuxDefaultPath, gMKVHelper.MKV_MERGE_GUI_FILENAME))
-                                || File.Exists(Path.Combine(linuxDefaultPath, gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
-                            {
-                                txtMKVToolnixPath.Text = linuxDefaultPath;
-                            }
-                            else
-                            {
-                                throw new Exception($"mkvmerge was not found in path {linuxDefaultPath}!");
-                            }
+                            gMKVLogger.Log($"mkvmerge was not found in ini path! ({_Settings.MkvToolnixPath})");
+
+                            AutoDetectMkvToolnixPath();
                         }
                     }
                     catch (Exception ex)
                     {
                         Debug.WriteLine(ex);
                         gMKVLogger.Log(ex.ToString());
-                        // MKVToolnix could not be found in registry
-                        // check in the current directory
-                        string currentDirectory = GetCurrentDirectory();
-                        if (File.Exists(Path.Combine(currentDirectory, gMKVHelper.MKV_MERGE_GUI_FILENAME))
-                            || File.Exists(Path.Combine(currentDirectory, gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
+                        
+                        // MKVToolnix could not be found anywhere
+                        // Select exception message according to running OS
+                        string exceptionMessage = "";
+                        if (gMKVHelper.IsOnLinux)
                         {
-                            txtMKVToolnixPath.Text = currentDirectory;
+                            exceptionMessage = "Could not find MKVToolNix in /usr/bin, or in the current directory, or in the ini file!";
                         }
                         else
                         {
-                            // check for ini file
-                            if (File.Exists(Path.Combine(_Settings.MkvToolnixPath, gMKVHelper.MKV_MERGE_GUI_FILENAME))
-                                || File.Exists(Path.Combine(_Settings.MkvToolnixPath, gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
-                            {
-                                _FromConstructor = true;
-                                txtMKVToolnixPath.Text = _Settings.MkvToolnixPath;
-                                _FromConstructor = false;
-                            }
-                            else
-                            {
-                                // Select exception message according to running OS
-                                string exceptionMessage = "";
-                                if (gMKVHelper.IsOnLinux)
-                                {
-                                    exceptionMessage = "Could not find MKVToolNix in /usr/bin, or in the current directory, or in the ini file!";
-                                }
-                                else
-                                {
-                                    exceptionMessage = "Could not find MKVToolNix in registry, or in the current directory, or in the ini file!";
-                                }
-                                gMKVLogger.Log(exceptionMessage);
-                                throw new Exception(exceptionMessage + Environment.NewLine + "Please download and reinstall or provide a manual path!");
-                            }
+                            exceptionMessage = "Could not find MKVToolNix in registry, or in the current directory, or in the ini file!";
                         }
+                        gMKVLogger.Log(exceptionMessage);
+                        throw new Exception(exceptionMessage + Environment.NewLine + "Please download and reinstall or provide a manual path!");
                     }
                 }
             }
@@ -246,6 +228,65 @@ namespace gMKVToolNix.Forms
                 Debug.WriteLine(ex);
                 gMKVLogger.Log(ex.ToString());
                 _FromConstructor = false;
+                ShowErrorMessage(ex.Message);
+            }
+        }
+
+        private void AutoDetectMkvToolnixPath()
+        {
+            // Check the current directory
+            string currentDirectory = GetCurrentDirectory();
+            gMKVLogger.Log($"Checking in current Directory for mkvmerge... ({currentDirectory})");
+
+            if (File.Exists(Path.Combine(currentDirectory, gMKVHelper.MKV_MERGE_GUI_FILENAME))
+                || File.Exists(Path.Combine(currentDirectory, gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
+            {
+                // We don't set the flag to bypass the checks here
+                // since we want the current directory to be saved in the settings
+                txtMKVToolnixPath.Text = currentDirectory;
+            }
+            else
+            {
+                gMKVLogger.Log($"mkvmerge was not found in current directory! ({currentDirectory})");
+
+                if (!gMKVHelper.IsOnLinux)
+                {
+                    // When on Windows, check the registry
+                    gMKVLogger.Log("Checking registry for mkvmerge...");
+
+                    // We don't set the flag to bypass the checks here
+                    // since we want the registry value to be saved in the settings
+                    txtMKVToolnixPath.Text = gMKVHelper.GetMKVToolnixPathViaRegistry();
+                }
+                else
+                {
+                    // When on Linux, check the usr/bin first
+                    string linuxDefaultPath = Path.Combine("/usr", "bin");
+                    if (File.Exists(Path.Combine(linuxDefaultPath, gMKVHelper.MKV_MERGE_GUI_FILENAME))
+                        || File.Exists(Path.Combine(linuxDefaultPath, gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
+                    {
+                        // We don't set the flag to bypass the checks here
+                        // since we want the current directory to be saved in the settings
+                        txtMKVToolnixPath.Text = linuxDefaultPath;
+                    }
+                    else
+                    {
+                        throw new Exception($"mkvmerge was not found in path {linuxDefaultPath}!");
+                    }
+                }
+            }
+        }
+
+        private void btnAutoDetectMkvToolnix_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                AutoDetectMkvToolnixPath();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -1229,7 +1270,7 @@ namespace gMKVToolNix.Forms
 
                     // Write the value to the ini file
                     _Settings.MkvToolnixPath = trimmedPath;
-                    gMKVLogger.Log("Changing MkvToolnixPath");
+                    gMKVLogger.Log($"Changing MkvToolnixPath to {trimmedPath}");
                     _Settings.Save();
                 }
                 _gMkvExtract = new gMKVExtract(txtMKVToolnixPath.Text);

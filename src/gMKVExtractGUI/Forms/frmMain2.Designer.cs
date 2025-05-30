@@ -103,6 +103,7 @@ namespace gMKVToolNix.Forms
             this.btnAbortAll = new System.Windows.Forms.Button();
             this.btnOptions = new System.Windows.Forms.Button();
             this.chkDarkMode = new System.Windows.Forms.CheckBox();
+            this.btnAutoDetectMkvToolnix = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.tlpMain.SuspendLayout();
             this.grpActions.SuspendLayout();
@@ -330,7 +331,7 @@ namespace gMKVToolNix.Forms
             // txtOutputDirectory
             // 
             this.txtOutputDirectory.AllowDrop = true;
-            this.txtOutputDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.txtOutputDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOutputDirectory.ContextMenuStrip = this.contextMenuStripOutputDirectory;
             this.txtOutputDirectory.Location = new System.Drawing.Point(6, 22);
@@ -369,6 +370,7 @@ namespace gMKVToolNix.Forms
             // 
             // grpConfig
             // 
+            this.grpConfig.Controls.Add(this.btnAutoDetectMkvToolnix);
             this.grpConfig.Controls.Add(this.txtMKVToolnixPath);
             this.grpConfig.Controls.Add(this.btnBrowseMKVToolnixPath);
             this.grpConfig.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -382,13 +384,13 @@ namespace gMKVToolNix.Forms
             // txtMKVToolnixPath
             // 
             this.txtMKVToolnixPath.AllowDrop = true;
-            this.txtMKVToolnixPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.txtMKVToolnixPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMKVToolnixPath.Location = new System.Drawing.Point(6, 22);
             this.txtMKVToolnixPath.Name = "txtMKVToolnixPath";
             this.txtMKVToolnixPath.ReadOnly = true;
             this.txtMKVToolnixPath.ShortcutsEnabled = false;
-            this.txtMKVToolnixPath.Size = new System.Drawing.Size(519, 23);
+            this.txtMKVToolnixPath.Size = new System.Drawing.Size(448, 23);
             this.txtMKVToolnixPath.TabIndex = 7;
             this.txtMKVToolnixPath.WordWrap = false;
             this.txtMKVToolnixPath.TextChanged += new System.EventHandler(this.txtMKVToolnixPath_TextChanged);
@@ -398,9 +400,9 @@ namespace gMKVToolNix.Forms
             // btnBrowseMKVToolnixPath
             // 
             this.btnBrowseMKVToolnixPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowseMKVToolnixPath.Location = new System.Drawing.Point(531, 17);
+            this.btnBrowseMKVToolnixPath.Location = new System.Drawing.Point(458, 18);
             this.btnBrowseMKVToolnixPath.Name = "btnBrowseMKVToolnixPath";
-            this.btnBrowseMKVToolnixPath.Size = new System.Drawing.Size(80, 30);
+            this.btnBrowseMKVToolnixPath.Size = new System.Drawing.Size(70, 30);
             this.btnBrowseMKVToolnixPath.TabIndex = 6;
             this.btnBrowseMKVToolnixPath.Text = "Browse...";
             this.btnBrowseMKVToolnixPath.UseVisualStyleBackColor = true;
@@ -752,6 +754,7 @@ namespace gMKVToolNix.Forms
             // 
             // txtSegmentInfo
             // 
+            this.txtSegmentInfo.DarkMode = false;
             this.txtSegmentInfo.DetectUrls = false;
             this.txtSegmentInfo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtSegmentInfo.Location = new System.Drawing.Point(3, 19);
@@ -807,6 +810,17 @@ namespace gMKVToolNix.Forms
             this.chkDarkMode.Text = "Dark";
             this.chkDarkMode.UseVisualStyleBackColor = true;
             this.chkDarkMode.CheckedChanged += new System.EventHandler(this.chkDarkMode_CheckedChanged);
+            // 
+            // btnAutoDetectMkvToolnix
+            // 
+            this.btnAutoDetectMkvToolnix.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAutoDetectMkvToolnix.Location = new System.Drawing.Point(531, 18);
+            this.btnAutoDetectMkvToolnix.Name = "btnAutoDetectMkvToolnix";
+            this.btnAutoDetectMkvToolnix.Size = new System.Drawing.Size(80, 30);
+            this.btnAutoDetectMkvToolnix.TabIndex = 8;
+            this.btnAutoDetectMkvToolnix.Text = "Auto Detect";
+            this.btnAutoDetectMkvToolnix.UseVisualStyleBackColor = true;
+            this.btnAutoDetectMkvToolnix.Click += new System.EventHandler(this.btnAutoDetectMkvToolnix_Click);
             // 
             // frmMain2
             // 
@@ -922,5 +936,6 @@ namespace gMKVToolNix.Forms
         private System.Windows.Forms.TableLayoutPanel tlpInput;
         private System.Windows.Forms.CheckBox chkAppendOnDragAndDrop;
         private System.Windows.Forms.CheckBox chkDarkMode;
+        private System.Windows.Forms.Button btnAutoDetectMkvToolnix;
     }
 }
