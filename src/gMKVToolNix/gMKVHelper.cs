@@ -117,6 +117,7 @@ namespace gMKVToolNix
                     {
                         valueFound = true;
                         valuePath = (string)regMkvToolnix.GetValue(valueName);
+                        gMKVLogger.Log($"Found MKVToolNix in registry (Win32): {valuePath}");
                         break;
                     }
                 }
@@ -149,6 +150,7 @@ namespace gMKVToolNix
                         {
                             valueFound = true;
                             valuePath = (string)regMkvToolnix.GetValue(valueName);
+                            gMKVLogger.Log($"Found MKVToolNix in registry (Win64): {valuePath}");
                             break;
                         }
                     }
@@ -178,7 +180,7 @@ namespace gMKVToolNix
                 }
 
                 RegistryKey regGui = null;
-                Boolean foundGuiKey = false;
+                bool foundGuiKey = false;
                 foreach (string subKey in regMkvToolnix.GetSubKeyNames())
                 {
                     if (subKey.Equals("GUI", StringComparison.OrdinalIgnoreCase))
@@ -200,6 +202,7 @@ namespace gMKVToolNix
                     {
                         valueFound = true;
                         valuePath = (string)regGui.GetValue("mkvmerge_executable");
+                        gMKVLogger.Log($"Found MKVToolNix in registry (CURRENT_USER): {valuePath}");
                         break;
                     }
                 }

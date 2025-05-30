@@ -138,19 +138,19 @@ namespace gMKVToolNix.Forms
                     // Get the path
                     string manualPath = arg.Substring(13);
                     // Log the path
-                    gMKVLogger.Log(string.Format("User provided a manual path for MKVToolNix: {0}", manualPath));
+                    gMKVLogger.Log($"User provided a manual path for MKVToolNix: {manualPath}");
 
                     if (string.IsNullOrWhiteSpace(manualPath))
                     {
                         manualPathOK = false;
-                        gMKVLogger.Log(string.Format("The manual path for MKVToolNix was empty!"));
+                        gMKVLogger.Log("The manual path for MKVToolNix was empty!");
                     }
                     else
                     {
                         if (!Directory.Exists(manualPath))
                         {
                             manualPathOK = false;
-                            gMKVLogger.Log(string.Format("The manual path for MKVToolNix does not exist!"));
+                            gMKVLogger.Log($"The manual path for MKVToolNix does not exist! ({manualPath})");
                         }
                         else
                         {
@@ -159,7 +159,7 @@ namespace gMKVToolNix.Forms
                             )
                             {
                                 manualPathOK = false;
-                                gMKVLogger.Log(string.Format("mkvmerge was not found in manual path!"));
+                                gMKVLogger.Log($"mkvmerge was not found in manual path! ({manualPath})");
                             }
                             else
                             {
@@ -171,7 +171,7 @@ namespace gMKVToolNix.Forms
 
                 if (manualMkvToolNixPath && !manualPathOK)
                 {
-                    gMKVLogger.Log(string.Format("Failed to set manual path! Trying to auto-detect..."));
+                    gMKVLogger.Log("Failed to set manual path! Trying to auto-detect...");
                 }
 
                 if (!manualMkvToolNixPath || (manualMkvToolNixPath && !manualPathOK))
@@ -188,27 +188,29 @@ namespace gMKVToolNix.Forms
                         else
                         {
                             // When on Linux, check the usr/bin first
-                            if (File.Exists(Path.Combine("/usr", "bin", gMKVHelper.MKV_MERGE_GUI_FILENAME))
-                                || File.Exists(Path.Combine("/usr", "bin", gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
+                            string linuxDefaultPath = Path.Combine("/usr", "bin");
+                            if (File.Exists(Path.Combine(linuxDefaultPath, gMKVHelper.MKV_MERGE_GUI_FILENAME))
+                                || File.Exists(Path.Combine(linuxDefaultPath, gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
                             {
-                                txtMKVToolnixPath.Text = Path.Combine("/usr", "bin");
+                                txtMKVToolnixPath.Text = linuxDefaultPath;
                             }
                             else
                             {
-                                throw new Exception(string.Format("mkvmerge was not found in path {0}!", Path.Combine("usr", "bin")));
+                                throw new Exception($"mkvmerge was not found in path {linuxDefaultPath}!");
                             }
                         }
                     }
                     catch (Exception ex)
                     {
                         Debug.WriteLine(ex);
-                        gMKVLogger.Log(ex.Message);
+                        gMKVLogger.Log(ex.ToString());
                         // MKVToolnix could not be found in registry
                         // check in the current directory
-                        if (File.Exists(Path.Combine(GetCurrentDirectory(), gMKVHelper.MKV_MERGE_GUI_FILENAME))
-                            || File.Exists(Path.Combine(GetCurrentDirectory(), gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
+                        string currentDirectory = GetCurrentDirectory();
+                        if (File.Exists(Path.Combine(currentDirectory, gMKVHelper.MKV_MERGE_GUI_FILENAME))
+                            || File.Exists(Path.Combine(currentDirectory, gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
                         {
-                            txtMKVToolnixPath.Text = GetCurrentDirectory();
+                            txtMKVToolnixPath.Text = currentDirectory;
                         }
                         else
                         {
@@ -310,7 +312,7 @@ namespace gMKVToolNix.Forms
                 if (e != null && e.Data != null && e.Data.GetDataPresent(DataFormats.FileDrop))
                 {
                     // check for sender
-                    if (((gTextBox)sender) == txtMKVToolnixPath)
+                    if (sender == txtMKVToolnixPath)
                     {
                         // check if MKVToolnix Path is already set
                         if (!string.IsNullOrWhiteSpace(txtMKVToolnixPath.Text))
@@ -321,7 +323,7 @@ namespace gMKVToolNix.Forms
                             }
                         }
                     }
-                    else if (((gTextBox)sender) == txtOutputDirectory)
+                    else if (sender == txtOutputDirectory)
                     {
                         // check if output directory is the same as the source
                         if (chkUseSourceDirectory.Checked)
@@ -351,7 +353,7 @@ namespace gMKVToolNix.Forms
             {
                 if (e != null && e.Data != null && e.Data.GetDataPresent(DataFormats.FileDrop))
                 {
-                    if (((gTextBox)sender) == txtOutputDirectory)
+                    if (sender == txtOutputDirectory)
                     {
                         // check if output directory is the same as the source
                         if (chkUseSourceDirectory.Checked)
@@ -374,11 +376,14 @@ namespace gMKVToolNix.Forms
                     }
                 }
                 else
+                {
                     e.Effect = DragDropEffects.None;
+                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -526,9 +531,13 @@ namespace gMKVToolNix.Forms
                 if (e != null && e.Data != null)
                 {
                     if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                    {
                         e.Effect = DragDropEffects.All;
+                    }
                     else
+                    {
                         e.Effect = DragDropEffects.None;
+                    }
                 }
             }
             catch (Exception ex)
@@ -657,7 +666,7 @@ namespace gMKVToolNix.Forms
                 {
                     prgBrStatus.Value = counter;
                     lblStatus.Text = string.Format("{0}%",
-                        Convert.ToInt32((Convert.ToDouble(prgBrStatus.Value) / Convert.ToDouble(prgBrStatus.Maximum)) * 100.0));
+                        Convert.ToInt32((double)prgBrStatus.Value / (double)prgBrStatus.Maximum * 100.0));
                 });
 
                 try
@@ -719,6 +728,7 @@ namespace gMKVToolNix.Forms
             {
                 Tag = segInfo
             };
+
             foreach (gMKVSegment seg in segmentList.Where(s => !(s is gMKVSegmentInfo)).ToList())
             {
                 TreeNode segNode = new TreeNode(seg.ToString())
@@ -809,7 +819,7 @@ namespace gMKVToolNix.Forms
             lblTotalStatus.Text = string.Format("{0}%", prgBrTotalStatus.Value / _TotalJobs);
             
             // Update the task bar progress bar based on the total progress and not on the individual job
-            gTaskbarProgress.SetValue(this, Convert.ToUInt64(prgBrTotalStatus.Value), (UInt64)prgBrTotalStatus.Maximum);
+            gTaskbarProgress.SetValue(this, Convert.ToUInt64(prgBrTotalStatus.Value), (ulong)prgBrTotalStatus.Maximum);
             //gTaskbarProgress.SetValue(this, Convert.ToUInt64(val), (UInt64)100);
 
             Application.DoEvents();
@@ -821,7 +831,7 @@ namespace gMKVToolNix.Forms
             Application.DoEvents();
         }
 
-        private void CheckNeccessaryInputFields(Boolean checkSelectedTracks, Boolean checkSelectedChapterType)
+        private void CheckNeccessaryInputFields(bool checkSelectedTracks, bool checkSelectedChapterType)
         {
             if (string.IsNullOrWhiteSpace(txtMKVToolnixPath.Text))
             {
@@ -1207,17 +1217,18 @@ namespace gMKVToolNix.Forms
                 if (!_FromConstructor)
                 {
                     // check if the folder actually contains MKVToolnix
-                    if (!File.Exists(Path.Combine(txtMKVToolnixPath.Text.Trim(), gMKVHelper.MKV_MERGE_GUI_FILENAME))
-                        && !File.Exists(Path.Combine(txtMKVToolnixPath.Text.Trim(), gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
+                    string trimmedPath = txtMKVToolnixPath.Text.Trim();
+                    if (!File.Exists(Path.Combine(trimmedPath, gMKVHelper.MKV_MERGE_GUI_FILENAME))
+                        && !File.Exists(Path.Combine(trimmedPath, gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
                     {
                         _FromConstructor = true;
                         txtMKVToolnixPath.Text = "";
                         _FromConstructor = false;
-                        throw new Exception("The folder does not contain MKVToolnix!");
+                        throw new Exception($"The folder does not contain MKVToolnix! {trimmedPath}");
                     }
 
                     // Write the value to the ini file
-                    _Settings.MkvToolnixPath = txtMKVToolnixPath.Text.Trim();
+                    _Settings.MkvToolnixPath = trimmedPath;
                     gMKVLogger.Log("Changing MkvToolnixPath");
                     _Settings.Save();
                 }
@@ -1225,9 +1236,18 @@ namespace gMKVToolNix.Forms
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
-                gMKVLogger.Log(ex.ToString());
-                ShowErrorMessage(ex.Message);
+                // If we are in the constructor, we don't want to show the error message
+                // because it will be handled in the constructor
+                if (!_FromConstructor)
+                {
+                    Debug.WriteLine(ex);
+                    gMKVLogger.Log(ex.ToString());
+                    ShowErrorMessage(ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
             }
         }
 
@@ -1249,6 +1269,7 @@ namespace gMKVToolNix.Forms
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -1413,6 +1434,7 @@ namespace gMKVToolNix.Forms
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 ShowErrorMessage(ex.Message);
             }
         }
@@ -1458,6 +1480,7 @@ namespace gMKVToolNix.Forms
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
             }
         }
 
@@ -1477,6 +1500,7 @@ namespace gMKVToolNix.Forms
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
             }
         }
 
@@ -1494,6 +1518,7 @@ namespace gMKVToolNix.Forms
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
             }
         }
 
@@ -1510,6 +1535,7 @@ namespace gMKVToolNix.Forms
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
                 e.Cancel = true;
                 ShowErrorMessage(ex.Message);
             }
