@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.Reflection;
-using System.Text;
-using System.Windows.Forms;
 using System.IO;
-using System.Threading;
 using System.Media;
+using System.Reflection;
+using System.Threading;
+using System.Windows.Forms;
 using gMKVToolNix.Forms;
+using gMKVToolNix.Jobs;
+using gMKVToolNix.Log;
+using gMKVToolNix.MkvExtract;
+using gMKVToolNix.Segments;
 
 namespace gMKVToolNix
 {
@@ -34,11 +36,11 @@ namespace gMKVToolNix
         private frmJobManager _JobManagerForm = null;
 
         private gMKVExtract _gMkvExtract = null;
-        private gSettings _Settings = new gSettings(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-        private Boolean _FromConstructor = false;
-        private ToolTip _ToolTip = new ToolTip();
-        private Boolean _JobMode = false;
-        private Boolean _ExtractRunning = false;
+        private readonly gSettings _Settings = new gSettings(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+        private bool _FromConstructor = false;
+        private readonly ToolTip _ToolTip = new ToolTip();
+        private bool _JobMode = false;
+        private bool _ExtractRunning = false;
 
         public frmMain()
         {
@@ -950,7 +952,7 @@ namespace gMKVToolNix
             }
         }
 
-        private void CheckNeccessaryInputFields(Boolean checkSelectedTracks, Boolean checkSelectedChapterType) 
+        private void CheckNeccessaryInputFields(bool checkSelectedTracks, bool checkSelectedChapterType) 
         {
             if (String.IsNullOrWhiteSpace(txtInputFile.Text))
             {
@@ -984,7 +986,7 @@ namespace gMKVToolNix
                     selectedExtractionMode == FormMkvExtractionMode.Tracks_And_Timecodes ||
                     selectedExtractionMode == FormMkvExtractionMode.Tracks_And_Cues_And_Timecodes)
                 {
-                    Boolean ok = false;
+                    bool ok = false;
                     foreach (gMKVSegment item in chkLstInputFileTracks.CheckedItems)
                     {
                         if (item is gMKVTrack)
@@ -1003,7 +1005,7 @@ namespace gMKVToolNix
                     selectedExtractionMode == FormMkvExtractionMode.Tracks_And_Cues ||
                     selectedExtractionMode == FormMkvExtractionMode.Tracks_And_Cues_And_Timecodes)
                 {
-                    Boolean ok = false;
+                    bool ok = false;
                     foreach (gMKVSegment item in chkLstInputFileTracks.CheckedItems)
                     {
                         if (item is gMKVTrack)

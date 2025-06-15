@@ -6,32 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using gMKVToolNix.Log;
+using gMKVToolNix.Segments;
 
-namespace gMKVToolNix
+namespace gMKVToolNix.MkvInfo
 {
-    public enum MkvInfoOptions
-    {
-        gui, // Start the GUI (and open inname if it was given)
-        checksum, // Calculate and display checksums of frame contents
-        check_mode, // Calculate and display checksums and use verbosity level 4.
-        summary, // Only show summaries of the contents, not each element
-        track_info, // Show statistics for each track in verbose mode
-        hexdump, // Show the first 16 bytes of each frame as a hex dump
-        full_hexdump, // Show all bytes of each frame as a hex dump
-        size, // Show the size of each element including its header
-        verbose, // Increase verbosity
-        quiet, // Suppress status output
-        ui_language, // Force the translations for 'code' to be used
-        command_line_charset, //  Charset for strings on the command line
-        output_charset, // Output messages in this charset
-        redirect_output, // Redirects all messages into this file
-        help, // Show this help
-        version, // Show version information
-        check_for_updates, // Check online for the latest release
-        gui_mode, // In this mode specially-formatted lines may be output that can tell a controlling GUI what's happening
-        no_gui // It doesn't show the GUI but the CLI
-    }
-
     public class gMKVInfo
     {
         // mkvinfo [options] <inname>
@@ -132,10 +111,10 @@ namespace gMKVToolNix
             }
 
             // Check if there are any video tracks
-            if (!argSegmentsList.Any(x => x is gMKVTrack xTrack && xTrack.TrackType == MkvTrackType.video))
+            if (!argSegmentsList.OfType<gMKVTrack>().Any(x => x.TrackType == MkvTrackType.video))
             {
                 // No video track found, so set all the delays to 0
-                foreach (gMKVTrack tr in argSegmentsList.Where(x => x is gMKVTrack xTrack && xTrack.TrackType == MkvTrackType.audio))
+                foreach (gMKVTrack tr in argSegmentsList.OfType<gMKVTrack>().Where(x => x.TrackType == MkvTrackType.audio))
                 {
                     tr.Delay = 0;
                     tr.EffectiveDelay = 0;
@@ -151,19 +130,16 @@ namespace gMKVToolNix
             _TrackDelaysFound = 0;
 
             // get only video and audio track in a trackList
-            foreach (gMKVSegment seg in argSegmentsList)
+            foreach (gMKVTrack segTrack in argSegmentsList.OfType<gMKVTrack>())
             {
-                if (seg is gMKVTrack segTrack)
+                // only find delays for video and audio tracks
+                if (segTrack.TrackType != MkvTrackType.subtitles)
                 {
-                    // only find delays for video and audio tracks
-                    if (segTrack.TrackType != MkvTrackType.subtitles)
+                    _TrackList.Add(segTrack);
+                    // Update the number of tracks for which delays were found, in order to exit early later on
+                    if (segTrack.Delay != int.MinValue)
                     {
-                        _TrackList.Add(segTrack);
-                        // Update the number of tracks for which delays were found, in order to exit early later on
-                        if (segTrack.Delay != int.MinValue)
-                        {
-                            _TrackDelaysFound++;
-                        }
+                        _TrackDelaysFound++;
                     }
                 }
             }

@@ -1,15 +1,7 @@
 ﻿using System;
 
-namespace gMKVToolNix
+namespace gMKVToolNix.Segments
 {
-    public enum MkvChapterTypes
-    {
-        XML,
-        OGM,
-        CUE,
-        PBF,
-    }
-
     [Serializable]
     public class gMKVChapter : gMKVSegment
     {

@@ -1,16 +1,7 @@
 ﻿using System;
 
-namespace gMKVToolNix
+namespace gMKVToolNix.Jobs
 {
-    public enum JobState
-    {
-        Ready,
-        Pending,
-        Running,
-        Completed,
-        Failed
-    }
-
     [Serializable]
     public class gMKVJobInfo
     {
