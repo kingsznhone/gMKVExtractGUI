@@ -214,7 +214,7 @@ namespace gMKVToolNix.Forms
                         // MKVToolnix could not be found anywhere
                         // Select exception message according to running OS
                         string exceptionMessage = "";
-                        if (gMKVHelper.IsOnLinux)
+                        if (PlatformExtensions.IsOnLinux)
                         {
                             exceptionMessage = "Could not find MKVToolNix in /usr/bin, or in the current directory, or in the ini file!";
                         }
@@ -253,7 +253,7 @@ namespace gMKVToolNix.Forms
             {
                 gMKVLogger.Log($"mkvmerge was not found in current directory! ({currentDirectory})");
 
-                if (!gMKVHelper.IsOnLinux)
+                if (!PlatformExtensions.IsOnLinux)
                 {
                     // When on Windows, check the registry
                     gMKVLogger.Log("Checking registry for mkvmerge...");
@@ -436,8 +436,19 @@ namespace gMKVToolNix.Forms
         private List<string> GetFilesFromInputFileDrop(string[] argFileDrop)
         {
             List<string> fileList = new List<string>();
+
             // Check if directories were provided
-            if (argFileDrop.Any(f => Directory.Exists(f)))
+            bool directoryExists = false;
+            using (Task ta = Task.Factory.StartNew(() =>
+            {
+                directoryExists = argFileDrop.Any(f => Directory.Exists(f));
+            }))
+            {
+                while (!ta.IsCompleted) { Application.DoEvents(); }
+                if (ta.Exception != null) { throw ta.Exception; }
+            }
+
+            if (directoryExists)
             {
                 // Check if they contain subdirectories
                 List<string> subDirList = new List<string>();
@@ -508,13 +519,21 @@ namespace gMKVToolNix.Forms
                 }
             }
 
-            // Add the files provided
-            argFileDrop.Where(f => File.Exists(f))
+            using (Task ta = Task.Factory.StartNew(() =>
+            {
+                // Add the files provided
+                argFileDrop.Where(f => File.Exists(f))
                 .ToList()
                 .ForEach(t => fileList.Add(t));
+            }))
+            {
+                while (!ta.IsCompleted) { Application.DoEvents(); }
+                if (ta.Exception != null) { throw ta.Exception; }
+            }
 
             // Remove all non valid matroska files
-            fileList.RemoveAll(f => {
+            fileList.RemoveAll(f =>
+            {
                 string extension = Path.GetExtension(f).ToLower();
                 return
                     extension != ".mkv"
@@ -522,8 +541,7 @@ namespace gMKVToolNix.Forms
                     && extension != ".mks"
                     && extension != ".mk3d"
                     && extension != ".webm";
-            }
-            );
+            });
 
             return fileList;
         }
@@ -629,7 +647,7 @@ namespace gMKVToolNix.Forms
                             n != null
                             && n.Tag != null
                             && n.Tag is gMKVSegmentInfo segInfo
-                            && segInfo.Path.ToLower().Equals(f.ToLower())
+                            && segInfo.Path.Equals(f, StringComparison.InvariantCultureIgnoreCase)
                     ));
 
                     // Check if there are any new files to add
