@@ -38,23 +38,23 @@ namespace gMKVToolNix.Unit.Tests
         [TestMethod]
         public void GetOutputFilenameWithMultipleExtensions_WithNoOverwrite_ShouldBe_Successful()
         {
-            string filename = "test.ogm.txt";
+            string filename = "test.tc.txt";
             string expectedFilename = filename;
 
             ActAndAssertGetOutputFilename(filename, false, expectedFilename);
 
             File.Create(expectedFilename).Dispose();
 
-            expectedFilename = "test.ogm.1.txt";
+            expectedFilename = "test.tc.1.txt";
             ActAndAssertGetOutputFilename(filename, false, expectedFilename);
 
             File.Create(expectedFilename).Dispose();
 
-            expectedFilename = "test.ogm.2.txt";
+            expectedFilename = "test.tc.2.txt";
             ActAndAssertGetOutputFilename(filename, false, expectedFilename);
 
-            File.Delete("test.ogm.txt");
-            File.Delete("test.ogm.1.txt");
+            File.Delete("test.tc.txt");
+            File.Delete("test.tc.1.txt");
         }
 
         [TestMethod]

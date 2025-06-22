@@ -1237,7 +1237,7 @@ namespace gMKVToolNix.MkvExtract
                             outputFileExtension = "xml";
                             break;
                         case MkvChapterTypes.OGM:
-                            outputFileExtension = "ogm.txt";
+                            outputFileExtension = "txt";
                             break;
                         case MkvChapterTypes.CUE:
                             outputFileExtension = "cue";
