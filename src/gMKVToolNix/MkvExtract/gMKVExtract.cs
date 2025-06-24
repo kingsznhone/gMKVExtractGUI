@@ -1136,7 +1136,6 @@ namespace gMKVToolNix.MkvExtract
                     finalFilename = finalFilename.Replace(gMKVExtractFilenamePatterns.AudioChannels, track.AudioChannels.ToString());
                 }
             }
-
             // Attachment placeholders
             else if (argSeg is gMKVAttachment attachment)
             {
@@ -1215,9 +1214,11 @@ namespace gMKVToolNix.MkvExtract
                     );
                     break;
                 case MkvExtractModes.tags:
+                    replacedFilePattern = ReplaceFilenamePlaceholders(argSeg, argMKVFile, argFilenamePatterns.TagsFilenamePattern);
+
                     outputFilename = Path.Combine(
                         outputDirectory,
-                        string.Format("{0}_tags.xml", argMkvFilenameNoExt));
+                        string.Format("{0}.{1}", replacedFilePattern, "xml"));
                     break;
                 case MkvExtractModes.attachments:
                     if (!(argSeg is gMKVAttachment))

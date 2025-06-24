@@ -655,6 +655,8 @@ namespace gMKVToolNix
                 SubtitleTrackFilenamePattern = _Settings.SubtitleTrackFilenamePattern
                 ,
                 VideoTrackFilenamePattern = _Settings.VideoTrackFilenamePattern
+                ,
+                TagsFilenamePattern = _Settings.TagsFilenamePattern
             };
         }
 

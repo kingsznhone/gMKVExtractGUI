@@ -48,6 +48,7 @@ namespace gMKVToolNix.MkvExtract
         public string SubtitleTrackFilenamePattern { get; set; } = "";
         public string ChapterFilenamePattern { get; set; } = "";
         public string AttachmentFilenamePattern { get; set; } = "";
+        public string TagsFilenamePattern { get; set; } = "";
 
         public override bool Equals(object oth)
         {
@@ -63,6 +64,7 @@ namespace gMKVToolNix.MkvExtract
                 && SubtitleTrackFilenamePattern.Equals(other.SubtitleTrackFilenamePattern, StringComparison.OrdinalIgnoreCase)
                 && ChapterFilenamePattern.Equals(other.ChapterFilenamePattern, StringComparison.OrdinalIgnoreCase)
                 && AttachmentFilenamePattern.Equals(other.AttachmentFilenamePattern, StringComparison.OrdinalIgnoreCase)
+                && TagsFilenamePattern.Equals(other.TagsFilenamePattern, StringComparison.OrdinalIgnoreCase)
             ;
         }
 
@@ -76,6 +78,7 @@ namespace gMKVToolNix.MkvExtract
                 hash = hash * 23 + SubtitleTrackFilenamePattern.GetHashCode();
                 hash = hash * 23 + ChapterFilenamePattern.GetHashCode();
                 hash = hash * 23 + AttachmentFilenamePattern.GetHashCode();
+                hash = hash * 23 + TagsFilenamePattern.GetHashCode();
                 return hash;
             }
         }

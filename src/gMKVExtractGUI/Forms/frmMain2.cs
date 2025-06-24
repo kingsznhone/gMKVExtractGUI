@@ -1001,6 +1001,10 @@ namespace gMKVToolNix.Forms
                 VideoTrackFilenamePattern =
                     string.IsNullOrWhiteSpace(_Settings.VideoTrackFilenamePattern) ?
                         _Settings.GetPropertyDefaultValue<string>(nameof(_Settings.VideoTrackFilenamePattern)) : _Settings.VideoTrackFilenamePattern
+                ,
+                TagsFilenamePattern =
+                    string.IsNullOrWhiteSpace(_Settings.TagsFilenamePattern) ?
+                        _Settings.GetPropertyDefaultValue<string>(nameof(_Settings.TagsFilenamePattern)) : _Settings.TagsFilenamePattern
             };
         }
 

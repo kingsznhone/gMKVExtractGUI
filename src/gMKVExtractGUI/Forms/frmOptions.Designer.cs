@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             this.tlpMain = new gMKVToolNix.gTableLayoutPanel();
+            this.grpTags = new gMKVToolNix.gGroupBox();
+            this.btnDefaultTagsPlaceholder = new System.Windows.Forms.Button();
+            this.btnAddTagsPlaceholder = new System.Windows.Forms.Button();
+            this.txtTagsFilename = new gMKVToolNix.gTextBox();
             this.grpChapters = new gMKVToolNix.gGroupBox();
             this.btnDefaultChapterPlaceholder = new System.Windows.Forms.Button();
             this.btnAddChapterPlaceholder = new System.Windows.Forms.Button();
@@ -57,6 +61,7 @@
             this.txtInfo = new gMKVToolNix.gRichTextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.tlpMain.SuspendLayout();
+            this.grpTags.SuspendLayout();
             this.grpChapters.SuspendLayout();
             this.grpActions.SuspendLayout();
             this.grpVideoTracks.SuspendLayout();
@@ -70,18 +75,19 @@
             // 
             this.tlpMain.ColumnCount = 1;
             this.tlpMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpMain.Controls.Add(this.grpTags, 0, 6);
             this.tlpMain.Controls.Add(this.grpChapters, 0, 4);
-            this.tlpMain.Controls.Add(this.grpActions, 0, 6);
+            this.tlpMain.Controls.Add(this.grpActions, 0, 7);
             this.tlpMain.Controls.Add(this.grpVideoTracks, 0, 1);
             this.tlpMain.Controls.Add(this.grpAudioTracks, 0, 2);
             this.tlpMain.Controls.Add(this.grpSubtitleTracks, 0, 3);
             this.tlpMain.Controls.Add(this.grpAttachments, 0, 5);
             this.tlpMain.Controls.Add(this.grpInfo, 0, 0);
-            this.tlpMain.Controls.Add(this.statusStrip1, 0, 7);
+            this.tlpMain.Controls.Add(this.statusStrip1, 0, 8);
             this.tlpMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpMain.Location = new System.Drawing.Point(0, 0);
             this.tlpMain.Name = "tlpMain";
-            this.tlpMain.RowCount = 8;
+            this.tlpMain.RowCount = 9;
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
@@ -89,9 +95,55 @@
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpMain.Size = new System.Drawing.Size(654, 501);
+            this.tlpMain.Size = new System.Drawing.Size(654, 561);
             this.tlpMain.TabIndex = 0;
+            // 
+            // grpTags
+            // 
+            this.grpTags.Controls.Add(this.btnDefaultTagsPlaceholder);
+            this.grpTags.Controls.Add(this.btnAddTagsPlaceholder);
+            this.grpTags.Controls.Add(this.txtTagsFilename);
+            this.grpTags.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grpTags.Location = new System.Drawing.Point(3, 424);
+            this.grpTags.Name = "grpTags";
+            this.grpTags.Size = new System.Drawing.Size(648, 54);
+            this.grpTags.TabIndex = 7;
+            this.grpTags.TabStop = false;
+            this.grpTags.Text = "Attachments";
+            // 
+            // btnDefaultTagsPlaceholder
+            // 
+            this.btnDefaultTagsPlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDefaultTagsPlaceholder.Location = new System.Drawing.Point(562, 19);
+            this.btnDefaultTagsPlaceholder.Name = "btnDefaultTagsPlaceholder";
+            this.btnDefaultTagsPlaceholder.Size = new System.Drawing.Size(83, 30);
+            this.btnDefaultTagsPlaceholder.TabIndex = 6;
+            this.btnDefaultTagsPlaceholder.Text = "Default";
+            this.btnDefaultTagsPlaceholder.UseVisualStyleBackColor = true;
+            this.btnDefaultTagsPlaceholder.Click += new System.EventHandler(this.btnDefaultTagsPlaceholder_Click);
+            // 
+            // btnAddTagsPlaceholder
+            // 
+            this.btnAddTagsPlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAddTagsPlaceholder.Location = new System.Drawing.Point(476, 19);
+            this.btnAddTagsPlaceholder.Name = "btnAddTagsPlaceholder";
+            this.btnAddTagsPlaceholder.Size = new System.Drawing.Size(83, 30);
+            this.btnAddTagsPlaceholder.TabIndex = 5;
+            this.btnAddTagsPlaceholder.Text = "Add...";
+            this.btnAddTagsPlaceholder.UseVisualStyleBackColor = true;
+            this.btnAddTagsPlaceholder.Click += new System.EventHandler(this.btnAddTagsPlaceholder_Click);
+            // 
+            // txtTagsFilename
+            // 
+            this.txtTagsFilename.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtTagsFilename.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
+            this.txtTagsFilename.Location = new System.Drawing.Point(9, 23);
+            this.txtTagsFilename.Name = "txtTagsFilename";
+            this.txtTagsFilename.Size = new System.Drawing.Size(462, 23);
+            this.txtTagsFilename.TabIndex = 1;
             // 
             // grpChapters
             // 
@@ -144,7 +196,7 @@
             this.grpActions.Controls.Add(this.btnOK);
             this.grpActions.Controls.Add(this.btnCancel);
             this.grpActions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grpActions.Location = new System.Drawing.Point(3, 424);
+            this.grpActions.Location = new System.Drawing.Point(3, 484);
             this.grpActions.Name = "grpActions";
             this.grpActions.Size = new System.Drawing.Size(648, 54);
             this.grpActions.TabIndex = 0;
@@ -376,6 +428,7 @@
             // 
             // txtInfo
             // 
+            this.txtInfo.DarkMode = false;
             this.txtInfo.DetectUrls = false;
             this.txtInfo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtInfo.Location = new System.Drawing.Point(3, 19);
@@ -389,7 +442,7 @@
             // statusStrip1
             // 
             this.statusStrip1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.statusStrip1.Location = new System.Drawing.Point(0, 481);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 541);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(654, 20);
             this.statusStrip1.TabIndex = 6;
@@ -398,7 +451,7 @@
             // frmOptions
             // 
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(654, 501);
+            this.ClientSize = new System.Drawing.Size(654, 561);
             this.Controls.Add(this.tlpMain);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(161)));
             this.MinimumSize = new System.Drawing.Size(400, 400);
@@ -408,6 +461,8 @@
             this.Load += new System.EventHandler(this.frmOptions_Load);
             this.tlpMain.ResumeLayout(false);
             this.tlpMain.PerformLayout();
+            this.grpTags.ResumeLayout(false);
+            this.grpTags.PerformLayout();
             this.grpChapters.ResumeLayout(false);
             this.grpChapters.PerformLayout();
             this.grpActions.ResumeLayout(false);
@@ -454,5 +509,9 @@
         private System.Windows.Forms.Button btnDefaultAttachmentPlaceholder;
         private System.Windows.Forms.Button btnDefaults;
         private System.Windows.Forms.StatusStrip statusStrip1;
+        private gGroupBox grpTags;
+        private System.Windows.Forms.Button btnDefaultTagsPlaceholder;
+        private System.Windows.Forms.Button btnAddTagsPlaceholder;
+        private gTextBox txtTagsFilename;
     }
 }

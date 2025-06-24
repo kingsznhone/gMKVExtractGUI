@@ -17,6 +17,7 @@ namespace gMKVToolNix.Forms
         private ContextMenuStrip _SubtitleTrackContextMenu = null;
         private ContextMenuStrip _ChapterContextMenu = null;
         private ContextMenuStrip _AttachmentContextMenu = null;
+        private ContextMenuStrip _TagsContextMenu = null;
 
         private readonly static string INFO_TEXT = "Here you can specify the output filename format for each kind of track." + Environment.NewLine +
             "Pressing the \"Add...\" button you will see the list with the available placeholders and select them." + Environment.NewLine +
@@ -29,7 +30,7 @@ namespace gMKVToolNix.Forms
                 InitializeComponent();
 
                 Icon = Icon.ExtractAssociatedIcon(GetExecutingAssemblyLocation());
-                Text = String.Format("gMKVExtractGUI v{0} -- Options", GetCurrentVersion());
+                Text = string.Format("gMKVExtractGUI v{0} -- Options", GetCurrentVersion());
 
                 // Set the info text
                 txtInfo.Text = INFO_TEXT;
@@ -72,6 +73,7 @@ namespace gMKVToolNix.Forms
             if (_SubtitleTrackContextMenu != null) ThemeManager.ApplyTheme(_SubtitleTrackContextMenu, _Settings.DarkMode);
             if (_ChapterContextMenu != null) ThemeManager.ApplyTheme(_ChapterContextMenu, _Settings.DarkMode);
             if (_AttachmentContextMenu != null) ThemeManager.ApplyTheme(_AttachmentContextMenu, _Settings.DarkMode);
+            if (_TagsContextMenu != null) ThemeManager.ApplyTheme(_TagsContextMenu, _Settings.DarkMode);
 
             // Select the information text box
             txtInfo.Select();
@@ -85,6 +87,7 @@ namespace gMKVToolNix.Forms
             txtSubtitleTracksFilename.Text = _Settings.SubtitleTrackFilenamePattern;
             txtChaptersFilename.Text = _Settings.ChapterFilenamePattern;
             txtAttachmentsFilename.Text = _Settings.AttachmentFilenamePattern;
+            txtTagsFilename.Text = _Settings.TagsFilenamePattern;
         }
 
         private void UpdateSettings()
@@ -94,6 +97,7 @@ namespace gMKVToolNix.Forms
             _Settings.SubtitleTrackFilenamePattern = txtSubtitleTracksFilename.Text;
             _Settings.ChapterFilenamePattern = txtChaptersFilename.Text;
             _Settings.AttachmentFilenamePattern = txtAttachmentsFilename.Text;
+            _Settings.TagsFilenamePattern = txtTagsFilename.Text;
         }
 
         private ToolStripMenuItem GetToolstripMenuItem(string description, string placeholder, TextBox txtBox)
@@ -111,6 +115,7 @@ namespace gMKVToolNix.Forms
             _SubtitleTrackContextMenu = new ContextMenuStrip();
             _ChapterContextMenu = new ContextMenuStrip();
             _AttachmentContextMenu = new ContextMenuStrip();
+            _TagsContextMenu = new ContextMenuStrip();
 
             // Common placeholders
             // ============================================================================================================================
@@ -142,6 +147,11 @@ namespace gMKVToolNix.Forms
             _AttachmentContextMenu.Items.Add("-");
             _AttachmentContextMenu.Items.Add(GetToolstripMenuItem("Directory Separator", gMKVExtractFilenamePatterns.DirectorySeparator, txtAttachmentsFilename));
             _AttachmentContextMenu.Items.Add("-");
+
+            _TagsContextMenu.Items.Add(GetToolstripMenuItem("Input Filename (without extension)", gMKVExtractFilenamePatterns.FilenameNoExt, txtTagsFilename));
+            _TagsContextMenu.Items.Add(GetToolstripMenuItem("Input Filename (with extension)", gMKVExtractFilenamePatterns.Filename, txtTagsFilename));
+            _TagsContextMenu.Items.Add("-");
+            _TagsContextMenu.Items.Add(GetToolstripMenuItem("Directory Separator", gMKVExtractFilenamePatterns.DirectorySeparator, txtTagsFilename));
             // ============================================================================================================================
 
             // Common Track placeholders
@@ -326,6 +336,20 @@ namespace gMKVToolNix.Forms
             }
         }
 
+        private void btnAddTagsPlaceholder_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                _TagsContextMenu.Show(btnAddTagsPlaceholder, 0, btnAddTagsPlaceholder.Height);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
+                ShowErrorMessage(ex.Message);
+            }
+        }
+
         private void btnOK_Click(object sender, EventArgs e)
         {
             try
@@ -437,6 +461,24 @@ namespace gMKVToolNix.Forms
                 var defaultValue = _Settings.GetPropertyDefaultValue<string>(nameof(_Settings.AttachmentFilenamePattern));
 
                 _Settings.AttachmentFilenamePattern = defaultValue;
+
+                FillFromSettings();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                gMKVLogger.Log(ex.ToString());
+                ShowErrorMessage(ex.Message);
+            }
+        }
+
+        private void btnDefaultTagsPlaceholder_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var defaultValue = _Settings.GetPropertyDefaultValue<string>(nameof(_Settings.TagsFilenamePattern));
+
+                _Settings.TagsFilenamePattern = defaultValue;
 
                 FillFromSettings();
             }

@@ -157,6 +157,14 @@ namespace gMKVToolNix
             set { _AttachmentFilenamePattern = value; }
         }
 
+        private string _TagsFilenamePattern = "{FilenameNoExt}_tags";
+        [DefaultValue("{FilenameNoExt}_tags")]
+        public string TagsFilenamePattern
+        {
+            get { return _TagsFilenamePattern; }
+            set { _TagsFilenamePattern = value; }
+        }
+
         /// <summary>
         /// Gets the Default Value Attribute value for a specific property
         /// </summary>
@@ -476,6 +484,23 @@ namespace gMKVToolNix
                                 _AttachmentFilenamePattern = "";
                             }
                         }
+                        else if (line.StartsWith("TagsFilenamePattern:"))
+                        {
+                            try
+                            {
+                                string tmp = line.Substring(line.IndexOf(":") + 1);
+                                if (!string.IsNullOrWhiteSpace(tmp))
+                                {
+                                    _TagsFilenamePattern = tmp;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine(ex);
+                                gMKVLogger.Log(string.Format("Error reading TagsFilenamePattern! {0}", ex.Message));
+                                _TagsFilenamePattern = "";
+                            }
+                        }
                         else if (line.StartsWith("Append On Drag and Drop:"))
                         {
                             try
@@ -534,6 +559,7 @@ namespace gMKVToolNix
                 sw.WriteLine(string.Format("SubtitleTrackFilenamePattern:{0}", _SubtitleTrackFilenamePattern));
                 sw.WriteLine(string.Format("ChapterFilenamePattern:{0}", _ChapterFilenamePattern));
                 sw.WriteLine(string.Format("AttachmentFilenamePattern:{0}", _AttachmentFilenamePattern));
+                sw.WriteLine(string.Format("TagsFilenamePattern:{0}", _TagsFilenamePattern));
             }
         }
     }
