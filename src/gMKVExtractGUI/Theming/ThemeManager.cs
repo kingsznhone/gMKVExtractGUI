@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using gMKVToolNix.Controls;
@@ -94,25 +96,41 @@ namespace gMKVToolNix.Theming
 
                 if (control is RichTextBox rich)
                 {
-                    // For RichTextBox, ensure the selection colors are set correctly
-                    if (darkMode)
+                    try
                     {
-                        rich.BackColor = rich.Parent.BackColor;
-                        rich.BorderStyle = BorderStyle.None;
-                        rich.SelectionBackColor = Color.FromArgb(80, 80, 80); // Dark selection background
-                        rich.SelectionColor = Color.White; // White text on dark selection
-                    }
-                    else
-                    {
-                        rich.BorderStyle = BorderStyle.Fixed3D;
-                        rich.SelectionBackColor = SystemColors.Highlight; // Standard highlight color
-                        rich.SelectionColor = SystemColors.HighlightText; // Standard highlight text color
-
-                        // For ReadOnly, we want to have a different back color than the default
-                        if (rich.ReadOnly)
+                        // For RichTextBox, ensure the selection colors are set correctly
+                        if (darkMode)
                         {
-                            control.BackColor = SystemColors.Control;
+                            rich.BackColor = rich.Parent.BackColor;
+                            rich.BorderStyle = BorderStyle.None;
+                            rich.SelectionBackColor = Color.FromArgb(80, 80, 80); // Dark selection background
+
+                            if (!PlatformExtensions.IsOnLinux)
+                            {
+                                rich.SelectionColor = Color.White; // White text on dark selection
+                            }
                         }
+                        else
+                        {
+                            rich.BorderStyle = BorderStyle.Fixed3D;
+                            rich.SelectionBackColor = SystemColors.Highlight; // Standard highlight color
+                            if (!PlatformExtensions.IsOnLinux)
+                            {
+                                rich.SelectionColor = SystemColors.HighlightText; // Standard highlight text color
+                            }
+
+                            // For ReadOnly, we want to have a different back color than the default
+                            if (rich.ReadOnly)
+                            {
+                                control.BackColor = SystemColors.Control;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Handle any exceptions that might occur during RichTextBox styling
+                        // Especially for Linux via Mono
+                        Debug.WriteLine(ex);
                     }
                 }
             }

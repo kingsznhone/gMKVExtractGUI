@@ -48,6 +48,10 @@ namespace gMKVToolNix
 
         protected override void WndProc(ref Message m)
         {
+            // If we are on Linux, we can't use P/Invoke to user32.dll
+            // So this function can't do anything
+            if (PlatformExtensions.IsOnLinux) return;
+
             const int WM_PAINT = 0x000F;
             const int WM_PRINTCLIENT = 0x0318;
             const int WM_ERASEBKGND = 0x0014;
