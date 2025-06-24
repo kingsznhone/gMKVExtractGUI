@@ -50,7 +50,11 @@ namespace gMKVToolNix
         {
             // If we are on Linux, we can't use P/Invoke to user32.dll
             // So this function can't do anything
-            if (PlatformExtensions.IsOnLinux) return;
+            if (PlatformExtensions.IsOnLinux)
+            {
+                base.WndProc(ref m); 
+                return;
+            }
 
             const int WM_PAINT = 0x000F;
             const int WM_PRINTCLIENT = 0x0318;
