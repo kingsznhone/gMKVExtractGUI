@@ -18,6 +18,10 @@ namespace gMKVToolNix.Controls
         /// <param name="parent"></param>
         public static void SuspendDrawing(this Control parent)
         {
+            // If we are on Linux, we can't use P/Invoke to user32.dll
+            // So this function can't do anything
+            if (PlatformExtensions.IsOnLinux) return;
+
             SendMessage(parent.Handle, WM_SETREDRAW, false, 0);
         }
 
@@ -27,14 +31,19 @@ namespace gMKVToolNix.Controls
         /// <param name="parent"></param>
         public static void ResumeDrawing(this Control parent)
         {
-            SendMessage(parent.Handle, WM_SETREDRAW, true, 0);
+            // If we are on Linux, we can't use P/Invoke to user32.dll
+            if (!PlatformExtensions.IsOnLinux)
+            {
+                SendMessage(parent.Handle, WM_SETREDRAW, true, 0);
+            }
             parent.Invalidate(true);
         }
 
+        private static readonly BindingFlags _designModeBindFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static;
+
         private static bool GetDesignMode(this Control control)
-        {
-            BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static;
-            PropertyInfo prop = control.GetType().GetProperty("DesignMode", bindFlags);
+        {            
+            PropertyInfo prop = control.GetType().GetProperty("DesignMode", _designModeBindFlags);
             return (bool)prop.GetValue(control, null);
         }
 
