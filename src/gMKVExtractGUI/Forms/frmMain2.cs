@@ -12,6 +12,8 @@ using System.Windows.Forms;
 using gMKVToolNix.Jobs;
 using gMKVToolNix.Log;
 using gMKVToolNix.MkvExtract;
+using gMKVToolNix.MkvInfo;
+using gMKVToolNix.MkvMerge;
 using gMKVToolNix.Segments;
 using gMKVToolNix.Theming;
 using gMKVToolNix.WinAPI;
@@ -469,38 +471,30 @@ namespace gMKVToolNix.Forms
                     Cursor = Cursors.Default;
                     var result = ShowQuestion("Do you want to include files in sub directories?", "Sub directories found!");
                     Cursor = Cursors.WaitCursor;
-                    if (result == DialogResult.Yes)
-                    {
-                        using (Task ta = Task.Factory.StartNew(() =>
-                        {
-                            // Add the subdirectory files
-                            argFileDrop.Where(f => Directory.Exists(f))
-                            .ToList()
-                            .ForEach(t => fileList.AddRange(Directory.GetFiles(t, "*", SearchOption.AllDirectories).ToList()));
-                        }))
-                        {
-                            while (!ta.IsCompleted) { Application.DoEvents(); }
-                            if (ta.Exception != null) { throw ta.Exception; }
-                        }
-                    }
-                    else if (result == DialogResult.No)
-                    {
-                        using (Task ta = Task.Factory.StartNew(() =>
-                        {
-                            // Add the top level directory files
-                            argFileDrop.Where(f => Directory.Exists(f))
-                            .ToList()
-                            .ForEach(t => fileList.AddRange(Directory.GetFiles(t, "*", SearchOption.TopDirectoryOnly).ToList()));
-                        }))
-                        {
-                            while (!ta.IsCompleted) { Application.DoEvents(); }
-                            if (ta.Exception != null) { throw ta.Exception; }
-                        }
-                    }
-                    else if (result == DialogResult.Cancel)
+
+                    if (result == DialogResult.Cancel)
                     {
                         Cursor = Cursors.Default;
                         return new List<string>();
+                    }
+
+                    using (Task ta = Task.Factory.StartNew(() =>
+                    {
+                        // Add the subdirectory files
+                        argFileDrop.Where(f => Directory
+                            .Exists(f))
+                            .ToList()
+                            .ForEach(t => fileList.AddRange(Directory.GetFiles(
+                                t, 
+                                "*", 
+                                result == DialogResult.Yes 
+                                    ? SearchOption.AllDirectories
+                                    : SearchOption.TopDirectoryOnly)
+                            .ToList()));
+                    }))
+                    {
+                        while (!ta.IsCompleted) { Application.DoEvents(); }
+                        if (ta.Exception != null) { throw ta.Exception; }
                     }
                 }
                 else
@@ -632,8 +626,10 @@ namespace gMKVToolNix.Forms
             {
                 tlpMain.Enabled = false;
                 Application.DoEvents();
+
                 // empty all the controls in any case
                 ClearControls();
+
                 // Check for append file or not
                 if (!argAppend)
                 {
@@ -679,6 +675,7 @@ namespace gMKVToolNix.Forms
 
                 // Add the nodes to the TreeView
                 trvInputFiles.Nodes.AddRange(results.Nodes.ToArray());
+
                 // Remove the check box from the nodes that contain the gMKVSegmentInfo
                 trvInputFiles.AllNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVSegmentInfo)
                     .ToList()
@@ -711,6 +708,9 @@ namespace gMKVToolNix.Forms
             NodeResults results = new NodeResults();
             List<TreeNode> fileNodes = new List<TreeNode>();
 
+            gMKVMerge gMerge = new gMKVMerge(argMKVToolNixPath);
+            gMKVInfo gInfo = new gMKVInfo(argMKVToolNixPath);
+
             statusStrip.Invoke((MethodInvoker)delegate
             {
                 prgBrStatus.Maximum = argFiles.Count;
@@ -734,7 +734,7 @@ namespace gMKVToolNix.Forms
 
                 try
                 {
-                    fileNodes.Add(GetFileNode(argMKVToolNixPath, sf));
+                    fileNodes.Add(GetFileNode(gMerge, gInfo, sf));
                 }
                 catch (Exception ex)
                 {
@@ -751,14 +751,8 @@ namespace gMKVToolNix.Forms
             return results;
         }
 
-        private TreeNode GetFileNode(string argMKVToolNixPath, string argFilename)
+        private TreeNode GetFileNode(gMKVMerge gMerge, gMKVInfo gInfo, string argFilename)
         {
-            // Check if MKVToolNix path was provided
-            if (string.IsNullOrWhiteSpace(argMKVToolNixPath))
-            {
-                throw new Exception("The MKVToolNix path was not provided!");
-            }
-
             // Check if filename was provided
             if (string.IsNullOrWhiteSpace(argFilename))
             {
@@ -772,7 +766,7 @@ namespace gMKVToolNix.Forms
             }
 
             // Check if the extension is a valid matroska file
-            string inputExtension = Path.GetExtension(argFilename).ToLower();
+            string inputExtension = Path.GetExtension(argFilename).ToLowerInvariant();
             if (inputExtension != ".mkv"
                 && inputExtension != ".mka"
                 && inputExtension != ".mks"
@@ -782,8 +776,8 @@ namespace gMKVToolNix.Forms
                 throw new Exception($"The input file {argFilename}{Environment.NewLine}{Environment.NewLine}is not a valid matroska file!");
             }
 
-            // get the file information                    
-            List<gMKVSegment> segmentList = gMKVHelper.GetMergedMkvSegmentList(argMKVToolNixPath, argFilename);
+            // get the file information
+            List<gMKVSegment> segmentList = gMKVHelper.GetMergedMkvSegmentList(gMerge, gInfo, argFilename);
 
             gMKVSegmentInfo segInfo = segmentList.OfType<gMKVSegmentInfo>().FirstOrDefault();
 
@@ -815,6 +809,7 @@ namespace gMKVToolNix.Forms
                     {
                         throw new Exception("Selected node has null tag!");
                     }
+
                     if (!(selNode.Tag is gMKVSegmentInfo))
                     {
                         // Get parent node
@@ -823,15 +818,18 @@ namespace gMKVToolNix.Forms
                         {
                             throw new Exception("Selected node has no parent node!");
                         }
+
                         if (selNode.Tag == null)
                         {
                             throw new Exception("Selected node has null tag!");
                         }
+
                         if (!(selNode.Tag is gMKVSegmentInfo))
                         {
                             throw new Exception("Selected node has no info!");
                         }
                     }
+
                     gMKVSegmentInfo seg = selNode.Tag as gMKVSegmentInfo;
                     txtSegmentInfo.Text = string.Format("Writing Application: {1}{0}Muxing Application: {2}{0}Duration: {3}{0}Date: {4}",
                         Environment.NewLine,
@@ -900,27 +898,16 @@ namespace gMKVToolNix.Forms
             {
                 throw new Exception("You must provide with MKVToolnix path!");
             }
+
             if (!File.Exists(Path.Combine(txtMKVToolnixPath.Text.Trim(), gMKVHelper.MKV_MERGE_GUI_FILENAME))
                 && !File.Exists(Path.Combine(txtMKVToolnixPath.Text.Trim(), gMKVHelper.MKV_MERGE_NEW_GUI_FILENAME)))
             {
                 throw new Exception("The MKVToolnix path provided does not contain MKVToolnix files!");
             }
+
             if (!chkUseSourceDirectory.Checked && string.IsNullOrWhiteSpace(txtOutputDirectory.Text))
             {
                 throw new Exception("You haven't specified an output directory!");
-            }
-            if (!chkUseSourceDirectory.Checked && !Directory.Exists(txtOutputDirectory.Text.Trim()))
-            {
-                // Ask the user to create the non existing output directory
-                if (ShowQuestion(string.Format("The output directory \"{0}\" does not exist!{1}{1}Do you want to create it?", txtOutputDirectory.Text.Trim(), Environment.NewLine), "Output directory does not exist!", false) != DialogResult.Yes)
-                {
-                    throw new Exception(string.Format("The output directory \"{0}\" does not exist!{1}{1}Extraction was cancelled!", txtOutputDirectory.Text.Trim(), Environment.NewLine));
-                }
-                else
-                {
-                    // Create the non existing output directory
-                    Directory.CreateDirectory(txtOutputDirectory.Text.Trim());
-                }
             }
 
             // Get the checked nodes
@@ -928,7 +915,9 @@ namespace gMKVToolNix.Forms
 
             if (checkSelectedTracks)
             {
-                FormMkvExtractionMode selectedExtractionMode = (FormMkvExtractionMode)Enum.Parse(typeof(FormMkvExtractionMode), (string)cmbExtractionMode.SelectedItem);
+                FormMkvExtractionMode selectedExtractionMode = (FormMkvExtractionMode)Enum.Parse(
+                    typeof(FormMkvExtractionMode), 
+                    (string)cmbExtractionMode.SelectedItem);
 
                 // Check if the checked nodes contain tracks
                 if (!checkedNodes.Any(t => t.Tag != null && !(t.Tag is gMKVSegmentInfo)))
@@ -976,6 +965,20 @@ namespace gMKVToolNix.Forms
                     }
                 }
             }
+
+            if (!chkUseSourceDirectory.Checked && !Directory.Exists(txtOutputDirectory.Text.Trim()))
+            {
+                // Ask the user to create the non existing output directory
+                if (ShowQuestion(string.Format("The output directory \"{0}\" does not exist!{1}{1}Do you want to create it?", txtOutputDirectory.Text.Trim(), Environment.NewLine), "Output directory does not exist!", false) != DialogResult.Yes)
+                {
+                    throw new Exception(string.Format("The output directory \"{0}\" does not exist!{1}{1}Extraction was cancelled!", txtOutputDirectory.Text.Trim(), Environment.NewLine));
+                }
+                else
+                {
+                    // Create the non existing output directory
+                    Directory.CreateDirectory(txtOutputDirectory.Text.Trim());
+                }
+            }
         }
 
         private gMKVExtractFilenamePatterns GetFilenamePatterns()
@@ -1019,7 +1022,9 @@ namespace gMKVToolNix.Forms
                 _gMkvExtract.MkvExtractProgressUpdated += g_MkvExtractProgressUpdated;
                 _gMkvExtract.MkvExtractTrackUpdated += g_MkvExtractTrackUpdated;
 
-                FormMkvExtractionMode extractionMode = (FormMkvExtractionMode)Enum.Parse(typeof(FormMkvExtractionMode), (string)cmbExtractionMode.SelectedItem);
+                FormMkvExtractionMode extractionMode = (FormMkvExtractionMode)Enum.Parse(
+                    typeof(FormMkvExtractionMode), 
+                    (string)cmbExtractionMode.SelectedItem);
 
                 // Check for necessary input fields 
                 switch (extractionMode)
@@ -1072,11 +1077,13 @@ namespace gMKVToolNix.Forms
                     gMKVSegmentInfo infoSegment = parentNode.Tag as gMKVSegmentInfo;
                     segments = checkedNodes.Where(n => n.Parent == parentNode).Select(t => t.Tag as gMKVSegment).ToList();
                     string outputDirectory = txtOutputDirectory.Text;
+                    
                     // Check if the output dir is the same as the source
                     if (chkUseSourceDirectory.Checked)
                     {
                         outputDirectory = infoSegment.Directory;
                     }
+
                     gMKVExtractSegmentsParameters parameterList = new gMKVExtractSegmentsParameters();
                     switch (extractionMode)
                     {
@@ -1154,6 +1161,7 @@ namespace gMKVToolNix.Forms
                     {
                         _JobManagerForm = new frmJobManager(this);
                     }
+
                     _JobManagerForm.Show();
                     foreach (var job in jobs)
                     {
@@ -1195,10 +1203,12 @@ namespace gMKVToolNix.Forms
                         }
                         UpdateProgress(100);
                     }
+
                     btnAbort.Enabled = false;
                     btnAbortAll.Enabled = false;
                     this.Refresh();
                     Application.DoEvents();
+
                     if (chkShowPopup.Checked)
                     {
                         ShowSuccessMessage("The extraction was completed successfully!", true);
@@ -1301,6 +1311,7 @@ namespace gMKVToolNix.Forms
                     gMKVLogger.Log($"Changing MkvToolnixPath to {trimmedPath}");
                     _Settings.Save();
                 }
+
                 _gMkvExtract = new gMKVExtract(txtMKVToolnixPath.Text);
             }
             catch (Exception ex)
@@ -1368,6 +1379,7 @@ namespace gMKVToolNix.Forms
             {
                 txtOutputDirectory.ReadOnly = chkUseSourceDirectory.Checked;
                 btnBrowseOutputDirectory.Enabled = !chkUseSourceDirectory.Checked;
+
                 if (!_FromConstructor)
                 {
                     _Settings.LockedOutputDirectory = chkUseSourceDirectory.Checked;
@@ -1399,7 +1411,7 @@ namespace gMKVToolNix.Forms
                         FileName = "Select directory",
                         Title = "Select output directory..."
                     };
-                    if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    if (sfd.ShowDialog() == DialogResult.OK)
                     {
                         txtOutputDirectory.Text = Path.GetDirectoryName(sfd.FileName);
                     }
@@ -1434,6 +1446,7 @@ namespace gMKVToolNix.Forms
                     FileName = "Select directory",
                     Title = "Select MKVToolnix directory..."
                 };
+
                 if (!string.IsNullOrWhiteSpace(txtMKVToolnixPath.Text))
                 {
                     if (Directory.Exists(txtMKVToolnixPath.Text.Trim()))
@@ -1441,7 +1454,8 @@ namespace gMKVToolNix.Forms
                         ofd.InitialDirectory = txtMKVToolnixPath.Text.Trim();
                     }
                 }
-                if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+
+                if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     txtMKVToolnixPath.Text = Path.GetDirectoryName(ofd.FileName);
                 }
@@ -1462,6 +1476,7 @@ namespace gMKVToolNix.Forms
                 {
                     _LogForm = new frmLog();
                 }
+
                 _LogForm.Show();
                 _LogForm.Focus();
                 _LogForm.Select();
@@ -1482,6 +1497,7 @@ namespace gMKVToolNix.Forms
                 {
                     _JobManagerForm = new frmJobManager(this);
                 }
+
                 _JobManagerForm.Show();
                 _JobManagerForm.Focus();
                 _JobManagerForm.Select();
@@ -2242,6 +2258,7 @@ namespace gMKVToolNix.Forms
 
                     break;
             }
+
             nodes.ForEach(n => n.Checked = argCheck);
         }
 
@@ -2328,11 +2345,13 @@ namespace gMKVToolNix.Forms
             {
                 return;
             }
+
             TreeNode node = trvInputFiles.SelectedNode;
             if (!(node.Tag is gMKVSegmentInfo))
             {
                 node = node.Parent;
             }
+
             trvInputFiles.Nodes.Remove(node);
             if (trvInputFiles.Nodes.Count > 0)
             {
@@ -2354,11 +2373,13 @@ namespace gMKVToolNix.Forms
                 {
                     return;
                 }
+
                 TreeNode node = trvInputFiles.SelectedNode;
                 if (!(node.Tag is gMKVSegmentInfo))
                 {
                     node = node.Parent;
                 }
+
                 gMKVSegmentInfo segInfo = node.Tag as gMKVSegmentInfo;
                 if (File.Exists(segInfo.Path))
                 {
@@ -2381,13 +2402,14 @@ namespace gMKVToolNix.Forms
                 {
                     return;
                 }
+
                 TreeNode node = trvInputFiles.SelectedNode;
                 if (!(node.Tag is gMKVSegmentInfo))
                 {
                     node = node.Parent;
                 }
-                gMKVSegmentInfo segInfo = node.Tag as gMKVSegmentInfo;
 
+                gMKVSegmentInfo segInfo = node.Tag as gMKVSegmentInfo;
                 if (Directory.Exists(segInfo.Directory))
                 {
                     if (File.Exists(segInfo.Path))
@@ -2419,7 +2441,8 @@ namespace gMKVToolNix.Forms
                     Multiselect = true,
                     AutoUpgradeEnabled = true
                 };
-                if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+
+                if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     AddFileNodes(txtMKVToolnixPath.Text, new List<string>(ofd.FileNames), true);
                 }
@@ -2498,6 +2521,7 @@ namespace gMKVToolNix.Forms
                             return;
                         }
                     }
+
                     _Settings.DefaultOutputDirectory = txtOutputDirectory.Text.Trim();
                     gMKVLogger.Log("Changing Default Output Directory...");
                     _Settings.Save();
@@ -2558,11 +2582,13 @@ namespace gMKVToolNix.Forms
                 _Settings.DarkMode = chkDarkMode.Checked;
                 _Settings.Save();
                 ThemeManager.ApplyTheme(this, _Settings.DarkMode); // Apply theme on toggle
+
                 // Hack for DarkMode checkbox
                 if (_Settings.DarkMode)
                 {
                     chkDarkMode.BackColor = Color.FromArgb(55, 55, 55);
                 }
+
                 NativeMethods.SetWindowThemeManaged(this.Handle, _Settings.DarkMode);
                 NativeMethods.TrySetImmersiveDarkMode(this.Handle, _Settings.DarkMode);
 

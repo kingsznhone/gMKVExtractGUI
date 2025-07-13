@@ -43,19 +43,6 @@ namespace gMKVToolNix.MkvMerge
             "yyyy-MM-ddT"
         };
 
-        private class OptionValue
-        {
-            public string Parameter { get; set; }
-
-            public MkvMergeOptions Option { get; set; }
-
-            public OptionValue(MkvMergeOptions opt, string par)
-            {
-                Option = opt;
-                Parameter = par;
-            }
-        }
-
         /// <summary>
         /// Gets the mkvinfo executable filename
         /// </summary>
@@ -67,8 +54,6 @@ namespace gMKVToolNix.MkvMerge
         private readonly string _MKVToolnixPath = "";
         private readonly string _MKVMergeFilename = "";
 
-        private readonly StringBuilder _MKVMergeOutput = new StringBuilder();
-        private readonly StringBuilder _ErrorBuilder = new StringBuilder();
         private readonly gMKVVersion _Version = null;
 
         public gMKVMerge(string mkvToolnixPath)
@@ -105,18 +90,13 @@ namespace gMKVToolNix.MkvMerge
 
         public List<gMKVSegment> GetMKVSegments(string argMKVFile)
         {
-            // check for existence of MKVMerge
-            if (!File.Exists(_MKVMergeFilename)) 
-            { 
-                throw new Exception(string.Format("Could not find {0}!" + Environment.NewLine + "{1}", MKV_MERGE_FILENAME, _MKVMergeFilename)); 
-            }
+            List<string> outputLines = new List<string>();
+            List<string> errors = new List<string>();
 
-            // Clear the mkvmerge output
-            _MKVMergeOutput.Length = 0;
-            // Clear the error builder
-            _ErrorBuilder.Length = 0;
             // Execute the mkvmerge
-            ExecuteMkvMerge(null, argMKVFile, myProcess_OutputDataReceived);
+            ExecuteMkvMerge(null, argMKVFile, errors, CreateProcessOutputHandlerFactory(
+                (string line) => outputLines.Add(line),
+                (string error) => errors.Add(error)));
 
             // Set the segment list
             List<gMKVSegment> segmentList = new List<gMKVSegment>();
@@ -126,11 +106,11 @@ namespace gMKVToolNix.MkvMerge
             if (_Version.FileMajorPart > 9 ||
                 (_Version.FileMajorPart == 9 && _Version.FileMinorPart >= 6))
             {
-                segmentList.AddRange(ParseMkvMergeJsonOutput(_MKVMergeOutput.ToString()));
+                segmentList.AddRange(ParseMkvMergeJsonOutput(string.Join(Environment.NewLine, outputLines)));
             }
             else
             {
-                segmentList.AddRange(ParseMkvMergeOutput(_MKVMergeOutput.ToString()));
+                segmentList.AddRange(ParseMkvMergeOutput(outputLines));
             }
 
             // Add the file properties in gMKVSegmentInfo
@@ -231,37 +211,29 @@ namespace gMKVToolNix.MkvMerge
                 return _Version;
             }
 
-            // check for existence of mkvmerge
-            if (!File.Exists(_MKVMergeFilename))
-            {
-                throw new Exception($"Could not find {MKV_MERGE_FILENAME}!{Environment.NewLine}{_MKVMergeFilename}");
-            }
-
             if (PlatformExtensions.IsOnLinux)
             {
                 // When on Linux, we need to run mkvmerge
 
-                // Clear the mkvmerge output
-                _MKVMergeOutput.Length = 0;
-                // Clear the error builder
-                _ErrorBuilder.Length = 0;
-
                 // Execute mkvmerge
-                List<OptionValue> options = new List<OptionValue>
+                List<OptionValue<MkvMergeOptions>> options = new List<OptionValue<MkvMergeOptions>>
                 {
-                    new OptionValue(MkvMergeOptions.version, "")
+                    new OptionValue<MkvMergeOptions>(MkvMergeOptions.version, "")
                 };
+
+                List<string> versionOutputLines = new List<string>();
+                List<string> errors = new List<string>();
 
                 using (Process myProcess = new Process())
                 {
                     // if on Linux, the language output must be defined from the environment variables LC_ALL, LANG, and LC_MESSAGES
                     // After talking with Mosu, the language output is defined from ui-language, with different language codes for Windows and Linux
-                    options.Add(new OptionValue(MkvMergeOptions.ui_language, "en_US"));
+                    options.Add(new OptionValue<MkvMergeOptions>(MkvMergeOptions.ui_language, "en_US"));
 
                     ProcessStartInfo myProcessInfo = new ProcessStartInfo
                     {
                         FileName = _MKVMergeFilename,
-                        Arguments = ConvertOptionValueListToString(options),
+                        Arguments = options.ConvertOptionValueListToString(),
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         StandardOutputEncoding = Encoding.UTF8,
@@ -279,7 +251,9 @@ namespace gMKVToolNix.MkvMerge
                     myProcess.Start();
 
                     // Read the Standard output character by character
-                    myProcess.ReadStreamPerCharacter(myProcess_OutputDataReceived);
+                    myProcess.ReadStreamPerCharacter(CreateProcessOutputHandlerFactory(
+                        (string line) => versionOutputLines.Add(line),
+                        (string error) => errors.Add(error)));
 
                     // Wait for the process to exit
                     myProcess.WaitForExit();
@@ -296,17 +270,12 @@ namespace gMKVToolNix.MkvMerge
                         // something went wrong!
                         throw new Exception(string.Format("Mkvmerge exited with error code {0}!" +
                             Environment.NewLine + Environment.NewLine + "Errors reported:" + Environment.NewLine + "{1}",
-                            myProcess.ExitCode, _ErrorBuilder.ToString()));
+                            myProcess.ExitCode, string.Join(Environment.NewLine, errors)));
                     }
                 }
 
-                string outputString = _MKVMergeOutput?.ToString();
-
-                // Clear the mkvmerge output
-                _MKVMergeOutput.Length = 0;
-
                 // Parse version info
-                return gMKVVersionParser.ParseVersionOutput(outputString);
+                return gMKVVersionParser.ParseVersionOutput(versionOutputLines);
             }
             else
             {
@@ -321,11 +290,15 @@ namespace gMKVToolNix.MkvMerge
             }
         }
 
-        private void ExecuteMkvMerge(List<OptionValue> argOptionList, string argMKVFile, DataReceivedEventHandler argHandler)
+        private void ExecuteMkvMerge(
+            List<OptionValue<MkvMergeOptions>> argOptionList, 
+            string argMKVFile, 
+            List<string> errors, 
+            Action<Process, string> argHandler)
         {
             using (Process myProcess = new Process())
             {
-                List<OptionValue> optionList = new List<OptionValue>();
+                List<OptionValue<MkvMergeOptions>> optionList = new List<OptionValue<MkvMergeOptions>>();
 
                 string LC_ALL = "";
                 string LANG = "";
@@ -335,11 +308,11 @@ namespace gMKVToolNix.MkvMerge
                 // After talking with Mosu, the language output is defined from ui-language, with different language codes for Windows and Linux
                 if (PlatformExtensions.IsOnLinux)
                 {
-                    optionList.Add(new OptionValue(MkvMergeOptions.ui_language, "en_US"));
+                    optionList.Add(new OptionValue<MkvMergeOptions>(MkvMergeOptions.ui_language, "en_US"));
                 }
                 else
                 {
-                    optionList.Add(new OptionValue(MkvMergeOptions.ui_language, "en"));
+                    optionList.Add(new OptionValue<MkvMergeOptions>(MkvMergeOptions.ui_language, "en"));
                 }
                 //optionList.Add(new OptionValue(MkvMergeOptions.command_line_charset, "\"UTF-8\""));
                 //optionList.Add(new OptionValue(MkvMergeOptions.output_charset, "\"UTF-8\""));
@@ -351,13 +324,13 @@ namespace gMKVToolNix.MkvMerge
                     if (_Version.FileMajorPart > 9 ||
                         (_Version.FileMajorPart == 9 && _Version.FileMinorPart >= 6))
                     {
-                        optionList.Add(new OptionValue(MkvMergeOptions.identify, ""));
-                        optionList.Add(new OptionValue(MkvMergeOptions.identification_format, "json"));
+                        optionList.Add(new OptionValue<MkvMergeOptions>(MkvMergeOptions.identify, ""));
+                        optionList.Add(new OptionValue<MkvMergeOptions>(MkvMergeOptions.identification_format, "json"));
                     }
                     else
                     {
                         // For previous mkvmerge versions, keep compatibility
-                        optionList.Add(new OptionValue(MkvMergeOptions.identify_verbose, ""));
+                        optionList.Add(new OptionValue<MkvMergeOptions>(MkvMergeOptions.identify_verbose, ""));
 
                         // Before JSON output, the safest way to ensure English output on Linux is throught the EnvironmentVariables
                         if (PlatformExtensions.IsOnLinux)
@@ -400,11 +373,11 @@ namespace gMKVToolNix.MkvMerge
 
                 if (!string.IsNullOrWhiteSpace(argMKVFile))
                 {
-                    myProcessInfo.Arguments = string.Format("{0} \"{1}\"", ConvertOptionValueListToString(optionList), argMKVFile);
+                    myProcessInfo.Arguments = string.Format("{0} \"{1}\"", optionList.ConvertOptionValueListToString(), argMKVFile);
                 }
                 else
                 {
-                    myProcessInfo.Arguments = ConvertOptionValueListToString(optionList);
+                    myProcessInfo.Arguments = optionList.ConvertOptionValueListToString();
                 }
 
                 myProcess.StartInfo = myProcessInfo;
@@ -433,7 +406,7 @@ namespace gMKVToolNix.MkvMerge
                     // something went wrong!
                     throw new Exception(string.Format("Mkvmerge exited with error code {0}!" +
                         Environment.NewLine + Environment.NewLine + "Errors reported:" + Environment.NewLine + "{1}",
-                        myProcess.ExitCode, _ErrorBuilder.ToString()));
+                        myProcess.ExitCode, string.Join(Environment.NewLine, errors)));
                 }
 
                 // Before JSON output, the safest way to ensure English output on Linux is throught the EnvironmentVariables
@@ -816,13 +789,19 @@ namespace gMKVToolNix.MkvMerge
             return finalList;
         }
 
-        private static List<gMKVSegment> ParseMkvMergeOutput(string output)
+        private static List<gMKVSegment> ParseMkvMergeOutput(List<string> output)
         {
             List<gMKVSegment> finalList = new List<gMKVSegment>();
 
             // start the loop for each line of the output
-            foreach (string outputLine in output.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (string outputLine in output)
             {
+                if (string.IsNullOrWhiteSpace(outputLine))
+                {
+                    // skip empty lines
+                    continue;
+                }
+
                 if (outputLine.StartsWith("File "))
                 {
                     gMKVSegmentInfo tmpSegInfo = new gMKVSegmentInfo();
@@ -866,7 +845,7 @@ namespace gMKVToolNix.MkvMerge
                 else if (outputLine.StartsWith("Track ID "))
                 {
                     int trackID = int.TryParse(outputLine.Substring(0, outputLine.IndexOf(":")).Replace("Track ID", "").Trim(), out int trackId) ? trackId : 0;
-                    
+
                     // Check if there is already a track with the same TrackID (workaround for a weird bug in MKVToolnix v4 when identifying files from AviDemux)
                     bool trackFound = false;
                     foreach (gMKVSegment tmpSeg in finalList)
@@ -889,9 +868,9 @@ namespace gMKVToolNix.MkvMerge
                     gMKVTrack tmpTrack = new gMKVTrack
                     {
                         TrackType = (MkvTrackType)Enum.Parse(
-                            typeof(MkvTrackType), 
+                            typeof(MkvTrackType),
                             outputLine.Substring(
-                                outputLine.IndexOf(":") + 1, 
+                                outputLine.IndexOf(":") + 1,
                                 outputLine.IndexOf("(") - outputLine.IndexOf(":") - 1)
                             .Trim()),
                         TrackID = trackID
@@ -1015,11 +994,41 @@ namespace gMKVToolNix.MkvMerge
                 else if (outputLine.StartsWith("Attachment ID "))
                 {
                     gMKVAttachment tmp = new gMKVAttachment();
-                    tmp.ID = int.Parse(outputLine.Substring(0, outputLine.IndexOf(":")).Replace("Attachment ID", "").Trim());
-                    tmp.Filename = outputLine.Substring(outputLine.IndexOf("file name")).Replace("file name", "");
-                    tmp.Filename = tmp.Filename.Substring(tmp.Filename.IndexOf("'") + 1, tmp.Filename.LastIndexOf("'") - 2).Trim();
-                    tmp.FileSize = outputLine.Substring(outputLine.IndexOf("size")).Replace("size", "").Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries)[0].Replace("bytes", "").Trim();
-                    tmp.MimeType = outputLine.Substring(outputLine.IndexOf("type")).Replace("type", "").Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries)[0].Replace("'", "").Trim();
+                    tmp.ID = int.Parse(outputLine.Substring("Attachment ID".Length, outputLine.IndexOf(":") - "Attachment ID".Length).Trim());
+
+                    // Extract filename between single quotes after "file name"
+                    int fileNameStart = outputLine.IndexOf("file name");
+                    if (fileNameStart >= 0)
+                    {
+                        int firstQuote = outputLine.IndexOf('\'', fileNameStart);
+                        int lastQuote = outputLine.IndexOf('\'', firstQuote + 1);
+                        if (firstQuote >= 0 && lastQuote > firstQuote)
+                        {
+                            tmp.Filename = outputLine.Substring(firstQuote + 1, lastQuote - firstQuote - 1).Trim();
+                        }
+                    }
+
+                    // Extract file size after "size"
+                    int sizeStart = outputLine.IndexOf("size");
+                    if (sizeStart >= 0)
+                    {
+                        int sizeEnd = outputLine.IndexOf(',', sizeStart);
+                        string sizePart = sizeEnd > sizeStart
+                            ? outputLine.Substring(sizeStart + 4, sizeEnd - sizeStart - 4)
+                            : outputLine.Substring(sizeStart + 4);
+                        tmp.FileSize = sizePart.Replace("bytes", "").Trim();
+                    }
+
+                    // Extract mime type after "type"
+                    int typeStart = outputLine.IndexOf("type");
+                    if (typeStart >= 0)
+                    {
+                        int typeEnd = outputLine.IndexOf(',', typeStart);
+                        string typePart = typeEnd > typeStart
+                            ? outputLine.Substring(typeStart + 4, typeEnd - typeStart - 4)
+                            : outputLine.Substring(typeStart + 4);
+                        tmp.MimeType = typePart.Replace("'", "").Trim();
+                    }
 
                     finalList.Add(tmp);
                 }
@@ -1027,7 +1036,13 @@ namespace gMKVToolNix.MkvMerge
                 {
                     gMKVChapter tmp = new gMKVChapter
                     {
-                        ChapterCount = int.TryParse(outputLine.Replace("Chapters: ", "").Replace("entry", "").Replace("entries", "").Trim(), out int chapterCount)
+                        ChapterCount = int.TryParse(
+                            outputLine
+                                .Replace("Chapters: ", "")
+                                .Replace("entry", "")
+                                .Replace("entries", "")
+                                .Trim(), 
+                            out int chapterCount)
                         ? chapterCount : 0
                     };
 
@@ -1071,55 +1086,40 @@ namespace gMKVToolNix.MkvMerge
             return gMKVHelper.UnescapeString(value).Trim();
         }
 
-        private void myProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        /// Factory that creates a process output handler with a custom output action.
+        /// </summary>
+        /// <param name="outputAction">The action to perform with the received line of text.</param>
+        /// <returns>A new Action<Process, string> that can be used as a handler.</returns>
+        public Action<Process, string> CreateProcessOutputHandlerFactory(Action<string> outputAction, Action<string> errorAction)
         {
-            if (e.Data != null)
-            {
-                if (e.Data.Trim().Length > 0)
-                {
-                    // add the line to the output stringbuilder
-                    _MKVMergeOutput.AppendLine(e.Data);
-                    // check for errors
-                    if (e.Data.Contains("Error:"))
-                    {
-                        _ErrorBuilder.AppendLine(e.Data.Substring(e.Data.IndexOf(":") + 1).Trim());
-                    }
-                    // debug write the output line
-                    Debug.WriteLine(e.Data);
-                    // log the output
-                    gMKVLogger.Log(e.Data);
-                }
-            }
+            // Return a new lambda expression that matches the Action<Process, string> signature.
+            // This lambda "closes over" the outputAction parameter.
+            return (process, line) => ProcessLineReceivedHandler(process, line, outputAction, errorAction);
         }
 
-        private static string ConvertOptionValueListToString(List<OptionValue> listOptionValue)
+        private void ProcessLineReceivedHandler(
+            Process sender, 
+            string lineReceived, 
+            Action<string> outputAction, 
+            Action<string> errorAction)
         {
-            StringBuilder optionString = new StringBuilder();
-            foreach (OptionValue optVal in listOptionValue)
+            if (!string.IsNullOrWhiteSpace(lineReceived))
             {
-                optionString.Append(' ');
-                optionString.Append(ConvertEnumOptionToStringOption(optVal.Option));
-                if (!string.IsNullOrWhiteSpace(optVal.Parameter))
+                // debug write the output line
+                Debug.WriteLine(lineReceived);
+
+                // log the output
+                gMKVLogger.Log(lineReceived);
+
+                // Call the outputAction with the received line
+                outputAction(lineReceived);
+
+                // check for errors
+                if (lineReceived.Contains("Error:"))
                 {
-                    optionString.Append(' ');
-                    optionString.Append(optVal.Parameter);
+                    errorAction(lineReceived.Substring(lineReceived.IndexOf(":") + 1).Trim());
                 }
             }
-
-            return optionString.ToString();
-        }
-
-        private static readonly Dictionary<MkvMergeOptions, string> _MkvMergeOptionsToStringMap =
-            Enum.GetValues(typeof(MkvMergeOptions))
-            .Cast<MkvMergeOptions>()
-            .ToDictionary(
-                val => val,
-                val => $"--{val.ToString().Replace("_", "-")}"
-            );
-
-        private static string ConvertEnumOptionToStringOption(MkvMergeOptions enumOption)
-        {
-            return _MkvMergeOptionsToStringMap[enumOption];
         }
     }
 }
