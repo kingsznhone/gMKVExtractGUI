@@ -1898,6 +1898,33 @@ namespace gMKVToolNix.Forms
                 tsUncheckVideoTracksByName.DropDownItems.AddRange(uncheckItems.ToArray());
             }
 
+            // Get all video track Forced
+            List<bool> videoForced = allNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.video).
+                Select(n => (n.Tag as gMKVTrack).Forced).Distinct().ToList();
+            ToolStripMenuItem tsCheckVideoTracksByForced = new ToolStripMenuItem(string.Format("Video Tracks by Forced ({0})...", videoForced.Count));
+            checkVideoTracksToolStripMenuItem.DropDownItems.Add(tsCheckVideoTracksByForced);
+            ToolStripMenuItem tsUncheckVideoTracksByForced = new ToolStripMenuItem(string.Format("Video Tracks by Forced ({0})...", videoForced.Count));
+            uncheckVideoTracksToolStripMenuItem.DropDownItems.Add(tsUncheckVideoTracksByForced);
+            checkItems = new List<ToolStripItem>();
+            uncheckItems = new List<ToolStripItem>();
+            foreach (bool forced in videoForced)
+            {
+                int totalForced = allNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.video && (n.Tag as gMKVTrack).Forced == forced).Count();
+                int checkedForced = checkedNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.video && (n.Tag as gMKVTrack).Forced == forced).Count();
+                var checkItem = new ToolStripMenuItem(string.Format("Forced: [{0}] ({1}/{2})", forced, checkedForced, totalForced), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.video, true, nodeSelectionFilter: NodeSelectionFilter.Forced, argFilter: forced.ToString()); }
+                    );
+                ThemeManager.ApplyToolStripItemTheme(checkItem, _Settings.DarkMode); // Apply theme
+                checkItems.Add(checkItem);
+                var uncheckItem = new ToolStripMenuItem(string.Format("Forced: [{0}] ({1}/{2})", forced, totalForced - checkedForced, totalForced), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.video, false, nodeSelectionFilter: NodeSelectionFilter.Forced, argFilter: forced.ToString()); }
+                    );
+                ThemeManager.ApplyToolStripItemTheme(uncheckItem, _Settings.DarkMode);
+                uncheckItems.Add(uncheckItem);
+            }
+            tsCheckVideoTracksByForced.DropDownItems.AddRange(checkItems.ToArray());
+            tsUncheckVideoTracksByForced.DropDownItems.AddRange(uncheckItems.ToArray());
+
             // Get all audio track languages
             List<string> audioLanguages = allNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.audio).
                 Select(n => (n.Tag as gMKVTrack).Language).Distinct().ToList();
@@ -2037,6 +2064,33 @@ namespace gMKVToolNix.Forms
                 tsUncheckAudioTracksByName.DropDownItems.AddRange(uncheckItems.ToArray());
             }
 
+            // Get all audio track Forced
+            List<bool> audioForced = allNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.audio).
+                Select(n => (n.Tag as gMKVTrack).Forced).Distinct().ToList();
+            ToolStripMenuItem tsCheckAudioTracksByForced = new ToolStripMenuItem(string.Format("Audio Tracks by Forced ({0})...", audioForced.Count));
+            checkAudioTracksToolStripMenuItem.DropDownItems.Add(tsCheckAudioTracksByForced);
+            ToolStripMenuItem tsUncheckAudioTracksByForced = new ToolStripMenuItem(string.Format("Audio Tracks by Forced ({0})...", audioForced.Count));
+            uncheckAudioTracksToolStripMenuItem.DropDownItems.Add(tsUncheckAudioTracksByForced);
+            checkItems = new List<ToolStripItem>();
+            uncheckItems = new List<ToolStripItem>();
+            foreach (bool forced in audioForced)
+            {
+                int totalForced = allNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.audio && (n.Tag as gMKVTrack).Forced == forced).Count();
+                int checkedForced = checkedNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.audio && (n.Tag as gMKVTrack).Forced == forced).Count();
+                var checkItem = new ToolStripMenuItem(string.Format("Forced: [{0}] ({1}/{2})", forced, checkedForced, totalForced), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.audio, true, nodeSelectionFilter: NodeSelectionFilter.Forced, argFilter: forced.ToString()); }
+                    );
+                ThemeManager.ApplyToolStripItemTheme(checkItem, _Settings.DarkMode); // Apply theme
+                checkItems.Add(checkItem);
+                var uncheckItem = new ToolStripMenuItem(string.Format("Forced: [{0}] ({1}/{2})", forced, totalForced - checkedForced, totalForced), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.audio, false, nodeSelectionFilter: NodeSelectionFilter.Forced, argFilter: forced.ToString()); }
+                    );
+                ThemeManager.ApplyToolStripItemTheme(uncheckItem, _Settings.DarkMode);
+                uncheckItems.Add(uncheckItem);
+            }
+            tsCheckAudioTracksByForced.DropDownItems.AddRange(checkItems.ToArray());
+            tsUncheckAudioTracksByForced.DropDownItems.AddRange(uncheckItems.ToArray());
+
             // Get all subtitle track languages
             List<string> subLanguages = allNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.subtitles).
                 Select(n => (n.Tag as gMKVTrack).Language).Distinct().ToList();
@@ -2148,6 +2202,33 @@ namespace gMKVToolNix.Forms
                 tsCheckSubtitleTracksByName.DropDownItems.AddRange(checkItems.ToArray());
                 tsUncheckSubtitleTracksByName.DropDownItems.AddRange(uncheckItems.ToArray());
             }
+
+            // Get all subtitle track Forced
+            List<bool> subtitleForced = allNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.subtitles).
+                Select(n => (n.Tag as gMKVTrack).Forced).Distinct().ToList();
+            ToolStripMenuItem tsCheckSubtitlesTracksByForced = new ToolStripMenuItem(string.Format("Subtitle Tracks by Forced ({0})...", subtitleForced.Count));
+            checkSubtitleTracksToolStripMenuItem.DropDownItems.Add(tsCheckSubtitlesTracksByForced);
+            ToolStripMenuItem tsUncheckSubtitlesTracksByForced = new ToolStripMenuItem(string.Format("Subtitle Tracks by Forced ({0})...", subtitleForced.Count));
+            uncheckSubtitleTracksToolStripMenuItem.DropDownItems.Add(tsUncheckSubtitlesTracksByForced);
+            checkItems = new List<ToolStripItem>();
+            uncheckItems = new List<ToolStripItem>();
+            foreach (bool forced in subtitleForced)
+            {
+                int totalForced = allNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.subtitles && (n.Tag as gMKVTrack).Forced == forced).Count();
+                int checkedForced = checkedNodes.Where(n => n != null && n.Tag != null && n.Tag is gMKVTrack && (n.Tag as gMKVTrack).TrackType == MkvTrackType.subtitles && (n.Tag as gMKVTrack).Forced == forced).Count();
+                var checkItem = new ToolStripMenuItem(string.Format("Forced: [{0}] ({1}/{2})", forced, checkedForced, totalForced), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.subtitle, true, nodeSelectionFilter: NodeSelectionFilter.Forced, argFilter: forced.ToString()); }
+                    );
+                ThemeManager.ApplyToolStripItemTheme(checkItem, _Settings.DarkMode); // Apply theme
+                checkItems.Add(checkItem);
+                var uncheckItem = new ToolStripMenuItem(string.Format("Forced: [{0}] ({1}/{2})", forced, totalForced - checkedForced, totalForced), null,
+                        delegate { SetCheckedTracks(TrackSelectionMode.subtitle, false, nodeSelectionFilter: NodeSelectionFilter.Forced, argFilter: forced.ToString()); }
+                    );
+                ThemeManager.ApplyToolStripItemTheme(uncheckItem, _Settings.DarkMode);
+                uncheckItems.Add(uncheckItem);
+            }
+            tsCheckSubtitlesTracksByForced.DropDownItems.AddRange(checkItems.ToArray());
+            tsUncheckSubtitlesTracksByForced.DropDownItems.AddRange(uncheckItems.ToArray());
         }
 
         private enum NodeSelectionFilter
@@ -2157,6 +2238,7 @@ namespace gMKVToolNix.Forms
             ExtraInfo,
             CodecId,
             Name,
+            Forced,
         }
 
         private void SetCheckedTracks(TrackSelectionMode argSelectionMode, bool argCheck,
@@ -2190,6 +2272,9 @@ namespace gMKVToolNix.Forms
                             case NodeSelectionFilter.Name:
                                 nodes = nodes.Where(n => (n.Tag as gMKVTrack).TrackName == argFilter).ToList();
                                 break;
+                            case NodeSelectionFilter.Forced:
+                                nodes = nodes.Where(n => (n.Tag as gMKVTrack).Forced == bool.Parse(argFilter)).ToList();
+                                break;
                             default:
                                 break;
                         }
@@ -2220,6 +2305,9 @@ namespace gMKVToolNix.Forms
                             case NodeSelectionFilter.Name:
                                 nodes = nodes.Where(n => (n.Tag as gMKVTrack).TrackName == argFilter).ToList();
                                 break;
+                            case NodeSelectionFilter.Forced:
+                                nodes = nodes.Where(n => (n.Tag as gMKVTrack).Forced == bool.Parse(argFilter)).ToList();
+                                break;
                             default:
                                 break;
                         }
@@ -2249,6 +2337,9 @@ namespace gMKVToolNix.Forms
                                 break;
                             case NodeSelectionFilter.Name:
                                 nodes = nodes.Where(n => (n.Tag as gMKVTrack).TrackName == argFilter).ToList();
+                                break;
+                            case NodeSelectionFilter.Forced:
+                                nodes = nodes.Where(n => (n.Tag as gMKVTrack).Forced == bool.Parse(argFilter)).ToList();
                                 break;
                             default:
                                 break;
