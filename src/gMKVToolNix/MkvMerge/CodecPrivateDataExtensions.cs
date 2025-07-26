@@ -30,7 +30,7 @@ namespace gMKVToolNix.MkvMerge
             // Check if the track has CodecPrivateData
             // and it doesn't have a text representation of CodecPrivate
             if (string.IsNullOrWhiteSpace(track.CodecPrivateData)
-                || string.IsNullOrWhiteSpace(track.CodecPrivate))
+                || !string.IsNullOrWhiteSpace(track.CodecPrivate))
             {
                 return null;
             }
