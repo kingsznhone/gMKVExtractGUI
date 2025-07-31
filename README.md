@@ -49,10 +49,9 @@ For more information, discussions, and support, please visit the project's origi
 
 ## Getting Started
 
-*(You might want to add basic instructions here on how to download/install the latest release or how to build from source, e.g.:)*
-
 1.  **Download the Latest Release:** Head over to the [Releases](https://github.com/Gpower2/gMKVExtractGUI/releases) section and download the latest executable.
 2.  **Prerequisites:** Ensure you have [MKVToolNix](https://mkvtoolnix.download/) installed on your system.
+3.  **Documentation:** For detailed usage instructions, refer to the [User Manual](docs/README.md).
 
 ---
 
