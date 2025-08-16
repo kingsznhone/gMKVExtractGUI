@@ -32,7 +32,7 @@ namespace gMKVToolNix.MkvMerge
             if (string.IsNullOrWhiteSpace(track.CodecPrivateData)
                 || !string.IsNullOrWhiteSpace(track.CodecPrivate))
             {
-                return null;
+                return "";
             }
 
             byte[] codecPrivateBytes = track.CodecPrivateData.HexStringToByteArray();
