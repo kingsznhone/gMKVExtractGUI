@@ -1,16 +1,18 @@
-﻿using System;
+﻿using gMKVToolNix.Log;
+using gMKVToolNix.Theming;
+using gMKVToolNix.WinAPI;
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Windows.Forms;
-using gMKVToolNix.Log;
-using gMKVToolNix.Theming;
-using gMKVToolNix.WinAPI;
 
 namespace gMKVToolNix
 {
+    [SupportedOSPlatform("windows")]
     public partial class frmLog : gForm
     {
         private readonly gSettings _Settings = null;

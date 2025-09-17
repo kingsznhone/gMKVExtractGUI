@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Versioning;
 using gMKVToolNix.Log;
 using gMKVToolNix.MkvInfo;
 using gMKVToolNix.MkvMerge;
@@ -10,6 +11,7 @@ using Microsoft.Win32;
 
 namespace gMKVToolNix
 {
+    [SupportedOSPlatform("windows")]
     public static class gMKVHelper
     {
         private static string _mkvMergeGuiFilename = null;

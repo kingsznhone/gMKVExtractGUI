@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace gMKVToolNix.Controls
 {
+    [SupportedOSPlatform("windows")]
     public static class ControlExtensions
     {
         [DllImport("user32.dll")]

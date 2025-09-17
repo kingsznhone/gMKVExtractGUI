@@ -1,11 +1,13 @@
-﻿using System;
+﻿using gMKVToolNix.Forms;
+using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
-using gMKVToolNix.Forms;
 
 namespace gMKVToolNix
 {
+    [SupportedOSPlatform("windows")]
     static class Program
     {
         /// <summary>
@@ -28,6 +30,7 @@ namespace gMKVToolNix
         static void Main(string[] args)
         {
             Application.EnableVisualStyles();
+            Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
             Application.SetCompatibleTextRenderingDefault(false);
 
             if (!File.Exists(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "gMKVToolNix.dll")))

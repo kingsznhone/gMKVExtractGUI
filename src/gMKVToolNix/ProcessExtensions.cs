@@ -2,10 +2,13 @@
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.Versioning;
 using System.Text;
 
 namespace gMKVToolNix
 {
+    [SupportedOSPlatform("windows")]
     public static class ProcessExtensions
     {
         private static readonly FieldInfo _dataReceivedEventArgsFieldInfo = typeof(DataReceivedEventArgs)
@@ -18,7 +21,7 @@ namespace gMKVToolNix
         /// <returns></returns>
         public static DataReceivedEventArgs GetDataReceivedEventArgs(object argData)
         {
-            DataReceivedEventArgs eventArgs = (DataReceivedEventArgs)System.Runtime.Serialization.FormatterServices
+            DataReceivedEventArgs eventArgs = (DataReceivedEventArgs)RuntimeHelpers
                 .GetUninitializedObject(typeof(DataReceivedEventArgs));
 
             _dataReceivedEventArgsFieldInfo.SetValue(eventArgs, argData);

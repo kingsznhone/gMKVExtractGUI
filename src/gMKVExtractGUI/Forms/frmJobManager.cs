@@ -1,4 +1,10 @@
-﻿using System;
+﻿using gMKVToolNix.Forms;
+using gMKVToolNix.Jobs;
+using gMKVToolNix.Log;
+using gMKVToolNix.MkvExtract;
+using gMKVToolNix.Theming;
+using gMKVToolNix.WinAPI;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -6,18 +12,14 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Media;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using gMKVToolNix.Forms;
-using gMKVToolNix.Jobs;
-using gMKVToolNix.Log;
-using gMKVToolNix.MkvExtract;
-using gMKVToolNix.Theming;
-using gMKVToolNix.WinAPI;
 
 namespace gMKVToolNix
 {
+    [SupportedOSPlatform("windows")]
     public partial class frmJobManager : gForm
     {
         private readonly StringBuilder _ExceptionBuilder = new StringBuilder();

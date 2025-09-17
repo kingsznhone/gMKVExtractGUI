@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Media;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using gMKVToolNix.Jobs;
+﻿using gMKVToolNix.Jobs;
 using gMKVToolNix.Log;
 using gMKVToolNix.MkvExtract;
 using gMKVToolNix.MkvInfo;
@@ -17,6 +6,18 @@ using gMKVToolNix.MkvMerge;
 using gMKVToolNix.Segments;
 using gMKVToolNix.Theming;
 using gMKVToolNix.WinAPI;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Media;
+using System.Runtime.Versioning;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace gMKVToolNix.Forms
 {
@@ -32,7 +33,7 @@ namespace gMKVToolNix.Forms
 
     public delegate void UpdateProgressDelegate(object val);
     public delegate void UpdateTrackLabelDelegate(object filename, object val);
-
+    [SupportedOSPlatform("windows")]
     public partial class frmMain2 : gForm, IFormMain
     {
         private frmLog _LogForm = null;

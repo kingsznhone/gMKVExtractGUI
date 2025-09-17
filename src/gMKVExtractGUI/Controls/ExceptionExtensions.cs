@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace gMKVToolNix.Controls
 {
+    [SupportedOSPlatform("windows")]
     public static class ExceptionExtensions
     {
         /// <summary>

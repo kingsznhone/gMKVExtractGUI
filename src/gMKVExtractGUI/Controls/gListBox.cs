@@ -1,7 +1,9 @@
-﻿using System.Windows.Forms;
+﻿using System.Runtime.Versioning;
+using System.Windows.Forms;
 
 namespace gMKVToolNix.Controls
 {
+    [SupportedOSPlatform("windows")]
     public class gListBox:ListBox
     {
         public gListBox()

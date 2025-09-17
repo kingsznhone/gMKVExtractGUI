@@ -2,15 +2,18 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace gMKVToolNix.Controls
 {
+    [SupportedOSPlatform("windows")]
     public class gDataGridView:DataGridView
     {
         protected int _LastClickedRowIndex = -1;
 
         [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int LastClickedRowIndex
         {
             get { return _LastClickedRowIndex; }
@@ -20,6 +23,7 @@ namespace gMKVToolNix.Controls
         protected int _LastClickedColumnIndex = -1;
 
         [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int LastClickedColumnIndex
         {
             get { return _LastClickedColumnIndex; }

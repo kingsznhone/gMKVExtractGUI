@@ -1,16 +1,18 @@
-﻿using System;
+﻿using gMKVToolNix.Log;
+using gMKVToolNix.Segments;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Text.RegularExpressions;
-using gMKVToolNix.Log;
-using gMKVToolNix.Segments;
 
 namespace gMKVToolNix.MkvInfo
 {
+    [SupportedOSPlatform("windows")]
     public class gMKVInfo
     {
         // mkvinfo [options] <inname>

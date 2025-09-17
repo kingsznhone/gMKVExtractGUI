@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace gMKVToolNix
 {
+    [SupportedOSPlatform("windows")]
     public static class gTaskbarProgress
     {
         public enum TaskbarStates

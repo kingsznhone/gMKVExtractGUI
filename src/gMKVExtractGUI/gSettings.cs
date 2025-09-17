@@ -1,15 +1,17 @@
-﻿using System;
+﻿using gMKVToolNix.Log;
+using gMKVToolNix.Segments;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Windows.Forms;
-using gMKVToolNix.Log;
-using gMKVToolNix.Segments;
 
 namespace gMKVToolNix
 {
+    [SupportedOSPlatform("windows")]
     public class gSettings
     {
         private string _MkvToolnixPath = "";

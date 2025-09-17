@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Xml.Serialization;
 using gMKVToolNix.Log;
@@ -11,7 +12,7 @@ namespace gMKVToolNix.MkvExtract
 {
     public delegate void MkvExtractProgressUpdatedEventHandler(int progress);
     public delegate void MkvExtractTrackUpdatedEventHandler(string filename, string trackName);
-
+    [SupportedOSPlatform("windows")]
     public class gMKVExtract
     {
         /// <summary>

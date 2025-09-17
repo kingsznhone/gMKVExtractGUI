@@ -1,16 +1,18 @@
-﻿using System;
+﻿using gMKVToolNix.Log;
+using gMKVToolNix.Segments;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.Versioning;
 using System.Text;
-using gMKVToolNix.Log;
-using gMKVToolNix.Segments;
-using Newtonsoft.Json.Linq;
 
 namespace gMKVToolNix.MkvMerge
 {
+    [SupportedOSPlatform("windows")]
     public class gMKVMerge
     {
         private static readonly string[] _dateFormats = { 

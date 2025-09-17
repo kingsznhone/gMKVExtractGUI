@@ -1,14 +1,18 @@
-﻿using System;
+﻿using gMKVToolNix.Controls;
+using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
-using gMKVToolNix.Controls;
 
 namespace gMKVToolNix
 {
+    [SupportedOSPlatform("windows")]
     public class gRichTextBox : RichTextBox
     {
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool DarkMode { get; set; } = false;
 
         public gRichTextBox()

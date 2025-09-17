@@ -1,8 +1,10 @@
-﻿using System.Windows.Forms;
+﻿using System.Runtime.Versioning;
+using System.Windows.Forms;
+
 
 namespace gMKVToolNix
 {
-
+    [SupportedOSPlatform("windows")]
     public class gCheckedListBox: System.Windows.Forms.CheckedListBox
     {
         public gCheckedListBox()

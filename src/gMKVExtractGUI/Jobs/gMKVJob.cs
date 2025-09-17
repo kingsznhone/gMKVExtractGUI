@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Versioning;
 using System.Text;
 using gMKVToolNix.Forms;
 using gMKVToolNix.MkvExtract;
@@ -11,6 +12,7 @@ namespace gMKVToolNix.Jobs
     public delegate void gMkvExtractMethod(object parameterList);
 
     [Serializable]
+    [SupportedOSPlatform("windows")]
     [System.Xml.Serialization.XmlInclude(typeof(List<gMKVSegment>))]
     [System.Xml.Serialization.XmlInclude(typeof(gMKVSegment))]
     [System.Xml.Serialization.XmlInclude(typeof(gMKVTrack))]
@@ -33,27 +35,18 @@ namespace gMKVToolNix.Jobs
 
         public gMkvExtractMethod ExtractMethod(gMKVExtract argGmkvExtract) 
         {
-            switch (ExtractionMode)
+            return ExtractionMode switch
             {
-                case FormMkvExtractionMode.Tracks:
-                    return argGmkvExtract.ExtractMKVSegmentsThreaded;
-                case FormMkvExtractionMode.Cue_Sheet:
-                    return argGmkvExtract.ExtractMkvCuesheetThreaded;
-                case FormMkvExtractionMode.Tags:
-                    return argGmkvExtract.ExtractMkvTagsThreaded;
-                case FormMkvExtractionMode.Timecodes:
-                    return argGmkvExtract.ExtractMKVTimecodesThreaded;
-                case FormMkvExtractionMode.Tracks_And_Timecodes:
-                    return argGmkvExtract.ExtractMKVSegmentsThreaded;
-                case FormMkvExtractionMode.Cues:
-                    return argGmkvExtract.ExtractMKVCuesThreaded;
-                case FormMkvExtractionMode.Tracks_And_Cues:
-                    return argGmkvExtract.ExtractMKVSegmentsThreaded;
-                case FormMkvExtractionMode.Tracks_And_Cues_And_Timecodes:
-                    return argGmkvExtract.ExtractMKVSegmentsThreaded;
-                default:
-                    throw new Exception("Unsupported Extraction Mode!");
-            }
+                FormMkvExtractionMode.Tracks => argGmkvExtract.ExtractMKVSegmentsThreaded,
+                FormMkvExtractionMode.Cue_Sheet => argGmkvExtract.ExtractMkvCuesheetThreaded,
+                FormMkvExtractionMode.Tags => argGmkvExtract.ExtractMkvTagsThreaded,
+                FormMkvExtractionMode.Timecodes => argGmkvExtract.ExtractMKVTimecodesThreaded,
+                FormMkvExtractionMode.Tracks_And_Timecodes => argGmkvExtract.ExtractMKVSegmentsThreaded,
+                FormMkvExtractionMode.Cues => argGmkvExtract.ExtractMKVCuesThreaded,
+                FormMkvExtractionMode.Tracks_And_Cues => argGmkvExtract.ExtractMKVSegmentsThreaded,
+                FormMkvExtractionMode.Tracks_And_Cues_And_Timecodes => argGmkvExtract.ExtractMKVSegmentsThreaded,
+                _ => throw new Exception("Unsupported Extraction Mode!"),
+            };
         }
 
         // For serialization only!!!
@@ -61,13 +54,13 @@ namespace gMKVToolNix.Jobs
 
         private string GetTracks(List<gMKVSegment> argSegmentList)
         {
-            StringBuilder trackBuilder = new StringBuilder();
+            StringBuilder trackBuilder = new();
             foreach (gMKVSegment item in argSegmentList)
             {
                 if (item is gMKVTrack track)
                 {
                     trackBuilder.AppendFormat("[{0}:{1}]",
-                        track.TrackType.ToString().Substring(0, 3),
+                        track.TrackType.ToString()[..3],
                         track.TrackID);
                 }
                 else if (item is gMKVAttachment attachment)
@@ -85,7 +78,7 @@ namespace gMKVToolNix.Jobs
 
         public override string ToString()
         {
-            StringBuilder retValue = new StringBuilder();
+            StringBuilder retValue = new();
             switch (ExtractionMode)
             {
                 case FormMkvExtractionMode.Tracks:

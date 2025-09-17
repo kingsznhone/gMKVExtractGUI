@@ -1,7 +1,9 @@
-﻿using System.Windows.Forms;
+﻿using System.Runtime.Versioning;
+using System.Windows.Forms;
 
 namespace gMKVToolNix
 {
+    [SupportedOSPlatform("windows")]
     public class gGroupBox:GroupBox
     {
         public const int WM_ERASEBKGND = 0x0014;

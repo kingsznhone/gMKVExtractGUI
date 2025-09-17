@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 using gMKVToolNix.Controls;
 
 namespace gMKVToolNix
 {
+    [SupportedOSPlatform("windows")]
     public class gTextBox : TextBox
     {
         public gTextBox()

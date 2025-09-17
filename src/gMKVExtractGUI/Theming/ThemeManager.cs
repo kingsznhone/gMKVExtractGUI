@@ -1,12 +1,14 @@
+using gMKVToolNix.Controls;
+using gMKVToolNix.WinAPI;
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
-using gMKVToolNix.Controls;
-using gMKVToolNix.WinAPI;
 
 namespace gMKVToolNix.Theming
 {
+    [SupportedOSPlatform("windows")]
     public static class ThemeManager
     {
         // Define Light and Dark Colors

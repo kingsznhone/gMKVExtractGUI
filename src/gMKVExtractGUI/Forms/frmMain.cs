@@ -1,4 +1,9 @@
-﻿using System;
+﻿using gMKVToolNix.Forms;
+using gMKVToolNix.Jobs;
+using gMKVToolNix.Log;
+using gMKVToolNix.MkvExtract;
+using gMKVToolNix.Segments;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -6,13 +11,9 @@ using System.Drawing;
 using System.IO;
 using System.Media;
 using System.Reflection;
+using System.Runtime.Versioning;
 using System.Threading;
 using System.Windows.Forms;
-using gMKVToolNix.Forms;
-using gMKVToolNix.Jobs;
-using gMKVToolNix.Log;
-using gMKVToolNix.MkvExtract;
-using gMKVToolNix.Segments;
 
 namespace gMKVToolNix
 {
@@ -29,7 +30,7 @@ namespace gMKVToolNix
 
     public delegate void UpdateProgressDelegate(Object val);
     public delegate void UpdateTrackLabelDelegate(Object filename, Object val);
-
+    [SupportedOSPlatform("windows")]
     public partial class frmMain : gForm, IFormMain
     {
         private frmLog _LogForm = null;

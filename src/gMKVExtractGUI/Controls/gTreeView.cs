@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace gMKVToolNix
 {
+    [SupportedOSPlatform("windows")]
     public class gTreeView : TreeView
     {
         private const int TVIF_STATE = 0x8;
@@ -40,6 +42,7 @@ namespace gMKVToolNix
         /// Gets or sets a value indicating whether the check box should be toggled when an item is selected.
         /// </summary>
         [Description("Indicates whether the check box should be toggled when an item is selected.")]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool CheckOnClick
         {
             get { return _CheckOnClick; }
@@ -52,6 +55,7 @@ namespace gMKVToolNix
         /// Gets or sets a value indicating whether right clicking a node changes the selection.
         /// </summary>
         [Description("Indicates whether right clicking a node changes the selection..")]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool SelectOnRightClick
         {
             get { return _SelectOnRightClick; }

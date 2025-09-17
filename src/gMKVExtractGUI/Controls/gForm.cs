@@ -3,10 +3,12 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace gMKVToolNix
 {
+    [SupportedOSPlatform("windows")]
     public class gForm : Form
     {
         private static readonly string _errorMessagePrefix = $"An error has occured!{Environment.NewLine}{Environment.NewLine}";
